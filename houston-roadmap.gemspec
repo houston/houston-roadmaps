@@ -7,16 +7,16 @@ require "houston/roadmap/version"
 Gem::Specification.new do |s|
   s.name        = "houston-roadmap"
   s.version     = Houston::Roadmap::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Houston Roadmap."
+  s.authors     = ["Bob Lail"]
+  s.email       = ["bob.lailfamily@gmail.com"]
+  s.homepage    = "https://github.com/houstonmc/houston-roadmap"
+  s.summary     = "A module for Houston to facilitate managing milestones"
   s.description = "TODO: Description of Houston Roadmap."
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 3.2.18"
+  s.add_dependency "rails"
 
   s.add_development_dependency "sqlite3"
 end
