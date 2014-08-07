@@ -1,0 +1,70 @@
+ol#milestones { margin: 0 -0.5em; }
+li.milestone {
+  display: block;
+  padding: 0.125em 0.5em 0.125em 20px;
+  
+  background-image: url(/images/drag-grip.png);
+  background-repeat: no-repeat;
+  background-position: 9px 6px;
+  
+  &:hover {
+    background-color: rgba(128, 212, 255, 0.1);
+  }
+  
+  &.editor {
+    input { width: 32em; margin: 0; }
+  }
+  
+  .milestone-name {
+    display: inline-block;
+    width: 32em;
+  }
+  
+  .milestone-tickets {
+    display: inline-block;
+    color: #ccc;
+    
+    &::after { content: ' tickets';}
+  }
+}
+
+#milestone_view #show_completed_tickets { margin-bottom: 12px; }
+
+form.freight_train { margin-bottom: 0; }
+
+.new-milestone {
+  color: #efefef;
+  cursor: pointer;
+  display: block;
+  
+  i {
+    font-family: 'FontAwesome';
+    font-size: 11px;
+    font-style: normal;
+    text-align: center;
+    line-height: 1em;
+
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-style: solid;
+    border-radius: 1em;
+    border-width: 2px;
+    padding: 2px 1px 0 1px;
+    white-space: nowrap;
+  }
+  
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+#new_milestone_form {
+  display: none;
+}
+
+#new_milestone_name {
+  float: left;
+  width: 32em;
+  margin: 0 8px 0 0;
+}

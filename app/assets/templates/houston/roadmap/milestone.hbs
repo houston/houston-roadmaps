@@ -1,0 +1,32 @@
+<div id="graph" class="burndown-chart shaded-chart"></div>
+
+<h2 class="light">Tickets</h2>
+
+<a class="btn" id="show_completed_tickets" data-toggle="button">Show Completed Tickets</a>
+
+<div>
+  <form id="add_ticket_form">
+    <input type="text" placeholder="Enter a ticket number or summary" id="add_ticket" />
+    <i class="icon-spinner icon-spin icon-large"></i>
+    <hr />
+  </form>
+</div>
+
+{{#if tickets}}
+<table class="table table-sortable table-milestone-tickets">
+  <thead>
+    <tr>
+      <th class="ticket-sequence sort-desc"><i class="icon icon-reorder"></i></th>
+      <th class="ticket-effort">Effort</th>
+      <td class="ticket-type ticket-type-na"></td>
+      <th class="ticket-summary">Summary</th>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody id="tickets">
+    {{#tickets}}{{> milestoneTicket}}{{/tickets}}
+  </tbody>
+</table>
+{{else}}
+<div class="alert alert-info">There are no tickets in this milestone.</div>
+{{/if}}

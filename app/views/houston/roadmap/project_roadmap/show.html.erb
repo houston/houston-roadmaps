@@ -1,0 +1,17 @@
+<%= render partial: "projects/header", locals: {project: @project, subtitle: "Roadmap"} %>
+
+<div id="roadmap_view"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    Roadmap.milestones = new Roadmap.Milestones(
+      <%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>);
+    new Roadmap.EditRoadmapView({
+      el: $('#roadmap_view')[0],
+      projectId: <%= @project.id %>,
+      milestones: Roadmap.milestones
+    }).render();
+  });
+</script>
+<% end %>

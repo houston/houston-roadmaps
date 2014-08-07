@@ -1,0 +1,7 @@
+#add_ticket {
+  width: 48em;
+  margin-bottom: 0;
+  padding: 0.5em 1em;
+}
+#add_ticket_form .icon-spinner { display: none; }
+#add_ticket_form.loading .icon-spinner { display: inline-block; }
