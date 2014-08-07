@@ -28,6 +28,7 @@ module Houston
       
       def update
         milestone = Milestone.unscoped.find(params[:id])
+        milestone.updated_by = current_user
         if milestone.update_attributes(milestone_attributes)
           render json: milestone
         else
