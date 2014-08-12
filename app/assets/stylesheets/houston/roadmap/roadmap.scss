@@ -12,7 +12,10 @@ li.milestone {
   }
   
   &.editor {
-    input { width: 32em; margin: 0; }
+    input[name="name"] { width: 24em; margin: 0; }
+    input[name="size"] { width: 5em; margin: 0; }
+    label { display: inline-block; }
+    input[type="date"] { width: 10em; margin: 0; }
   }
   
   .milestone-name {
@@ -67,4 +70,19 @@ form.freight_train { margin-bottom: 0; }
   float: left;
   width: 32em;
   margin: 0 8px 0 0;
+}
+
+rect.roadmap-milestone {
+  &.certainty-low {
+    fill: rgba(0,0,0,0.15);
+    stroke: #aaa;
+    stroke-width: 3px;
+    stroke-dasharray: 7 7;
+  }
+  &.certainty-mid {
+    fill: rgba(0,0,0,0.27);
+    stroke: #777;
+    stroke-width: 2px;
+    stroke-dasharray: 12 5;
+  }
 }

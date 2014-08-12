@@ -12,6 +12,7 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
   initialize: ->
     @projectId = @options.projectId
     @milestones = @collection = @options.milestones
+    @milestones.bind 'change', @updateRoadmap, @
     super
   
   render: ->
@@ -19,6 +20,7 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
     @$el.find('#milestones').sortable
       placeholder: 'ui-state-highlight'
       update: _.bind(@saveSequence, @)
+    @drawRoadmap()
     @
   
   saveSequence: ->
@@ -49,3 +51,84 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
     $('#new_milestone').show()
     $('#new_milestone_form').enable().hide()
     $('#new_milestone_name').val('')
+  
+  
+  
+  drawRoadmap: ->
+    @height = 24
+    @margin = {top: 90, right: 80, bottom: 40, left: 50}
+    @width = 960
+    @height = @width * 0.27
+    @graphWidth = @width - @margin.left - @margin.right
+    @graphHeight = @height - @margin.top - @margin.bottom
+    
+    @roadmap = d3.select('#graph').append('svg')
+        .attr('width', @width)
+        .attr('height', @height)
+      .append('g')
+        .attr('transform', "translate(0,0)")
+    @xAxis = @roadmap.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', "translate(0,#{@graphHeight})")
+    @updateRoadmap()
+  
+  updateRoadmap: ->
+    width = (milestone)->
+      return null if !milestone.size or !milestone.units
+      weeks = milestone.size
+      weeks *= 4.3452380952381 if milestone.units == 'months'
+      weeks
+    
+    certainty = (milestone)->
+      return 'certainty-low' if milestone.units.startsWith('mo')
+      'certainty-mid'
+    
+    visibleMilestones = _.select @milestones.sorted().toJSON(), width
+    
+    for milestone in visibleMilestones
+      milestone.startDate = d3.time.format('%Y-%m-%d').parse(milestone.start_date) if milestone.start_date
+    startDate = d3.min(visibleMilestones, (milestone)-> milestone.startDate)
+    startDate ||= d3.time.format('%Y-%m-%d').parse('2014-08-01')
+    
+    left = startDate
+    space = 1.20 # 1 week off for every 4
+    radius = 4
+    for milestone in visibleMilestones
+      milestone.width = width(milestone)
+      milestone.left = left
+      milestone.right = milestone.width.weeks().after(left)
+      left = (milestone.width * space).weeks().after(left)
+    
+    x = d3.time.scale()
+      .domain([startDate, left])
+      .range([@margin.left, @graphWidth])
+    
+    xAxis = d3.svg.axis()
+      .scale(x)
+      .orient('bottom')
+    
+    @xAxis.transition(750).call(xAxis)
+    
+    milestones = @roadmap.selectAll('.roadmap-milestone')
+      .data(visibleMilestones, (milestone)-> milestone.id)
+    
+    # update
+    milestones
+      .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
+      .transition(750)
+        .attr('width', (milestone)-> x(milestone.right) - x(milestone.left))
+        .attr('x', (milestone)-> x(milestone.left))
+  
+    # enter
+    milestones.enter().append('rect')
+      .attr('rx', radius)
+      .attr('ry', radius)
+      .attr('height', 24)
+      .attr('width', (milestone)-> x(milestone.right) - x(milestone.left))
+      .attr('x', (milestone)-> x(milestone.left))
+      .attr('y', @margin.top)
+      .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
+    
+    # exit
+    milestones.exit().remove()
+

@@ -5,10 +5,11 @@ module Houston
       
       layout "houston/roadmap/application"
       
-      before_filter :find_milestone, only: [:show, :add_ticket, :remove_ticket]
+      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :remove_ticket]
       
       
       def show
+        authorize! :read, milestone
         @project = milestone.project
         @tickets = milestone.tickets.includes(:tasks, :reporter)
         @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
@@ -17,6 +18,7 @@ module Houston
       
       def create
         project = Project.find(params[:projectId])
+        authorize! :create, project.milestones.build
         milestone = project.create_milestone!(params.pick(:name))
         if milestone.persisted?
           render json: milestone, status: :created
@@ -27,7 +29,7 @@ module Houston
       
       
       def update
-        milestone = Milestone.unscoped.find(params[:id])
+        authorize! :update, milestone
         milestone.updated_by = current_user
         if milestone.update_attributes(milestone_attributes)
           render json: milestone
@@ -38,7 +40,7 @@ module Houston
       
       
       def close
-        @milestone = Milestone.unscoped.find(params[:id])
+        authorize! :update, milestone
         milestone.close!
         render json: {}
       end
@@ -67,7 +69,7 @@ module Houston
       end
       
       def milestone_attributes
-        params.fetch(:milestone).pick(:name)
+        params.fetch(:milestone).pick(:name, :size, :units, :start_date)
       end
       
     end

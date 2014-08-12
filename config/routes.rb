@@ -1,5 +1,6 @@
 Houston::Roadmap::Engine.routes.draw do
   
+  get "", :to => "project_roadmap#index", :as => :project_roadmaps
   get "by_project/:slug", :to => "project_roadmap#show", :as => :project_roadmap
   put "by_project/:slug/order", :to => "project_roadmap#update_order"
   

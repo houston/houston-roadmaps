@@ -3,3 +3,5 @@ class Roadmap.Milestone extends Backbone.Model
 
 class Roadmap.Milestones extends Backbone.Collection
   model: Roadmap.Milestone
+  
+  sorted: -> new Roadmap.Milestones(@sortBy (milestone)-> milestone.get('position'))

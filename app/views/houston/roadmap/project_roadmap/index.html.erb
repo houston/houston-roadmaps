@@ -1,0 +1,23 @@
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  Roadmap
+  
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
+
+<div id="graph"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    new Roadmap.ShowRoadmapView({
+      projects: <%=raw @projects.map { |project| {
+        id: project.id,
+        color: project.color,
+        milestones: Houston::Roadmap::MilestonePresenter.new(project.milestones.uncompleted)
+      } }.to_json %>
+    }).render();
+  });
+</script>
+<% end %>

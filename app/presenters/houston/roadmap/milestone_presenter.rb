@@ -12,6 +12,9 @@ class Houston::Roadmap::MilestonePresenter
     { id: milestone.id,
       name: milestone.name,
       tickets: milestone.tickets_count,
+      size: milestone.size,
+      units: milestone.units,
+      start_date: milestone.start_date,
       position: milestone.position }
   end
   
