@@ -131,4 +131,35 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
     
     # exit
     milestones.exit().remove()
+    
+    
+    
+    clipText = (milestone)->
+      name = milestone.name
+      maxWidth = x(milestone.right) - x(milestone.left) - 8
+      while @getBBox().width > maxWidth
+        name = name.substring(0, name.length - 1)
+        d3.select(@).select(-> @lastChild).text(name + "...")
+    
+    milestoneNames = @roadmap.selectAll('.roadmap-milestone-name')
+      .data(visibleMilestones, (milestone)-> milestone.id)
+    
+    # update
+    milestoneNames
+      .text((milestone)-> milestone.name)
+      .each(clipText)
+      .transition(750)
+        .attr('x', (milestone)-> (x(milestone.left) + x(milestone.right)) / 2)
+
+    # enter
+    milestoneNames.enter().append('text')
+      .attr('text-anchor', 'middle')
+      .attr('x', (milestone)-> (x(milestone.left) + x(milestone.right)) / 2)
+      .attr('y', @margin.top + 17)
+      .attr('class', (milestone)-> 'roadmap-milestone-name')
+      .text((milestone)-> milestone.name)
+      .each(clipText)
+
+    # exit
+    milestoneNames.exit().remove()
 

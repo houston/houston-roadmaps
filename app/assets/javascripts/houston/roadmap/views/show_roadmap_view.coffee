@@ -24,7 +24,7 @@ class Roadmap.ShowRoadmapView extends Backbone.View
         .attr('width', @width)
         .attr('height', @height)
       .append('g')
-        .attr('transform', "translate(0,0)")
+        .attr('transform', 'translate(0,0)')
     @xAxis = @roadmap.append('g')
       .attr('class', 'x axis')
       .attr('transform', "translate(0,#{@graphHeight})")
@@ -100,4 +100,36 @@ class Roadmap.ShowRoadmapView extends Backbone.View
     
     # exit
     milestones.exit().remove()
+    
+    
+    
+    clipText = (milestone)->
+      name = milestone.name
+      maxWidth = x(milestone.right) - x(milestone.left) - 8
+      while @getBBox().width > maxWidth
+        name = name.substring(0, name.length - 1)
+        d3.select(@).select(-> @lastChild).text(name + "...")
+    
+    milestoneNames = bands.selectAll('.roadmap-milestone-name')
+      .data(((project)-> project.milestones), ((milestone)-> milestone.id))
+    
+    # update
+    milestoneNames
+      .text((milestone)-> milestone.name)
+      .each(clipText)
+      .transition(750)
+        .attr('x', (milestone)-> (x(milestone.left) + x(milestone.right)) / 2)
+
+    # enter
+    milestoneNames.enter().append('text')
+      .attr('text-anchor', 'middle')
+      .attr('x', (milestone)-> (x(milestone.left) + x(milestone.right)) / 2)
+      .attr('y', 17)
+      .attr('class', (milestone)-> 'roadmap-milestone-name')
+      .text((milestone)-> milestone.name)
+      .each(clipText)
+
+    # exit
+    milestoneNames.exit().remove()
+
 
