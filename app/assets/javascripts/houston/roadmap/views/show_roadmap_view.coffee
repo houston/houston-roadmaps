@@ -1,10 +1,13 @@
 class Roadmap.ShowRoadmapView extends Backbone.View
   
   initialize: ->
-    @projects = @options.projects
-    for project in @projects
+    @setProjects @options.projects
+  
+  setProjects: (projects)->
+    for project in projects
       project.milestones = _.select project.milestones, (milestone)-> milestone.size && milestone.units
-    @projects = _.select @projects, (project)-> project.milestones.length > 0
+    @projects = _.select projects, (project)-> project.milestones.length > 0
+    @
   
   render: ->
     @drawRoadmap()
@@ -41,6 +44,7 @@ class Roadmap.ShowRoadmapView extends Backbone.View
       return 'certainty-low' if milestone.units.startsWith('mo')
       'certainty-mid'
     
+    minStart = new Date()
     space = (width)-> width * 1.25 # 1 week off for every 4
     space = (width)-> width + 0.25
     radius = 4
@@ -56,9 +60,10 @@ class Roadmap.ShowRoadmapView extends Backbone.View
         milestone.left = left
         milestone.right = milestone.width.weeks().after(left)
         left = space(milestone.width).weeks().after(left)
+      minStart = d3.min([minStart, startDate])
     
     x = d3.time.scale()
-      .domain([startDate, left])
+      .domain([minStart, 6.months().after(minStart)])
       .range([@margin.left, @graphWidth])
     
     y = d3.scale.ordinal()

@@ -91,13 +91,14 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
     startDate ||= d3.time.format('%Y-%m-%d').parse('2014-08-01')
     
     left = startDate
-    space = 1.20 # 1 week off for every 4
+    space = (width)-> width * 1.25 # 1 week off for every 4
+    space = (width)-> width + 0.25
     radius = 4
     for milestone in visibleMilestones
       milestone.width = width(milestone)
       milestone.left = left
       milestone.right = milestone.width.weeks().after(left)
-      left = (milestone.width * space).weeks().after(left)
+      left = space(milestone.width).weeks().after(left)
     
     x = d3.time.scale()
       .domain([startDate, left])

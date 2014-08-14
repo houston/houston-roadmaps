@@ -1,0 +1,24 @@
+<h1>Roadmap</h1>
+
+<div id="graph"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    view = new Roadmap.ShowRoadmapView({
+      projects: <%=raw @projects.to_json %>
+    });
+    
+    view.render();
+    
+    new Refresher()
+      .container('#container')
+      .interval(45 * 60 * 1000) // 45 minutes
+      .callback(function() {
+        $.getJSON(window.location.path, function(projects) {
+          view.setProjects(projects).updateRoadmap();
+        });
+      }).render();
+  });
+</script>
+<% end %>

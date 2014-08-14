@@ -11,6 +11,22 @@ module Houston
         @title = "Roadmap"
       end
       
+      def dashboard
+        authorize! :read, Milestone
+        
+        @projects = Project.includes(:uncompleted_milestones).map { |project| {
+          id: project.id,
+          color: project.color,
+          milestones: Houston::Roadmap::MilestonePresenter.new(project.uncompleted_milestones)
+        } }
+        @title = "Roadmap"
+        
+        respond_to do |format|
+          format.html { render layout: "houston/roadmap/dashboard" }
+          format.json { render json: @projects }
+        end
+      end
+      
       
       def show
         authorize! :read, Milestone
