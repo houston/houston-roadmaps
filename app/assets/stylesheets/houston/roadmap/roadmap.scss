@@ -1,13 +1,15 @@
 ol#milestones { margin: 0 -0.5em; }
-li.milestone {
-  display: block;
-  padding: 0.125em 0.5em 0.125em 20px;
-  
+.ui-sortable li.milestone {
   background-image: url(/images/drag-grip.png);
   background-repeat: no-repeat;
   background-position: 9px 6px;
+  padding-left: 20px;
+}
+li.milestone {
+  display: block;
+  padding: 0.125em 0.5em 0.125em;
   
-  &:hover {
+  &.neat-interactive:hover {
     background-color: rgba(128, 212, 255, 0.1);
   }
   

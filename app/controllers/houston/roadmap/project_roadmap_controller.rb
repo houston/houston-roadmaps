@@ -12,8 +12,6 @@ module Houston
       end
       
       def dashboard
-        authorize! :read, Milestone
-        
         @projects = Project.includes(:uncompleted_milestones).map { |project| {
           id: project.id,
           color: project.color,
@@ -29,18 +27,19 @@ module Houston
       
       
       def show
-        authorize! :read, Milestone
-        
         @project = Project.find_by_slug!(params[:slug])
         @title = "#{@project.name} Roadmap"
+        
+        authorize! :read, @project.milestones.build
+        
         @milestones = @project.milestones.uncompleted
       end
       
       
       def update_order
-        authorize! :update, Milestone
-        
         @project = Project.find_by_slug!(params[:slug])
+        authorize! :update, @project.milestones.build
+        
         ids = Array.wrap(params[:order]).map(&:to_i).reject(&:zero?)
         
         ids.each_with_index do |id, i|

@@ -1,0 +1,15 @@
+<div id="graph" class="roadmap shaded-chart"></div>
+
+<h2 class="light">Milestones</h2>
+
+<div id="milestones_view">
+  <ol id="milestones">
+    {{#each milestones}}
+    <li class="milestone">
+      <span class="milestone-name"><a href="/roadmap/milestones/{{id}}">{{name}}</a></span>
+      <span class="milestone-tickets">{{tickets}}</span>
+      <span class="milestone-size">{{size}} {{units}}</span>
+    </li>
+    {{/each}}
+  </ol>
+</div>

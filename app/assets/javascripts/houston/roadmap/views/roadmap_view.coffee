@@ -1,60 +1,9 @@
-class Roadmap.EditRoadmapView extends Neat.CollectionEditor
-  resource: 'milestones'
-  viewPath: 'houston/roadmap/milestones'
-  sortedBy: null
-  pageSize: Infinity
+class Roadmap.RoadmapView
   
-  events:
-    'click #new_milestone': 'newMilestone'
-    'submit #new_milestone_form': 'createMilestone'
-    'click #cancel_new_milestone_button': 'resetNewMilestone'
-  
-  initialize: ->
-    @projectId = @options.projectId
-    @milestones = @collection = @options.milestones
-    @milestones.bind 'change', @updateRoadmap, @
-    super
+  constructor: (@milestones)->
+    @milestones.bind 'change', @update, @
   
   render: ->
-    super
-    @$el.find('#milestones').sortable
-      placeholder: 'ui-state-highlight'
-      update: _.bind(@saveSequence, @)
-    @drawRoadmap()
-    @
-  
-  saveSequence: ->
-    ids = $('.milestone').pluck('data-id')
-    $.put "#{window.location.pathname}/order", {order: ids}
-  
-  newMilestone: ->
-    $('#new_milestone').hide()
-    $('#new_milestone_form').show()
-    $('#new_milestone_name').select()
-  
-  createMilestone: (e)->
-    e.preventDefault()
-    $('#new_milestone_form').disable()
-    attributes = 
-      name: $('#new_milestone_name').val()
-      projectId: @projectId
-    @milestones.create attributes,
-      wait: true
-      success: (milestone)=>
-        @resetNewMilestone()
-      error: (milestone, jqXhr)=>
-        $('#new_milestone_form').enable()
-        console.log('error', arguments)
-        alert(jqXhr.responseText)
-  
-  resetNewMilestone: ->
-    $('#new_milestone').show()
-    $('#new_milestone_form').enable().hide()
-    $('#new_milestone_name').val('')
-  
-  
-  
-  drawRoadmap: ->
     @height = 24
     @margin = {top: 90, right: 80, bottom: 40, left: 50}
     @width = 960
@@ -70,9 +19,9 @@ class Roadmap.EditRoadmapView extends Neat.CollectionEditor
     @xAxis = @roadmap.append('g')
       .attr('class', 'x axis')
       .attr('transform', "translate(0,#{@graphHeight})")
-    @updateRoadmap()
+    @update()
   
-  updateRoadmap: ->
+  update: ->
     width = (milestone)->
       return null if !milestone.size or !milestone.units
       weeks = milestone.size
