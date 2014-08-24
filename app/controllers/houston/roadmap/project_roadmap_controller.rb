@@ -28,7 +28,7 @@ module Houston
       
       def show
         @project = Project.find_by_slug!(params[:slug])
-        @title = "#{@project.name} Roadmap"
+        @title = "Roadmap • #{@project.name}"
         
         authorize! :read, @project.milestones.build
         

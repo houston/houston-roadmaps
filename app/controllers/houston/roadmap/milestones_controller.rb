@@ -11,6 +11,7 @@ module Houston
       def show
         authorize! :read, milestone
         @project = milestone.project
+        @title = "#{milestone.name} • #{@project.name}"
         @tickets = milestone.tickets.includes(:tasks, :reporter)
         @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
       end
