@@ -9,12 +9,16 @@ class Houston::Roadmap::MilestonePresenter
   end
   
   def to_hash(milestone)
+    project = milestone.project
     { id: milestone.id,
       name: milestone.name,
+      projectId: project.id,
+      projectColor: project.color,
       tickets: milestone.tickets_count,
+      band: milestone.band,
       size: milestone.size,
       units: milestone.units,
-      start_date: milestone.start_date,
+      startDate: milestone.start_date,
       position: milestone.position }
   end
   

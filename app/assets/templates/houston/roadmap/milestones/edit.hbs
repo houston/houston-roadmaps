@@ -1,6 +1,3 @@
 <input type="text" name="name" value="{{name}}" autofocus />
 <input type="text" name="size" {{#if size}}{{#if units}}value="{{size}} {{units}}"{{/if}}{{/if}} placeholder="3 weeks" />
-
-<input type="checkbox" id="starts_after_last" {{#start_date}}{{else}}checked{{/start_date}}>
-<label for="starts_after_last">Starts after last</label>
-<input type="date" name="start_date" value="{{start_date}}">
+<input type="date" name="start_date" value="{{start_date}}" />

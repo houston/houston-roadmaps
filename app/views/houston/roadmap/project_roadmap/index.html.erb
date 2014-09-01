@@ -6,17 +6,15 @@
 </h1>
 <% end %>
 
-<div id="graph"></div>
+<div id="roadmap"></div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
+    var milestones = <%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>;
+    Roadmap.milestones = new Roadmap.Milestones(milestones, {parse: true});
     new Roadmap.ShowRoadmapView({
-      projects: <%=raw @projects.map { |project| {
-        id: project.id,
-        color: project.color,
-        milestones: Houston::Roadmap::MilestonePresenter.new(project.milestones.uncompleted)
-      } }.to_json %>
+      milestones: Roadmap.milestones
     }).render();
   });
 </script>

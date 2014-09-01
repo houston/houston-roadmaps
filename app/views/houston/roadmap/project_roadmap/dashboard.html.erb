@@ -1,22 +1,25 @@
 <h1>Roadmap</h1>
 
-<div id="graph"></div>
+<div id="roadmap"></div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
+    Roadmap.milestones = new Roadmap.Milestones(<%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>, {parse: true});
+    
     view = new Roadmap.ShowRoadmapView({
-      projects: <%=raw @projects.to_json %>
+      milestones: Roadmap.milestones,
+      showToday: false
     });
     
     view.render();
     
     new Refresher()
       .container('#container')
-      .interval(45 * 60 * 1000) // 45 minutes
+      .interval(45 * Duration.MINUTE)
       .callback(function() {
-        $.getJSON(window.location.path, function(projects) {
-          view.setProjects(projects).updateRoadmap();
+        $.getJSON(window.location.path, function(milestones) {
+          Roadmap.milestones.reset(milestones, {parse: true});
         });
       }).render();
   });

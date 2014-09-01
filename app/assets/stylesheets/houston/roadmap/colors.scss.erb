@@ -5,16 +5,7 @@
 .roadmap-band {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      rect.roadmap-milestone {
-        &.certainty-low {
-          fill: lighten(<%= value.rgb %>, 40%);
-          stroke: lighten(<%= value.rgb %>, 40%);
-        }
-        &.certainty-mid {
-          fill: lighten(<%= value.rgb %>, 27%);
-          stroke: lighten(<%= value.rgb %>, 27%);
-        }
-      }
+      .roadmap-milestone::before { background: <%= value.rgb %>; }
     }
   <% end %>
 }
@@ -22,19 +13,7 @@
 body.dashboard .roadmap-band {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      rect.roadmap-milestone {
-        &.certainty-low {
-          fill: rgba(<%= value.rgb %>, 0.75);
-          stroke: darken(<%= value.rgb %>, 40%);
-        }
-        &.certainty-mid {
-          fill: rgba(<%= value.rgb %>, 0.95);
-          stroke: darken(<%= value.rgb %>, 30%);
-        }
-      }
-      text.roadmap-milestone-name {
-        fill: rgba(255, 255, 255, 0.9);
-      }
+      .roadmap-milestone { border-color: <%= value.rgb %>; }
     }
   <% end %>
 }

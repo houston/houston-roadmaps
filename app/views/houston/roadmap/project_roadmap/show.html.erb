@@ -6,7 +6,7 @@
 <script type="text/javascript">
   $(function() {
     var milestones = <%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>;
-    Roadmap.milestones = new Roadmap.Milestones(milestones);
+    Roadmap.milestones = new Roadmap.Milestones(milestones, {parse: true});
     <% if can?(:manage, @project.milestones.build) %>
     new Roadmap.EditProjectRoadmapView({
       el: $('#roadmap_view')[0],

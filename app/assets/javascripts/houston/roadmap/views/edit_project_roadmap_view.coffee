@@ -12,20 +12,13 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   initialize: ->
     @projectId = @options.projectId
     @milestones = @collection = @options.milestones
-    @roadmap = new Roadmap.RoadmapView(@milestones)
+    @roadmap = new Roadmap.EditRoadmapView(@milestones)
     super
   
   render: ->
     super
-    @$el.find('#milestones').sortable
-      placeholder: 'ui-state-highlight'
-      update: _.bind(@saveSequence, @)
     @roadmap.render()
     @
-  
-  saveSequence: ->
-    ids = $('.milestone').pluck('data-id')
-    $.put "#{window.location.pathname}/order", {order: ids}
   
   newMilestone: ->
     $('#new_milestone').hide()
