@@ -4,15 +4,11 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   sortedBy: null
   pageSize: Infinity
   
-  events:
-    'click #new_milestone': 'newMilestone'
-    'submit #new_milestone_form': 'createMilestone'
-    'click #cancel_new_milestone_button': 'resetNewMilestone'
-  
   initialize: ->
     @projectId = @options.projectId
     @milestones = @collection = @options.milestones
     @roadmap = new Roadmap.EditRoadmapView(@milestones)
+      .createMilestone(_.bind(@createMilestone, @))
     super
   
   render: ->
@@ -20,28 +16,16 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
     @roadmap.render()
     @
   
-  newMilestone: ->
-    $('#new_milestone').hide()
-    $('#new_milestone_form').show()
-    $('#new_milestone_name').select()
-  
-  createMilestone: (e)->
-    e.preventDefault()
-    $('#new_milestone_form').disable()
-    attributes = 
-      name: $('#new_milestone_name').val()
-      projectId: @projectId
-    @milestones.create attributes,
-      wait: true
-      success: (milestone)=>
-        @resetNewMilestone()
-      error: (milestone, jqXhr)=>
-        $('#new_milestone_form').enable()
-        console.log('error', arguments)
-        alert(jqXhr.responseText)
-  
-  resetNewMilestone: ->
-    $('#new_milestone').show()
-    $('#new_milestone_form').enable().hide()
-    $('#new_milestone_name').val('')
-
+  createMilestone: (attributes, callback)->
+    attributes.projectId = @projectId
+    if attributes.name = prompt('Name:')
+      @milestones.create attributes,
+        wait: true
+        success: (milestone)=>
+          callback()
+        error: (milestone, jqXhr)=>
+          callback()
+          console.log('error', arguments)
+          alert(jqXhr.responseText)
+    else
+      callback()

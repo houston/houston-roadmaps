@@ -1,5 +1,60 @@
 class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   MAX_BANDS = 4
+  $newMilestone: null
+  newMilestoneX: null
+  supportsCreate: false
+  
+  
+  constructor: (milestones, options={})->
+    super(milestones, options)
+    $(document.body).on 'keyup', (e)=>
+      return unless @$newMilestone and @supportsCreate
+      @cancelCreate() if e.keyCode is 27
+  
+  
+  createMilestone: (callback)->
+    @supportsCreate = !!callback
+    @_createMilestoneCallback = callback
+    @
+  
+  
+  render: ->
+    super
+    @$el.on 'mouseleave', => @cancelCreate()
+    
+    @$el.on 'mouseup', (e)=>
+      return unless @$newMilestone and @supportsCreate
+      newMilestoneWidth = e.screenX - @newMilestoneX
+      if newMilestoneWidth > 10
+        band = +@$newMilestone.closest('.roadmap-band').attr('data-band')
+        startDate = @x.invert(@$newMilestone.position().left)
+        endDate = @x.invert(@$newMilestone.position().left + @$newMilestone.width())
+        weeks = Math.round (endDate - startDate) / Duration.WEEK
+        attributes = 
+          band: band
+          startDate: startDate
+          size: weeks || 1
+          units: 'weeks'
+        @$newMilestone.addClass('creating').text('Saving...')
+        @$el.removeClass('drag-create')
+        [$newMilestone, @$newMilestone] = [@$newMilestone, null]
+        @_createMilestoneCallback attributes, -> $newMilestone.remove()
+      else
+        @cancelCreate()
+    
+    @$el.on 'mousemove', (e)=>
+      return unless @$newMilestone and @supportsCreate
+      newMilestoneWidth = e.screenX - @newMilestoneX
+      newMilestoneWidth = 0 if newMilestoneWidth < 0
+      @$newMilestone.css(width: newMilestoneWidth)
+  
+  
+  cancelCreate: ->
+    return unless @$newMilestone and @supportsCreate
+    @$el.removeClass('drag-create')
+    @$newMilestone.remove()
+    @$newMilestone = null
+  
   
   groupMilestonesIntoBands: ->
     projectColor = {}
@@ -34,8 +89,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     
     milestoneBands
   
+  
   initializeBand: (band)->
     view = @
+    
     $(band).droppable
       hoverClass: 'sort-active'
       drop: (event, ui)->
@@ -48,6 +105,14 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           band: band
           startDate: d3.time.monday.round(date)
         milestone.save(attributes, wait: true)
+    .on 'mousedown', (e)->
+      return unless view.supportsCreate
+      return if e.target isnt @
+      view.newMilestoneX = e.screenX
+      view.$el.addClass('drag-create')
+      view.$newMilestone = $('<div class="roadmap-milestone-placeholder">&nbsp;</div>')
+        .css(left: e.offsetX)
+        .appendTo(@)
   
   initializeMilestone: (milestone)->
     view = @
@@ -66,4 +131,4 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       zIndex: 10
       revertDuration: 150
       revert: ($target)-> !$target or !$target.is('.roadmap-band')
-    
+

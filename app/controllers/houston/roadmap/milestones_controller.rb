@@ -20,9 +20,9 @@ module Houston
       def create
         project = Project.find(params[:projectId])
         authorize! :create, project.milestones.build
-        milestone = project.create_milestone!(params.pick(:name))
+        milestone = project.create_milestone!(milestone_attributes)
         if milestone.persisted?
-          render json: milestone, status: :created
+          render json: Houston::Roadmap::MilestonePresenter.new(milestone), status: :created
         else
           render json: milestone.errors, status: :unprocessable_entity
         end
@@ -33,7 +33,7 @@ module Houston
         authorize! :update, milestone
         milestone.updated_by = current_user
         if milestone.update_attributes(milestone_attributes)
-          render json: milestone
+          render json: Houston::Roadmap::MilestonePresenter.new(milestone)
         else
           render json: milestone.errors, status: :unprocessable_entity
         end

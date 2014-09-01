@@ -6,6 +6,7 @@ class Roadmap.RoadmapView
     @startDate = 3.weeks().before(@today)
     @endDate = 6.months().after(@startDate)
     @height = 24
+    @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'reset', @update, @
     $(window).resize (e)=>

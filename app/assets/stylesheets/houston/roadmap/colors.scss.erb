@@ -5,7 +5,9 @@
 .roadmap-band {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      .roadmap-milestone::before { background: <%= value.rgb %>; }
+      .roadmap-milestone, .roadmap-milestone-placeholder {
+        &::before { background: <%= value.rgb %>; }
+      }
     }
   <% end %>
 }
