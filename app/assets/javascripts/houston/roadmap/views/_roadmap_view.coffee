@@ -2,9 +2,12 @@ class Roadmap.RoadmapView
   
   constructor: (@milestones, options={})->
     @showToday = options.showToday ? true
+    @showThumbnail = options.showThumbnail ? true
     @today = new Date()
-    @startDate = 3.weeks().before(@today)
-    @endDate = 6.months().after(@startDate)
+    @viewport = new Roadmap.Viewport
+      start: 3.weeks().before(@today)
+      end: 6.months().after(3.weeks().before(@today))
+    @viewport.bind 'change', @updateViewport, @
     @height = 24
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
@@ -14,7 +17,17 @@ class Roadmap.RoadmapView
   
   render: ->
     @$el = $('#roadmap')
+    
+    if @showThumbnail
+      @thumbnail = new Roadmap.ThumbnailRoadmapView
+        milestones: @milestones
+        viewport: @viewport
+        parent: d3.select('#roadmap')
+      @thumbnail.render()
+    
     @roadmap = d3.select('#roadmap')
+      .append('div')
+        .attr('class', 'roadmap-bands')
     
     svg = @roadmap.append('svg')
         .attr('height', @height)
@@ -39,16 +52,27 @@ class Roadmap.RoadmapView
     @roadmap.select('svg').transition(150).attr('width', @width)
     
     @x = d3.time.scale()
-      .domain([@startDate, @endDate])
+      .domain(@viewport.domain())
       .range([0, @width])
     timeline = d3.svg.axis()
       .scale(@x)
       .orient('bottom')
     @xAxis.transition(150).call(timeline)
     
-    @update()
+    @update(transition: true)
   
-  update: ->
+  updateViewport: ->
+    @x = d3.time.scale()
+      .domain(@viewport.domain())
+      .range([0, @width])
+    timeline = d3.svg.axis()
+      .scale(@x)
+      .orient('bottom')
+    @xAxis.call(timeline)
+    
+    @update(transition: false)
+  
+  update: (options)->
     certainty = (milestone)->
       return 'certainty-low' if milestone.units.startsWith('mo')
       'certainty-mid'
@@ -70,9 +94,14 @@ class Roadmap.RoadmapView
       .data(((band)-> band.milestones), (milestone)-> milestone.id)
     
     # update
-    milestones
-      .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
-      .transition(150)
+    if options.transition
+      milestones
+        .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
+        .transition(150)
+          .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
+    else
+      milestones
+        .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
         .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
     
     # enter
