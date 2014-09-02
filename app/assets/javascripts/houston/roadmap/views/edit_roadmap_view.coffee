@@ -6,6 +6,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   
   
   constructor: (milestones, options={})->
+    @project = options.project
     super(milestones, options)
     $(document.body).on 'keyup', (e)=>
       return unless @$newMilestone and @supportsCreate
@@ -57,34 +58,16 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   
   
   groupMilestonesIntoBands: ->
-    projectColor = {}
-    milestoneBands = {}
-    bandsByProject = {}
-    for milestone in @milestones.sorted().toJSON() when @widthOfMilestone(milestone)
-      milestone.startDate = @today unless milestone.startDate
-      milestone.duration = @widthOfMilestone(milestone)
-      milestone.endDate = milestone.duration.weeks().after(milestone.startDate)
-      
-      projectColor[milestone.projectId] = milestone.projectColor
-      key = "#{milestone.projectId}-#{milestone.band}"
-      (milestoneBands[key] ||=
-        key: key
-        projectId: milestone.projectId
-        color: milestone.projectColor
-        number: milestone.band
-        milestones: []).milestones.push(milestone)
-      (bandsByProject[milestone.projectId] ||= d3.set()).add(milestone.band)
+    milestoneBands = super
     
-    milestoneBands = _.values(milestoneBands)
-    
-    for projectId, bands of bandsByProject when bands.values().length < MAX_BANDS
-      newBand = +d3.max(bands.values()) + 1
-      key = "#{projectId}-#{newBand}"
+    nextBand = +d3.max(milestoneBands, (band)-> band.number) + 1
+    nextBand = 1 if _.isNaN(nextBand)
+    if nextBand <= MAX_BANDS
       milestoneBands.push
-        key: key
-        projectId: projectId
-        color: projectColor[projectId]
-        number: newBand
+        key: "#{@project.id}-#{nextBand}"
+        projectId: @project.id
+        color: @project.color
+        number: nextBand
         milestones: []
     
     milestoneBands
