@@ -1,7 +1,8 @@
 class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   resource: 'milestones'
   viewPath: 'houston/roadmap/milestones'
-  sortedBy: null
+  sortedBy: 'startDate'
+  sortOrder: 'asc'
   pageSize: Infinity
   
   initialize: ->
