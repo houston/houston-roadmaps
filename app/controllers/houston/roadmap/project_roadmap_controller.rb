@@ -12,8 +12,9 @@ module Houston
       end
       
       def dashboard
-        @milestones = Milestone.visible
-        @title = "Roadmap"
+        today = Date.today
+        @milestones = Milestone.during(today..4.weeks.from(today))
+        @title = "Current Goals"
         respond_to do |format|
           format.html { render layout: "houston/roadmap/dashboard" }
           format.json { render json: Houston::Roadmap::MilestonePresenter.new(@milestones) }

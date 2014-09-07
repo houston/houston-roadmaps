@@ -1,4 +1,4 @@
-<h1>Roadmap</h1>
+<h1>Current Goals</h1>
 
 <div id="roadmap"></div>
 
@@ -10,7 +10,11 @@
     view = new Roadmap.ShowRoadmapView({
       milestones: Roadmap.milestones,
       showToday: false,
-      showThumbnail: false
+      showThumbnail: false,
+      viewport: new Roadmap.Viewport({
+        start: Roadmap.milestones.start(),
+        end: Roadmap.milestones.end()
+      })
     });
     
     view.render();

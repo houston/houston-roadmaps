@@ -17,3 +17,6 @@ class Roadmap.Milestone extends Backbone.Model
 
 class Roadmap.Milestones extends Backbone.Collection
   model: Roadmap.Milestone
+  
+  start: -> _.min @pluck('startDate')
+  end: -> _.max @pluck('endDate')

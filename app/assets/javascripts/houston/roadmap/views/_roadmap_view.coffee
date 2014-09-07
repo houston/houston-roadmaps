@@ -1,12 +1,10 @@
 class Roadmap.RoadmapView
+  today: new Date()
   
   constructor: (@milestones, options={})->
     @showToday = options.showToday ? true
     @showThumbnail = options.showThumbnail ? true
-    @today = new Date()
-    @viewport = new Roadmap.Viewport
-      start: 3.weeks().before(@today)
-      end: 6.months().after(3.weeks().before(@today))
+    @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
     @milestones.bind 'add', @update, @
@@ -14,6 +12,11 @@ class Roadmap.RoadmapView
     @milestones.bind 'reset', @update, @
     $(window).resize (e)=>
       @updateWindow() if e.target is window
+  
+  defaultViewport: ->
+    new Roadmap.Viewport
+      start: 3.weeks().before(@today)
+      end: 6.months().after(3.weeks().before(@today))
   
   render: ->
     @$el = $('#roadmap')
