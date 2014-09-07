@@ -3,16 +3,17 @@ class Roadmap.Milestone extends Backbone.Model
   
   parse: (milestone)->
     milestone.startDate = App.serverDateFormat.parse(milestone.startDate) if milestone.startDate
+    milestone.endDate = App.serverDateFormat.parse(milestone.endDate) if milestone.endDate
     milestone
   
   toJSON: (options)->
     json = super(options)
-    if options?.success
+    if 'emulateHTTP' of (options || {})
       json.start_date = App.serverDateFormat(json.startDate) if json.startDate
       delete json.startDate
+      json.end_date = App.serverDateFormat(json.endDate) if json.endDate
+      delete json.endDate
     json
 
 class Roadmap.Milestones extends Backbone.Collection
   model: Roadmap.Milestone
-  
-  sorted: -> new Roadmap.Milestones(@sortBy (milestone)-> milestone.get('position'))

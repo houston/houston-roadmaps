@@ -75,18 +75,7 @@ class Roadmap.ThumbnailRoadmapView
     @update()
   
   update: ->
-    width = (milestone)->
-      return null if !milestone.size or !milestone.units
-      weeks = milestone.size
-      weeks *= 4.3452380952381 if milestone.units == 'months'
-      weeks
-    
-    certainty = (milestone)->
-      return 'certainty-low' if milestone.units.startsWith('mo')
-      'certainty-mid'
-    
-    visibleMilestones = _.select @milestones.sorted().toJSON(), width
-    visibleMilestones = _.select visibleMilestones, (m)-> m.startDate
+    visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate
     
     milestoneBands = d3.nest()
       .key (milestone)-> milestone.band
@@ -95,9 +84,6 @@ class Roadmap.ThumbnailRoadmapView
     startDate = d3.min(visibleMilestones, (milestone)-> milestone.startDate)
     startDate ||= d3.time.format('%Y-%m-%d').parse('2014-08-01')
     endDate = 2.years().after startDate
-    
-    for milestone in visibleMilestones
-      milestone.endDate = width(milestone).weeks().after(milestone.startDate)
     
     bands = @roadmap.selectAll('.roadmap-thumbnail-band')
       .data(milestoneBands, (band)-> band.key)

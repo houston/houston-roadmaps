@@ -38,12 +38,6 @@ class Roadmap.RoadmapView
     
     @updateWindow()
   
-  widthOfMilestone: (milestone)->
-    return null if !milestone.size or !milestone.units
-    weeks = milestone.size
-    weeks *= 4.3452380952381 if milestone.units == 'months'
-    weeks
-  
   updateWindow: ->
     width = @$el.width() || 960
     return if @width is width
@@ -73,10 +67,6 @@ class Roadmap.RoadmapView
     @update(transition: false)
   
   update: (options)->
-    certainty = (milestone)->
-      return 'certainty-low' if milestone.units.startsWith('mo')
-      'certainty-mid'
-    
     view = @
     
     bands = @roadmap.selectAll('.roadmap-band')
@@ -96,18 +86,16 @@ class Roadmap.RoadmapView
     # update
     if options.transition
       milestones
-        .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
         .transition(150)
           .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
     else
       milestones
-        .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
         .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
     
     # enter
     milestones.enter().append('div')
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
-      .attr('class', (milestone)-> "roadmap-milestone #{certainty(milestone)}")
+      .attr('class', 'roadmap-milestone')
       .attr('data-id', (milestone)-> milestone.id)
       .text((milestone)-> milestone.name)
       .each -> view.initializeMilestone.apply(view, [@])
@@ -125,11 +113,7 @@ class Roadmap.RoadmapView
   
   groupMilestonesIntoBands: ->
     milestoneBands = {}
-    for milestone in @milestones.sorted().toJSON() when @widthOfMilestone(milestone)
-      milestone.startDate = @today unless milestone.startDate
-      milestone.duration = @widthOfMilestone(milestone)
-      milestone.endDate = milestone.duration.weeks().after(milestone.startDate)
-      
+    for milestone in @milestones.toJSON() when milestone.startDate and milestone.endDate
       key = "#{milestone.projectId}-#{milestone.band}"
       (milestoneBands[key] ||=
         key: key

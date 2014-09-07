@@ -70,7 +70,7 @@ module Houston
       end
       
       def milestone_attributes
-        params.fetch(:milestone).pick(:name, :band, :size, :units, :start_date)
+        params.fetch(:milestone).pick(:name, :band, :start_date, :end_date)
       end
       
     end

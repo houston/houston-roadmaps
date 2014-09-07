@@ -16,10 +16,8 @@ class Houston::Roadmap::MilestonePresenter
       projectColor: project.color,
       tickets: milestone.tickets_count,
       band: milestone.band,
-      size: milestone.size,
-      units: milestone.units,
       startDate: milestone.start_date,
-      position: milestone.position }
+      endDate: milestone.end_date }
   end
   
 end

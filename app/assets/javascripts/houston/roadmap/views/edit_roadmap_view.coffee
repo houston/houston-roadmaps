@@ -30,12 +30,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         band = +@$newMilestone.closest('.roadmap-band').attr('data-band')
         startDate = @x.invert(@$newMilestone.position().left)
         endDate = @x.invert(@$newMilestone.position().left + @$newMilestone.width())
-        weeks = Math.round (endDate - startDate) / Duration.WEEK
         attributes = 
           band: band
-          startDate: startDate
-          size: weeks || 1
-          units: 'weeks'
+          startDate: d3.time.monday.round(startDate)
+          endDate: d3.time.friday.round(endDate)
         @$newMilestone.addClass('creating').text('Saving...')
         @$el.removeClass('drag-create')
         [$newMilestone, @$newMilestone] = [@$newMilestone, null]
@@ -83,11 +81,17 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         id = ui.draggable.attr('data-id')
         milestone = view.milestones.get(id)
         return unless milestone
-        date = view.x.invert(ui.position.left)
-        attributes = 
+        
+        startDate = d3.time.monday.round(view.x.invert(ui.position.left))
+        ui.draggable.css left: view.x(startDate)
+        
+        offset = Math.floor((startDate - milestone.get('startDate')) / Duration.DAY)
+        endDate = offset.days().after milestone.get('endDate')
+        milestone.save
           band: band
-          startDate: d3.time.monday.round(date)
-        milestone.save(attributes, wait: true)
+          startDate: startDate
+          endDate: endDate
+        , wait: true
     .on 'mousedown', (e)->
       return unless view.supportsCreate
       return if e.target isnt @
@@ -101,13 +105,16 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     view = @
     $(milestone).resizable
       handles: 'e'
+      animate: false
       stop: (event, ui)->
         id = ui.element.attr('data-id')
         milestone = view.milestones.get(id)
         return unless milestone
-        endDate = view.x.invert(ui.position.left + ui.size.width)
-        weeks = Math.round (endDate - milestone.get('startDate')) / Duration.WEEK
-        milestone.save size: weeks
+        endDate = d3.time.friday.round(view.x.invert(ui.position.left + ui.size.width))
+        ui.element.css width: view.x(endDate) - ui.element.position().left
+        milestone.save
+          endDate: endDate
+        , wait: true
     .draggable
       snap: '.roadmap-band'
       snapMode: 'inner'
