@@ -14,11 +14,13 @@ class Roadmap.ThumbnailRoadmapView
       @updateWindow() if e.target is window
   
   render: ->
-    @$el = $('#roadmap')
     @height = 46
     @graphHeight = @height - 18
     
-    svg = @parent.append('svg')
+    el = @parent.append('div')
+      .attr('style', "position: relative; height: #{@height}px;")
+    
+    svg = el.append('svg')
         .attr('height', @height)
         .attr('class', 'roadmap-thumbnail')
       .append('g')
@@ -27,24 +29,29 @@ class Roadmap.ThumbnailRoadmapView
     @roadmap = svg.append('g')
       .attr('class', 'roadmap-bands')
     
-    drag = d3.behavior.drag()
-      .origin((viewport)=> {x: @x(viewport.get('start')), y: 0})
-      .on 'drag', (viewport)=>
-        x = d3.max [0, d3.event.x]
-        x = d3.min [x, @width - @viewer.attr('width')]
-        start = @x.invert(x)
-        viewport.set(start: start, end: 6.months().after(start))
-        @viewer.attr('x', x)
-    
-    @viewer = svg.selectAll('.roadmap-thumbnail-viewer')
+    @viewer = el.selectAll('.roadmap-thumbnail-viewer')
       .data([@viewport])
     
+    view = @
     @viewer.enter()
-      .append('rect')
+      .append('div')
         .attr('class', 'roadmap-thumbnail-viewer')
-        .attr('y', 1)
-        .attr('height', @height - 2)
-        .call(drag)
+        .attr('style', "top: 1px; height: #{@height - 2}px; left: 1px;")
+        .each ->
+          $(@).draggable
+            axis: 'x'
+            containment: 'parent'
+            drag: (e, ui)->
+              start = view.x.invert(ui.position.left)
+              offset = start - view.viewport.get('start')
+              end = new Date(+view.viewport.get('end') + offset)
+              view.viewport.set(start: start, end: end)
+          .resizable
+            handles: 'e'
+            containment: 'parent'
+            resize: (e, ui)->
+              end = view.x.invert(ui.position.left + ui.size.width)
+              view.viewport.set(end: end)
     
     @xAxis = svg.append('g')
       .attr('class', 'x axis')
@@ -69,8 +76,7 @@ class Roadmap.ThumbnailRoadmapView
     @xAxis.transition(150).call(timeline)
     
     @viewer.transition(150)
-      .attr('x', (viewport)=> @x(viewport.get('start')))
-      .attr('width', (viewport)=> @x(viewport.get('end')) - @x(viewport.get('start')))
+      .attr('style', (viewport)=> "top: 1px; height: #{@height - 2}px; left: #{@x(viewport.get('start'))}px; width: #{@x(viewport.get('end')) - @x(viewport.get('start'))}px;")
     
     @update()
   
