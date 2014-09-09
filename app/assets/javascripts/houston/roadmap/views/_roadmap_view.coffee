@@ -107,12 +107,19 @@ class Roadmap.RoadmapView
     milestones.exit().remove()
     
     if @showToday
-      @roadmap.selectAll('.roadmap-today')
+      today = @roadmap.selectAll('.roadmap-today')
         .data([@today])
-        .enter()
-          .append('div')
-            .attr('class', 'roadmap-today')
-            .attr('style', (date)=> "left: #{@x(date)}px;")
+      
+      today.enter()
+        .append('div')
+          .attr('class', 'roadmap-today')
+          .attr('style', (date)=> "left: #{@x(date)}px;")
+      
+      if options.transition
+        today.transition(150)
+          .attr('style', (date)=> "left: #{@x(date)}px;")
+      else
+        today.attr('style', (date)=> "left: #{@x(date)}px;")
   
   groupMilestonesIntoBands: ->
     milestoneBands = {}
