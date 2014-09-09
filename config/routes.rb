@@ -11,4 +11,10 @@ Houston::Roadmap::Engine.routes.draw do
   post "milestones/:id/tickets/:ticket_id", :to => "milestones#add_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
   delete "milestones/:id/tickets/:ticket_id", :to => "milestones#remove_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
   
+  namespace "api" do
+    namespace "v1" do
+      get "milestones/current", to: "roadmap#current"
+    end
+  end
+  
 end
