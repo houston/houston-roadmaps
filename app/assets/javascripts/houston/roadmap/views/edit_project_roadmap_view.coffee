@@ -9,8 +9,9 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
     @projectId = @options.projectId
     @projectColor = @options.projectColor
     @milestones = @collection = @options.milestones
-    @roadmap = new Roadmap.EditRoadmapView(@milestones,
-        project: {id: @projectId, color: @projectColor})
+    @roadmap = new Roadmap.EditRoadmapView @milestones,
+        project: {id: @projectId, color: @projectColor}
+        showWeekends: true
       .createMilestone(_.bind(@createMilestone, @))
     super
   

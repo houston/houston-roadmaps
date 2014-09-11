@@ -4,6 +4,7 @@ class Roadmap.RoadmapView
   constructor: (@milestones, options={})->
     @showToday = options.showToday ? true
     @showThumbnail = options.showThumbnail ? true
+    @showWeekends = options.showWeekends ? false
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
@@ -83,19 +84,27 @@ class Roadmap.RoadmapView
     
     bands.exit().remove()
     
+    
+    
+    if @showWeekends
+      weeks = @roadmap.selectAll('.roadmap-weekend')
+        .data(d3.time.fridays(@x.domain()...), (date)-> date)
+      
+      weeks.enter().append('div')
+        .attr('class', 'roadmap-weekend')
+        .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
+      
+      update = if options.transition then weeks.transition(150) else weeks
+      update
+        .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
+      
+      weeks.exit().remove()
+    
+    
+    
     milestones = bands.selectAll('.roadmap-milestone')
       .data(((band)-> band.milestones), (milestone)-> milestone.id)
     
-    # update
-    if options.transition
-      milestones
-        .transition(150)
-          .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
-    else
-      milestones
-        .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
-    
-    # enter
     milestones.enter().append('div')
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
       .attr('class', 'roadmap-milestone')
@@ -103,8 +112,13 @@ class Roadmap.RoadmapView
       .text((milestone)-> milestone.name)
       .each -> view.initializeMilestone.apply(view, [@])
     
-    # exit
+    update = if options.transition then milestones.transition(150) else milestones
+    update
+      .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
+    
     milestones.exit().remove()
+    
+    
     
     if @showToday
       today = @roadmap.selectAll('.roadmap-today')
@@ -115,11 +129,9 @@ class Roadmap.RoadmapView
           .attr('class', 'roadmap-today')
           .attr('style', (date)=> "left: #{@x(date)}px;")
       
-      if options.transition
-        today.transition(150)
-          .attr('style', (date)=> "left: #{@x(date)}px;")
-      else
-        today.attr('style', (date)=> "left: #{@x(date)}px;")
+      update = if options.transition then today.transition(150) else today
+      update
+        .attr('style', (date)=> "left: #{@x(date)}px;")
   
   groupMilestonesIntoBands: ->
     milestoneBands = {}
