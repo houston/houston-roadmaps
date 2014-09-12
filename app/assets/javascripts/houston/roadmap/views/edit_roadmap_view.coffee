@@ -33,7 +33,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         attributes = 
           band: band
           startDate: d3.time.monday.round(startDate)
-          endDate: d3.time.friday.round(endDate)
+          endDate: d3.time.saturday.round(endDate)
         @$newMilestone.addClass('creating').text('Saving...')
         @$el.removeClass('drag-create')
         [$newMilestone, @$newMilestone] = [@$newMilestone, null]
@@ -110,7 +110,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         id = ui.element.attr('data-id')
         milestone = view.milestones.get(id)
         return unless milestone
-        endDate = d3.time.friday.round(view.x.invert(ui.position.left + ui.size.width))
+        endDate = d3.time.saturday.round(view.x.invert(ui.position.left + ui.size.width))
         ui.element.css width: view.x(endDate) - ui.element.position().left
         milestone.save
           endDate: endDate

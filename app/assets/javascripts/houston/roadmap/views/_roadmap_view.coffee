@@ -88,7 +88,7 @@ class Roadmap.RoadmapView
     
     if @showWeekends
       weeks = @roadmap.selectAll('.roadmap-weekend')
-        .data(d3.time.fridays(@x.domain()...), (date)-> date)
+        .data(d3.time.saturdays(@x.domain()...), (date)-> date)
       
       weeks.enter().append('div')
         .attr('class', 'roadmap-weekend')
