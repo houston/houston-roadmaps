@@ -37,7 +37,6 @@ form.freight_train { margin-bottom: 0; }
 #roadmap {
   position: relative;
   overflow: hidden;
-  padding-bottom: 5em;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -52,9 +51,6 @@ form.freight_train { margin-bottom: 0; }
     position: absolute;
     bottom: 2em;
   }
-}
-#roadmap.shaded-chart {
-  padding-bottom: 2em;
 }
 
 .roadmap-band {
