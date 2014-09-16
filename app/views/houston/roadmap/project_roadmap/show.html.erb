@@ -18,7 +18,8 @@
     new Roadmap.ShowProjectRoadmapView({
       el: $('#roadmap_view')[0],
       projectId: <%= @project.id %>,
-      milestones: Roadmap.milestones
+      milestones: Roadmap.milestones,
+      showWeekends: true
     }).render();
     <% end %>
   });

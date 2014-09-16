@@ -4,7 +4,7 @@ class Roadmap.ShowProjectRoadmapView extends Backbone.View
     @projectId = @options.projectId
     @milestones = @options.milestones
     @template = HandlebarsTemplates['houston/roadmap/show']
-    @roadmap = new Roadmap.RoadmapView(@milestones)
+    @roadmap = new Roadmap.RoadmapView(@milestones, @options)
     super
   
   render: ->
