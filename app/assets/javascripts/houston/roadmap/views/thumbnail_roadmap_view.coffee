@@ -4,8 +4,8 @@ class Roadmap.ThumbnailRoadmapView
     @milestones = options.milestones
     @parent = options.parent
     @viewport = options.viewport
-    @startDate = 3.weeks().ago()
-    @endDate = 2.years().after(@startDate)
+    @startDate = d3.min @milestones.pluck('startDate').concat(3.weeks().ago())
+    @endDate = d3.max @milestones.pluck('endDate').concat(2.years().after(@startDate))
     @viewerStart = @startDate
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
