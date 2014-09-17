@@ -143,6 +143,22 @@ to {background-position: 30px 0;}
   }
 }
 
+a.roadmap-milestone {
+  display: block;
+  color: inherit;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: none;
+    background: #DBEBEC;
+    border-color: #C3DBDD;
+  }
+  
+  &.unlocked:hover {
+    background: #E3EDEE;
+  }
+}
+
 .roadmap-milestone-placeholder {
   cursor: col-resize;
   

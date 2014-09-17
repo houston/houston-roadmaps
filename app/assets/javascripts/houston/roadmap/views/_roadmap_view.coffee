@@ -5,6 +5,7 @@ class Roadmap.RoadmapView
     @showToday = options.showToday ? true
     @showThumbnail = options.showThumbnail ? true
     @showWeekends = options.showWeekends ? false
+    @linkMilestones = options.linkMilestones ? false
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
@@ -105,7 +106,13 @@ class Roadmap.RoadmapView
     milestones = bands.selectAll('.roadmap-milestone')
       .data(((band)-> band.milestones), (milestone)-> milestone.id)
     
-    milestones.enter().append('div')
+    newMilestones = if @linkMilestones
+      milestones.enter().append('a')
+        .attr('href', (milestone)-> "/roadmap/milestones/#{milestone.id}")
+    else
+      milestones.enter().append('div')
+    
+    newMilestones
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
       .attr('class', 'roadmap-milestone')
       .attr('data-id', (milestone)-> milestone.id)

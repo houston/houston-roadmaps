@@ -14,7 +14,8 @@
     var milestones = <%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>;
     Roadmap.milestones = new Roadmap.Milestones(milestones, {parse: true});
     new Roadmap.ShowRoadmapView({
-      milestones: Roadmap.milestones
+      milestones: Roadmap.milestones,
+      linkMilestones: true
     }).render();
   });
 </script>
