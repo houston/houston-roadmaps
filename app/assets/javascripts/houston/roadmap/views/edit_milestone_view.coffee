@@ -27,9 +27,14 @@ class Roadmap.EditMilestoneView extends Backbone.View
     
     @renderBurndownChart(@tickets.models)
     
-    $('.table-sortable').tablesorter
-      headers:
-        0: {sorter: 'sequence'}
+    $('#tickets').sortable
+      handle: '.ticket-handle'
+      helper: (e, ui)-> ui.children().each(-> $(@).width $(@).width()); ui
+      stop: (e, ui)-> ui.item.children().css('width', '')
+      update: (e, ui)->
+        $tickets = $('#tickets .ticket')
+        ids = _.map $tickets, (el)-> +$(el).attr('data-id')
+        $.put "#{window.location.pathname}/ticket_order", {order: ids}
     
     typeaheadTemplate = @typeaheadTemplate
     view = @

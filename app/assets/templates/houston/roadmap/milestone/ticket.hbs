@@ -1,11 +1,5 @@
 <tr class="ticket {{#firstReleaseAt}}ticket-released{{/firstReleaseAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" data-id="{{id}}">
-  <td class="ticket-effort">
-    {{estimatedEffort}}
-    {{#firstReleaseAt}}
-      <i class="fa fa-ok-sign" rel="tooltip" title="Released {{formatDate this}}"></i>
-    {{/firstReleaseAt}}
-  </td>
-  <td class="ticket-type ticket-type-{{type}}"></td>
+  <td class="ticket-handle"></td>
   <td class="ticket-summary">
     {{summary}}
     <a href="{{ticketUrl}}" target="_blank" rel="ticket" data-number="{{number}}">[#{{number}}]</a>
@@ -16,12 +10,17 @@
       <span class="ticket-tag" style="background-color: #333">{{milestoneName}}</span>
     {{/if}}
   </td>
+  <td class="ticket-effort">
+    {{estimatedEffort}}
+  </td>
   <td class="ticket-status">
     {{#if closedAt}}
       <i class="fa fa-ban"></i> Closed
+    {{else}}{{#if firstReleaseAt}}
+      <i class="fa fa-paper-plane"></i> Released
     {{else}}
       <i class="fa fa-circle-o"></i> Open
-    {{/if}}
+    {{/if}}{{/if}}
   </td>
   <td class="ticket-remove">
     <a class="remove-ticket-button remove-button"></a>

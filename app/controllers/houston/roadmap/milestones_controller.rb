@@ -5,14 +5,14 @@ module Houston
       
       layout "houston/roadmap/application"
       
-      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :remove_ticket]
+      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :remove_ticket, :update_order]
       
       
       def show
         authorize! :read, milestone
         @project = milestone.project
         @title = "#{milestone.name} • #{@project.name}"
-        @tickets = milestone.tickets.includes(:tasks, :reporter)
+        @tickets = milestone.tickets.includes(:project, :tasks, :reporter)
         @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
       end
       
@@ -59,6 +59,22 @@ module Houston
         authorize! :update, milestone
         ticket = Ticket.find params[:ticket_id]
         ticket.update_attribute :milestone_id, nil
+        head :ok
+      end
+      
+      
+      def update_order
+        ids = Array.wrap(params[:order]).map(&:to_i).reject(&:zero?)
+        
+        ::Ticket.transaction do
+          milestone.tickets.where(::Ticket.arel_table[:id].not_in(ids))
+            .update_all("extended_attributes = extended_attributes || 'milestoneSequence=>NULL'::hstore")
+          
+          ids.each_with_index do |id, i|
+            ::Ticket.unscoped.where(id: id).update_all("extended_attributes = extended_attributes || 'milestoneSequence=>#{i+1}'::hstore")
+          end
+        end
+        
         head :ok
       end
       

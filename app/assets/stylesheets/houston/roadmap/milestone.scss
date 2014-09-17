@@ -12,4 +12,20 @@
   &.hide-completed .ticket-closed { display: none; }
 }
 
+.ui-sortable tr.ticket {
+  &:hover td { background-color: rgba(128, 212, 255, 0.1); }
+}
+.table .ui-sortable-helper td { border-bottom: none; background: white; }
+
+td.ticket-handle {
+  background-image: url(/images/drag-grip.png);
+  background-repeat: no-repeat;
+  background-position: 9px 8px;
+  cursor: pointer;
+  width: 6px;
+}
+td.ticket-status {
+  white-space: nowrap;
+}
+
 .milestone-progress { float: right; }
