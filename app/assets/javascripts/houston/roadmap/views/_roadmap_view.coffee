@@ -114,6 +114,7 @@ class Roadmap.RoadmapView
     
     update = if options.transition then milestones.transition(150) else milestones
     update
+      .attr('class', (milestone)=> "roadmap-milestone #{if milestone.locked then "locked" else "unlocked"}")
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
     
     milestones.exit().remove()

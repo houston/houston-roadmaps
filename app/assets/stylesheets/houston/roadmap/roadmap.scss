@@ -1,32 +1,35 @@
-ol#milestones { margin: 0 -0.5em; }
-
-li.milestone {
-  display: block;
-  padding: 0.125em 0.5em 0.125em;
-  
-  &.neat-interactive:hover {
+.milestone {
+  &.neat-interactive:hover td {
     background-color: rgba(128, 212, 255, 0.1);
+    cursor: pointer;
   }
   
-  &.editor {
-    input[name="name"] { width: 24em; margin: 0; }
-    input[name="size"] { width: 5em; margin: 0; }
-    label { display: inline-block; }
-    input[type="date"] { width: 10em; margin: 0; }
+  td { 
+    padding: 4px 8px;
+    border-bottom: 0;
   }
   
   .milestone-name {
-    display: inline-block;
-    width: 32em;
+    input {
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      height: 30px;
+    }
   }
   
-  .milestone-tickets {
-    display: inline-block;
-    color: #ccc;
-    
-    &::after { content: ' tickets';}
-  }
+  &.inactive .milestone-name a { display: block; }
+  
+  .milestone-duration, .milestone-tickets { text-align: right; }
+  .milestone-tickets.zero { color: #ccc; }
+  .milestone-locked { text-align: center; }
+  .milestone-startDate { font-size: 0.84em; }
+  
+  .fa-unlock-alt { color: #ccc; }
 }
+
+th.milestone-startDate, th.milestone-tickets, th.milestone-duration { text-align: right; }
+th.milestone-locked { text-align: center; }
 
 #milestone_view #show_completed_tickets { margin-bottom: 12px; }
 
@@ -114,6 +117,19 @@ to {background-position: 30px 0;}
   padding: 4px 8px 4px 10px;
   box-sizing: border-box;
   z-index: 2;
+  
+  &.unlocked {
+    border: 2px dashed #ccc;
+    background: #e4e4e4;
+    border-radius: 4px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    
+    &::before {
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
+    }
+  }
   
   &::before {
     content: '.';

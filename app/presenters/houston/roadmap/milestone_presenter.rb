@@ -16,6 +16,7 @@ class Houston::Roadmap::MilestonePresenter
       projectColor: project.color,
       tickets: milestone.tickets_count,
       band: milestone.band,
+      locked: milestone.locked?,
       startDate: milestone.start_date,
       endDate: milestone.end_date }
   end
