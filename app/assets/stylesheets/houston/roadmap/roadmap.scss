@@ -189,7 +189,7 @@ to {background-position: 30px 0;}
 
 .roadmap-today {
   position: absolute;
-  top: 0;
+  top: 1px;
   bottom: 52px;
   width: 1px;
   background: rgba(0, 0, 0, 0.5);
@@ -199,6 +199,6 @@ to {background-position: 30px 0;}
 .roadmap-weekend {
   background: rgba(255, 255, 255, 0.4);
   position: absolute;
-  top: 0;
+  top: 1px;
   bottom: 52px;
 }
