@@ -1,4 +1,5 @@
 class Roadmap.EditMilestoneView extends @TicketsView
+  supportsSorting: false
   className: 'hide-completed'
   
   events:
