@@ -10,6 +10,7 @@ class Roadmap.EditMilestoneView extends @TicketsView
     @id = @options.id
     @template = HandlebarsTemplates['houston/roadmap/milestone']
     @openTickets = @options.openTickets
+    @projectTicketTracker = @options.projectTicketTracker
     super
   
   render: ->
@@ -22,8 +23,10 @@ class Roadmap.EditMilestoneView extends @TicketsView
     @$el.html html
     
     @newTicketView = new FindOrCreateTicketView
+      ticketTracker: @projectTicketTracker
       tickets: @openTickets
       addTicket: _.bind(@addTicket, @)
+      createTicket: _.bind(@createTicket, @)
     @$el.find('#find_or_create_ticket_view').appendView @newTicketView
     
     complete = _.select(tickets, (ticket)-> !!ticket.closedAt).length / tickets.length
@@ -43,33 +46,21 @@ class Roadmap.EditMilestoneView extends @TicketsView
   
   
   
-  addTicket: (id)->
-    ticket = _.detect @openTickets, (ticket)-> +ticket.id == +id
-    if ticket && +ticket.effort <= 0
-      @promptForEffort(ticket).done(=> @addTicket(id))
-      return
-
-    $('#add_ticket_form').addClass('loading')
-
-    $.post("/roadmap/milestones/#{@id}/tickets/#{id}")
-      .error( (response) =>
-        $('#add_ticket_form').removeClass('loading')
-        $('#add_ticket')
-          .tooltip
-            animation: false
-            title: response.responseText
-            placement: 'bottom'
-            trigger: 'manual'
-          .tooltip('show')
-        window.setTimeout((-> $('#add_ticket').tooltip('destroy')), 3000)
-
-      ).success =>
-        unless @tickets.get(ticket.id)
-          @tickets.push new Ticket(ticket)
-          @rerenderTickets()
-          @renderBurndownChart(@tickets.models)
-        $(".ticket[data-id=#{ticket.id}]").highlight()
-        $('#add_ticket_form').removeClass('loading')
+  addTicket: (ticket)->
+    $.post("/roadmap/milestones/#{@id}/tickets/#{ticket.id}")
+      .success => @_addTicket(ticket)
+  
+  createTicket: (summary)->
+    $.post("/roadmap/milestones/#{@id}/tickets", {summary: summary})
+      .success (ticket)=> @_addTicket(ticket)
+  
+  _addTicket: (ticket)->
+    unless @tickets.get(ticket.id)
+      @tickets.push new Ticket(ticket)
+      @rerenderTickets()
+      @renderBurndownChart(@tickets.models)
+    $(".ticket[data-id=#{ticket.id}]").highlight()
+  
   
   rerenderTickets: ->
     template = HandlebarsTemplates['houston/roadmap/milestone/ticket']

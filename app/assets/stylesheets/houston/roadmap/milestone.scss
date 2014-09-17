@@ -1,7 +1,7 @@
 #find_or_create_ticket {
   width: 100%;
   box-sizing: border-box;
-  height: 30px;
+  height: 34px;
   margin-bottom: 0;
   padding: 0.5em 1em;
 }
@@ -22,9 +22,9 @@ td.ticket-handle {
   cursor: pointer;
   width: 6px;
 }
-td.ticket-status {
-  white-space: nowrap;
-}
+
+td.ticket-status { white-space: nowrap; }
+
 td, th {
   &.ticket-number, &.ticket-effort { text-align: right; }
 }

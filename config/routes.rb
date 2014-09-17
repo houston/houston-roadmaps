@@ -9,6 +9,7 @@ Houston::Roadmap::Engine.routes.draw do
   put "milestones/:id", :to => "milestones#update"
   put "milestones/:id/ticket_order", :to => "milestones#update_order"
 
+  post "milestones/:id/tickets", :to => "milestones#create_ticket", constraints: {id: /\d+/}
   post "milestones/:id/tickets/:ticket_id", :to => "milestones#add_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
   delete "milestones/:id/tickets/:ticket_id", :to => "milestones#remove_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
   

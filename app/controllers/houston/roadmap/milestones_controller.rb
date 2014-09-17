@@ -5,7 +5,7 @@ module Houston
       
       layout "houston/roadmap/application"
       
-      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :remove_ticket, :update_order]
+      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :create_ticket, :remove_ticket, :update_order]
       
       
       def show
@@ -55,6 +55,24 @@ module Houston
       end
       
       
+      def create_ticket
+        authorize! :update, milestone
+        authorize! :create, milestone.tickets.build
+        
+        ticket = project.create_ticket!(
+          milestone_id: milestone.id,
+          type: "Feature",
+          summary: params[:summary],
+          reporter: current_user)
+        
+        if ticket.persisted?
+          render json: TicketPresenter.new(ticket), status: :created, location: ticket.ticket_tracker_ticket_url
+        else
+          render json: ticket.errors, status: :unprocessable_entity
+        end
+      end
+      
+      
       def remove_ticket
         authorize! :update, milestone
         ticket = Ticket.find params[:ticket_id]
@@ -83,6 +101,10 @@ module Houston
       
       def find_milestone
         @milestone = Milestone.unscoped.find(params[:id])
+      end
+      
+      def project
+        milestone.project
       end
       
       def milestone_attributes
