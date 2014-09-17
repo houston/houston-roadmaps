@@ -116,8 +116,11 @@ class Roadmap.RoadmapView
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
       .attr('class', 'roadmap-milestone')
       .attr('data-id', (milestone)-> milestone.id)
-      .text((milestone)-> milestone.name)
       .each -> view.initializeMilestone.apply(view, [@])
+      
+      # Put the milestone name into a span so that Midori can render it correctly
+      .append('span')
+        .text((milestone)-> milestone.name)
     
     update = if options.transition then milestones.transition(150) else milestones
     update

@@ -83,8 +83,11 @@ body.dashboard {
   }
   
   .roadmap-milestone {
-    background: #111;
+    background: black;
     padding: 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
     
     &::before { display: none; }
   }
@@ -106,9 +109,6 @@ to {background-position: 30px 0;}
 
 .roadmap-milestone, .roadmap-milestone-placeholder {
   position: absolute;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   border: 1px solid #ccc;
   background: #ddd;
   border-radius: 2px;
@@ -141,6 +141,14 @@ to {background-position: 30px 0;}
     bottom: 1px;
     width: 5px;
   }
+}
+
+.roadmap-milestone > span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 a.roadmap-milestone {
