@@ -2,7 +2,7 @@ class Roadmap.EditMilestoneView extends Backbone.View
   className: 'hide-completed'
   
   events:
-    'click .btn-remove': 'removeTicket'
+    'click .remove-button': 'removeTicket'
     'click #show_completed_tickets': 'toggleShowCompleted'
   
   initialize: ->
@@ -21,6 +21,9 @@ class Roadmap.EditMilestoneView extends Backbone.View
     
     html = @template(tickets: tickets)
     @$el.html html
+    
+    complete = _.select(tickets, (ticket)-> !!ticket.closedAt).length / tickets.length
+    $('#milestone_progress').html((complete * 100).toFixed(0) + '%')
     
     @renderBurndownChart(@tickets.models)
     
@@ -192,7 +195,6 @@ class Roadmap.EditMilestoneView extends Backbone.View
         sprints.push(sprint)
     
     chart = new Houston.BurndownChart()
-      .margin(top: 40, right: 80, bottom: 32, left: 50)
       .days((new Date(sprint) for sprint in sprints))
       .dateFormat(d3.time.format('%b %e'))
       .totalEffort(totalEffort)

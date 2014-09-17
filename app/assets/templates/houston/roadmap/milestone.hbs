@@ -1,5 +1,12 @@
 <div id="graph" class="burndown-chart callout callout-banner"></div>
 
+<div class="score score-medium milestone-progress">
+  <p class="positive">
+    <span class="score-count" id="milestone_progress"></span>
+    <span class="score-label">Complete</span>
+  </p>
+</div>
+
 <h2 class="light">Tickets</h2>
 
 <a class="btn" id="show_completed_tickets" data-toggle="button">Show Completed Tickets</a>
@@ -16,10 +23,10 @@
 <table class="table table-sortable table-milestone-tickets">
   <thead>
     <tr>
-      <th class="ticket-sequence sort-desc"><i class="fa fa-reorder"></i></th>
       <th class="ticket-effort">Effort</th>
       <td class="ticket-type ticket-type-na"></td>
       <th class="ticket-summary">Summary</th>
+      <th class="ticket-status">Status</th>
       <td></td>
     </tr>
   </thead>

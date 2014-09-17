@@ -1,7 +1,4 @@
 <tr class="ticket {{#firstReleaseAt}}ticket-released{{/firstReleaseAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" data-id="{{id}}">
-  <td class="ticket-sequence">
-    {{sequence}}
-  </td>
   <td class="ticket-effort">
     {{estimatedEffort}}
     {{#firstReleaseAt}}
@@ -19,7 +16,14 @@
       <span class="ticket-tag" style="background-color: #333">{{milestoneName}}</span>
     {{/if}}
   </td>
-  <td class="ticket-command">
-    <button tabindex="-1" class="btn btn-remove">Remove</button>
+  <td class="ticket-status">
+    {{#if closedAt}}
+      <i class="fa fa-ban"></i> Closed
+    {{else}}
+      <i class="fa fa-circle-o"></i> Open
+    {{/if}}
+  </td>
+  <td class="ticket-remove">
+    <a class="remove-ticket-button remove-button"></a>
   </td>
 </tr>

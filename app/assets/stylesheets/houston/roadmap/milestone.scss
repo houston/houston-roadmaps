@@ -1,7 +1,15 @@
 #add_ticket {
-  width: 48em;
+  width: 100%;
+  box-sizing: border-box;
+  height: 30px;
   margin-bottom: 0;
   padding: 0.5em 1em;
 }
 #add_ticket_form .fa-spinner { display: none; }
 #add_ticket_form.loading .fa-spinner { display: inline-block; }
+
+#milestone_view {
+  &.hide-completed .ticket-closed { display: none; }
+}
+
+.milestone-progress { float: right; }
