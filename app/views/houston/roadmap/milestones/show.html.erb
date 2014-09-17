@@ -11,11 +11,7 @@
     new Roadmap.EditMilestoneView({
       el: $('#milestone_view')[0],
       id: <%= @milestone.id %>,
-      project: {
-        id: <%= @project.id %>,
-        slug: <%=raw @project.slug.to_json %>,
-        name: <%=raw @project.name.to_json %>,
-        ticketTrackerName: <%=raw @project.ticket_tracker_name.to_json %> },
+      project: <%=raw @project.slug.to_json %>,
       tickets: tickets,
       openTickets: <%=raw Houston::Roadmap::TicketPresenter.new(@open_tickets).to_json %>
     }).render();

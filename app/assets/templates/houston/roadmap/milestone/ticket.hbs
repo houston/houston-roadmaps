@@ -1,14 +1,11 @@
-<tr class="ticket {{#firstReleaseAt}}ticket-released{{/firstReleaseAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" data-id="{{id}}">
+<tr id="ticket_{{id}}" class="ticket {{#firstReleaseAt}}ticket-released{{/firstReleaseAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" rel="ticket" data-number="{{number}}" data-id="{{id}}">
   <td class="ticket-handle"></td>
+  <td class="ticket-number">#{{number}}</td>
   <td class="ticket-summary">
     {{summary}}
-    <a href="{{ticketUrl}}" target="_blank" rel="ticket" data-number="{{number}}">[#{{number}}]</a>
     {{#tags}}
       <span class="ticket-tag" style="background-color: #{{color}}">{{name}}</span>
     {{/tags}}
-    {{#if milestoneName}}
-      <span class="ticket-tag" style="background-color: #333">{{milestoneName}}</span>
-    {{/if}}
   </td>
   <td class="ticket-effort">
     {{estimatedEffort}}

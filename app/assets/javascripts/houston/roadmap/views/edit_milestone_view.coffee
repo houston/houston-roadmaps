@@ -1,4 +1,4 @@
-class Roadmap.EditMilestoneView extends Backbone.View
+class Roadmap.EditMilestoneView extends @TicketsView
   className: 'hide-completed'
   
   events:
@@ -7,7 +7,6 @@ class Roadmap.EditMilestoneView extends Backbone.View
   
   initialize: ->
     @id = @options.id
-    @tickets = @options.tickets
     @template = HandlebarsTemplates['houston/roadmap/milestone']
     @typeaheadTemplate = HandlebarsTemplates['houston/roadmap/milestone/typeahead']
     @openTickets = @options.openTickets

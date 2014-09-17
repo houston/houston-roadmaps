@@ -27,5 +27,6 @@ td.ticket-handle {
 td.ticket-status {
   white-space: nowrap;
 }
+td.ticket-number, th.ticket-number { text-align: right; }
 
 .milestone-progress { float: right; }
