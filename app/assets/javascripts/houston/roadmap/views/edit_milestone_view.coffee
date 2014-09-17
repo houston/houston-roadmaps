@@ -8,7 +8,6 @@ class Roadmap.EditMilestoneView extends @TicketsView
   initialize: ->
     @id = @options.id
     @template = HandlebarsTemplates['houston/roadmap/milestone']
-    @typeaheadTemplate = HandlebarsTemplates['houston/roadmap/milestone/typeahead']
     @openTickets = @options.openTickets
     super
   
@@ -20,6 +19,11 @@ class Roadmap.EditMilestoneView extends @TicketsView
     
     html = @template(tickets: tickets)
     @$el.html html
+    
+    @newTicketView = new FindOrCreateTicketView
+      tickets: @openTickets
+      addTicket: _.bind(@addTicket, @)
+    @$el.find('#find_or_create_ticket_view').appendView @newTicketView
     
     complete = _.select(tickets, (ticket)-> !!ticket.closedAt).length / tickets.length
     $('#milestone_progress').html((complete * 100).toFixed(0) + '%')
@@ -34,42 +38,6 @@ class Roadmap.EditMilestoneView extends @TicketsView
         $tickets = $('#tickets .ticket')
         ids = _.map $tickets, (el)-> +$(el).attr('data-id')
         $.put "#{window.location.pathname}/ticket_order", {order: ids}
-    
-    typeaheadTemplate = @typeaheadTemplate
-    view = @
-    $add_ticket = @$el.find('#add_ticket').attr('autocomplete', 'off').typeahead
-      source: @openTickets
-      matcher: (item)->
-        ~item.summary.toLowerCase().indexOf(@query.toLowerCase()) ||
-        ~item.projectTitle.toLowerCase().indexOf(@query.toLowerCase()) ||
-        ~item.number.toString().toLowerCase().indexOf(@query.toLowerCase())
-
-      sorter: (items)-> items # apply no sorting (return them in order of priority)
-
-      highlighter: (ticket)->
-        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
-        regex = new RegExp("(#{query})", 'ig')
-        ticket.summary.replace regex, ($1, match)-> "<strong>#{match}</strong>"
-        typeaheadTemplate
-          summary: ticket.summary.replace regex, ($1, match)-> "<strong>#{match}</strong>"
-          number: ticket.number.toString().replace regex, ($1, match)-> "<strong>#{match}</strong>"
-
-    $add_ticket.data('typeahead').render = (tickets)->
-      items = $(tickets).map (i, item)=>
-        i = $(@options.item).attr('data-value', item.id)
-        i.find('a').html(@highlighter(item))
-        i[0]
-
-      items.first().addClass('active')
-      @$menu.html(items)
-      @
-
-    addTicket = _.bind(@addTicket, @)
-    $add_ticket.data('typeahead').select = ->
-      id = @$menu.find('.active').attr('data-value')
-      @$element.val('')
-      @hide()
-      addTicket(id)
     @
   
   

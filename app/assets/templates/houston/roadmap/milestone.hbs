@@ -11,13 +11,9 @@
 
 <a class="btn" id="show_completed_tickets" data-toggle="button">Show Completed Tickets</a>
 
-<div>
-  <form id="add_ticket_form">
-    <input type="text" placeholder="Enter a ticket number or summary" id="add_ticket" />
-    <i class="fa fa-spinner fa-spin fa-large"></i>
-    <hr />
-  </form>
-</div>
+<div id="find_or_create_ticket_view"></div>
+
+<hr />
 
 {{#if tickets}}
 <table class="table table-milestone-tickets">

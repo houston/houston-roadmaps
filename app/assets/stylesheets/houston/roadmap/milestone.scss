@@ -1,12 +1,10 @@
-#add_ticket {
+#find_or_create_ticket {
   width: 100%;
   box-sizing: border-box;
   height: 30px;
   margin-bottom: 0;
   padding: 0.5em 1em;
 }
-#add_ticket_form .fa-spinner { display: none; }
-#add_ticket_form.loading .fa-spinner { display: inline-block; }
 
 #milestone_view {
   &.hide-completed .ticket-closed { display: none; }
@@ -27,6 +25,8 @@ td.ticket-handle {
 td.ticket-status {
   white-space: nowrap;
 }
-td.ticket-number, th.ticket-number { text-align: right; }
+td, th {
+  &.ticket-number, &.ticket-effort { text-align: right; }
+}
 
 .milestone-progress { float: right; }
