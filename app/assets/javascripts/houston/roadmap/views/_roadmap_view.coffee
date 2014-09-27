@@ -6,6 +6,7 @@ class Roadmap.RoadmapView
     @showThumbnail = options.showThumbnail ? true
     @showWeekends = options.showWeekends ? false
     @linkMilestones = options.linkMilestones ? false
+    @showProgress = options.showProgress ? false
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
@@ -112,6 +113,10 @@ class Roadmap.RoadmapView
     else
       milestones.enter().append('div')
     
+    if @showProgress
+      newMilestones.append('div')
+        .attr('class', 'roadmap-milestone-progress')
+    
     newMilestones
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
       .attr('class', 'roadmap-milestone')
@@ -126,6 +131,10 @@ class Roadmap.RoadmapView
     update
       .attr('class', (milestone)=> "roadmap-milestone #{if milestone.locked then "locked" else "unlocked"}")
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
+      .select('.roadmap-milestone-progress')
+        .attr 'style', (milestone)->
+          return "width: 0" if milestone.tickets is 0
+          "width: #{milestone.ticketsCompleted * 100 / milestone.tickets}%"
     
     milestones.exit().remove()
     

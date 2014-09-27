@@ -16,6 +16,7 @@ body.dashboard .roadmap-band {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
       .roadmap-milestone { border-color: <%= value.rgb %>; }
+      .roadmap-milestone-progress { background: rgba(<%= value.rgb %>, 0.75); }
     }
   <% end %>
 }
