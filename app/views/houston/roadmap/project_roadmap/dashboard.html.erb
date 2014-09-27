@@ -12,8 +12,8 @@
       showToday: false,
       showThumbnail: false,
       viewport: new Roadmap.Viewport({
-        start: Roadmap.milestones.start(),
-        end: Roadmap.milestones.end()
+        start: new Date(<%=raw @range.begin.to_json %>),
+        end: new Date(<%=raw @range.end.to_json %>)
       })
     });
     

@@ -13,7 +13,8 @@ module Houston
       
       def dashboard
         today = Date.today
-        @milestones = Milestone.during(today..4.weeks.from(today))
+        @range = 3.weeks.before(today)..6.weeks.after(today)
+        @milestones = Milestone.during(@range)
         @title = "Current Goals"
         respond_to do |format|
           format.html { render layout: "houston/roadmap/dashboard" }
