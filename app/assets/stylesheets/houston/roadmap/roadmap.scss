@@ -95,6 +95,8 @@ body.dashboard {
     border-radius: 4px;
     
     &::before { display: none; }
+    
+    &.upcoming { opacity: 0.5; }
   }
   
   .roadmap-today {

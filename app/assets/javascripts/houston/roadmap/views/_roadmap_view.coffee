@@ -74,6 +74,7 @@ class Roadmap.RoadmapView
   
   update: (options)->
     view = @
+    today = new Date()
     
     bands = @roadmap.selectAll('.roadmap-band')
       .data(@groupMilestonesIntoBands(), (band)-> band.key)
@@ -129,8 +130,20 @@ class Roadmap.RoadmapView
     
     update = if options.transition then milestones.transition(150) else milestones
     update
-      .attr('class', (milestone)=> "roadmap-milestone #{if milestone.locked then "locked" else "unlocked"}")
-      .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
+      .attr 'class', (milestone)->
+        classes = ['roadmap-milestone']
+        classes.push(if milestone.locked then 'locked' else 'unlocked')
+        classes.push(if milestone.completed then 'completed' else 'uncompleted')
+        if milestone.startDate > today
+          classes.push 'upcoming'
+        else if milestone.endDate < today
+          classes.push 'past'
+        else
+          classes.push 'active'
+        classes.join(' ')
+      .attr 'style', (milestone)=>
+        [ "left: #{@x(milestone.startDate)}px",
+          "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px" ].join('; ')
       .select('.roadmap-milestone-progress')
         .attr 'style', (milestone)->
           return "width: 0" if milestone.tickets is 0
