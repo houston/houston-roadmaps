@@ -9,7 +9,7 @@
     
     view = new Roadmap.ShowRoadmapView({
       milestones: Roadmap.milestones,
-      showToday: false,
+      showToday: true,
       showThumbnail: false,
       viewport: new Roadmap.Viewport({
         start: new Date(<%=raw @range.begin.to_json %>),

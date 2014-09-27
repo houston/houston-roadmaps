@@ -96,6 +96,11 @@ body.dashboard {
     
     &::before { display: none; }
   }
+  
+  .roadmap-today {
+    background: rgba(255, 255, 255, 0.15);
+    width: 3px;
+  }
 }
 
 @-webkit-keyframes progress
