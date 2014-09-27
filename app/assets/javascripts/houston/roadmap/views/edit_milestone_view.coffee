@@ -30,7 +30,12 @@ class Roadmap.EditMilestoneView extends @TicketsView
     @$el.find('#find_or_create_ticket_view').appendView @newTicketView
     
     complete = _.select(tickets, (ticket)-> !!ticket.closedAt).length / tickets.length
-    $('#milestone_progress').html((complete * 100).toFixed(0) + '%')
+    if _.isNaN(complete)
+      $('.milestone-progress').hide()
+    else
+      percentComplete = (complete * 100).toFixed(0) + '%'
+      $('#milestone_progress').html(percentComplete)
+      $('.milestone-progress').show()
     
     @renderBurndownChart(@tickets.models)
     
