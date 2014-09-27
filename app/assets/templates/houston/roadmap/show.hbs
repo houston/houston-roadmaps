@@ -2,6 +2,8 @@
 
 <h2 class="light">Milestones</h2>
 
+<a class="btn" id="show_completed_milestones" data-toggle="button">Show Completed Milestones</a>
+
 <div id="milestones_view">
   <table class="table table-roadmap-milestones">
     <thead>
@@ -9,15 +11,19 @@
       <th class="milestone-startDate">Starts</th>
       <th class="milestone-duration">Duration</th>
       <th class="milestone-tickets">Tickets</th>
+      <th class="milestone-completion">Completed</th>
       <th class="milestone-locked">Locked</th>
     </thead>
     <tbody id="milestones">
       {{#each milestones}}
-      <tr class="milestone inactive">
+      <tr class="milestone inactive {{#if locked}}locked{{/if}} {{#if completed}}completed{{/if}}">
         <td class="milestone-name"><a href="/roadmap/milestones/{{id}}">{{name}}</a></td>
         <td class="milestone-startDate date">{{{formatDateWithYear startDate}}}</td>
         <td class="milestone-duration">{{durationOfMilestone this}}</td>
-        <td class="milestone-tickets {{#if tickets}}{{else}}zero{{/if}}">{{tickets}}</td>
+        <td class="milestone-tickets {{#if tickets}}{{else}}zero{{/if}}">
+          {{#if ticketsCompleted}}{{ticketsCompleted}}/{{/if}}{{tickets}}
+        </td>
+        <td class="milestone-completion">{{milestonePercentComplete this}}</td>
         <td class="milestone-locked">
           {{#if locked}}
             <i class="fa fa-lock"></i>

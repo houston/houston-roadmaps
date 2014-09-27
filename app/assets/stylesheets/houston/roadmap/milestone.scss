@@ -7,6 +7,7 @@
 }
 
 #milestone_view {
+  #show_completed_tickets { margin-bottom: 12px; }
   &.hide-completed .ticket-closed { display: none; }
 }
 

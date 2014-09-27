@@ -5,6 +5,9 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   sortOrder: 'asc'
   pageSize: Infinity
   
+  events:
+    'click #show_completed_milestones': 'toggleShowCompleted'
+  
   initialize: ->
     @projectId = @options.projectId
     @projectColor = @options.projectColor
@@ -33,3 +36,14 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
           alert(jqXhr.responseText)
     else
       callback()
+  
+  
+  
+  toggleShowCompleted: (e)->
+    $button = $(e.target)
+    if $button.hasClass('active')
+      $button.removeClass('btn-success')
+      @$el.addClass('hide-completed')
+    else
+      $button.addClass('btn-success')
+      @$el.removeClass('hide-completed')

@@ -33,8 +33,7 @@ class Roadmap.EditMilestoneView extends @TicketsView
     if _.isNaN(complete)
       $('.milestone-progress').hide()
     else
-      percentComplete = (complete * 100).toFixed(0) + '%'
-      $('#milestone_progress').html(percentComplete)
+      $('#milestone_progress').html(App.formatPercent complete)
       $('.milestone-progress').show()
     
     @renderBurndownChart(@tickets.models)

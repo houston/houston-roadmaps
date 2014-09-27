@@ -1,6 +1,6 @@
 <%= render partial: "projects/header", locals: {project: @project, subtitle: "Roadmap"} %>
 
-<div id="roadmap_view"></div>
+<div id="roadmap_view" class="hide-completed"></div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">

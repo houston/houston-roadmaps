@@ -28,7 +28,7 @@ module Houston
         
         authorize! :read, @project.milestones.build
         
-        @milestones = @project.milestones.uncompleted
+        @milestones = @project.milestones.all
       end
       
       

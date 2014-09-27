@@ -22,16 +22,21 @@
   
   .milestone-duration, .milestone-tickets { text-align: right; }
   .milestone-tickets.zero { color: #ccc; }
-  .milestone-locked { text-align: center; }
+  .milestone-locked { text-align: center; width: 2.25em; }
+  .milestone-completion { text-align: right; width: 2.5em; }
   .milestone-startDate { font-size: 0.84em; }
   
   .fa-unlock-alt { color: #ccc; }
 }
 
 th.milestone-startDate, th.milestone-tickets, th.milestone-duration { text-align: right; }
-th.milestone-locked { text-align: center; }
+th.milestone-locked { text-align: center; width: 2.25em; }
+th.milestone-completion { text-align: right; width: 2.5em; }
 
-#milestone_view #show_completed_tickets { margin-bottom: 12px; }
+#roadmap_view {
+  #show_completed_milestones { margin-bottom: 12px; }
+  &.hide-completed .completed { display: none; }
+}
 
 form.freight_train { margin-bottom: 0; }
 
