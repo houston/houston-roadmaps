@@ -63,14 +63,18 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   
   save: (e)->
     e.preventDefault()
-    $buttons = $('#reset_roadmap, #save_roadmap')
-    changes = @milestones.changes()
-    $buttons.prop('disabled', true)
-    $.put "/roadmap/by_project/#{@projectSlug}", {roadmap: changes}
-      .success =>
-        $buttons.prop('disabled', false)
-        @milestones.clearChangesSinceSave()
-      .error (response)->
-        $buttons.prop('disabled', false)
-        errors = Errors.fromResponse(response)
-        errors.renderToAlert()
+    if message = prompt('Commit message:')
+      $buttons = $('#reset_roadmap, #save_roadmap')
+      changes = @milestones.changes()
+      $buttons.prop('disabled', true)
+      console.log 'changes', JSON.stringify(changes)
+      $.put("/roadmap/by_project/#{@projectSlug}",
+        roadmap: changes
+        message: message)
+        .success =>
+          $buttons.prop('disabled', false)
+          @milestones.clearChangesSinceSave()
+        .error (response)->
+          $buttons.prop('disabled', false)
+          errors = Errors.fromResponse(response)
+          errors.renderToAlert()

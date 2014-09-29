@@ -36,13 +36,11 @@ module Houston
         @project = Project.find_by_slug!(params[:slug])
         authorize! :update, @project.milestones.build
         
-        changes = params.fetch(:roadmap, {}).values
-        Project.transaction do
-          changes.each do |change|
-            milestone = @project.milestones.find(change.delete(:id))
-            milestone.update_attributes!(change)
-          end
-        end
+        RoadmapCommit.create!(
+          user: current_user,
+          project: @project,
+          message: params[:message],
+          milestone_changes: params.fetch(:roadmap, {}).values)
         
         head :ok
       end
