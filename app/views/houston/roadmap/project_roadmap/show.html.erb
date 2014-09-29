@@ -11,6 +11,7 @@
     new Roadmap.EditProjectRoadmapView({
       el: $('#roadmap_view')[0],
       projectId: <%= @project.id %>,
+      projectSlug: '<%= @project.slug %>',
       projectColor: '<%= @project.color %>',
       milestones: Roadmap.milestones
     }).render();

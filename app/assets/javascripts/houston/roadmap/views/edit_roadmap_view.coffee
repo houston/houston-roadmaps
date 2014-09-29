@@ -77,7 +77,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     $(band).droppable
       hoverClass: 'sort-active'
       drop: (event, ui)->
-        band = $(@).attr('data-band')
+        band = +$(@).attr('data-band')
         id = ui.draggable.attr('data-id')
         milestone = view.milestones.get(id)
         return unless milestone
@@ -87,11 +87,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         
         offset = Math.floor((startDate - milestone.get('startDate')) / Duration.DAY)
         endDate = offset.days().after milestone.get('endDate')
-        milestone.save
+        milestone.set
           band: band
           startDate: startDate
           endDate: endDate
-        , wait: true
     .on 'mousedown', (e)->
       return unless view.supportsCreate
       return if e.target isnt @
@@ -112,13 +111,11 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         return unless milestone
         endDate = d3.time.saturday.round(view.x.invert(ui.position.left + ui.size.width))
         ui.element.css width: view.x(endDate) - ui.element.position().left
-        milestone.save
+        milestone.set
           endDate: endDate
-        , wait: true
     .draggable
       snap: '.roadmap-band'
       snapMode: 'inner'
       zIndex: 10
       revertDuration: 150
       revert: ($target)-> !$target or !$target.is('.roadmap-band')
-

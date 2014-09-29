@@ -32,6 +32,21 @@ module Houston
         @milestones = @project.milestones.all
       end
       
+      def update
+        @project = Project.find_by_slug!(params[:slug])
+        authorize! :update, @project.milestones.build
+        
+        changes = params.fetch(:roadmap, {}).values
+        Project.transaction do
+          changes.each do |change|
+            milestone = @project.milestones.find(change.delete(:id))
+            milestone.update_attributes!(change)
+          end
+        end
+        
+        head :ok
+      end
+      
       
     end
   end
