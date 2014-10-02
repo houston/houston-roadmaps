@@ -35,7 +35,7 @@ th.milestone-completion { text-align: right; width: 2.5em; }
 
 #roadmap_view {
   #show_completed_milestones { margin-bottom: 12px; }
-  &.hide-completed .completed { display: none; }
+  &.hide-completed #milestones_view .completed { display: none; }
 }
 
 form.freight_train { margin-bottom: 0; }
