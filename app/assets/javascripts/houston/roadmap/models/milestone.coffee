@@ -1,8 +1,6 @@
 class Roadmap.Milestone extends Backbone.Model
   urlRoot: '/roadmap/milestones'
   
-  
-  
   initialize: ->
     super
     _.bindAll(@, 'clearChangesSinceSave', 'revert')
@@ -16,6 +14,9 @@ class Roadmap.Milestone extends Backbone.Model
       @clearChangesSinceSave()
     @trigger('save', @)
     super
+  
+  duration: ->
+    Math.floor((@get('endDate') - @get('startDate')) / Duration.DAY).days()
   
   clearChangesSinceSave: ->
     @_originalAttributes = _.clone @attributes

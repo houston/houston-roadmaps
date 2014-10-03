@@ -76,6 +76,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     
     $(band).droppable
       hoverClass: 'sort-active'
+      over: (event, ui)->
+        return unless view.drag
+        view.drag.bandOver = +$(@).attr('data-band')
+        
       drop: (event, ui)->
         band = +$(@).attr('data-band')
         id = ui.draggable.attr('data-id')
@@ -85,12 +89,27 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         startDate = d3.time.monday.round(view.x.invert(ui.position.left))
         ui.draggable.css left: view.x(startDate)
         
-        offset = Math.floor((startDate - milestone.get('startDate')) / Duration.DAY)
-        endDate = offset.days().after milestone.get('endDate')
         milestone.set
           band: band
           startDate: startDate
-          endDate: endDate
+          endDate: milestone.duration().after startDate
+        
+        return unless view.drag
+        return unless view.drag.band is view.drag.bandOver
+        return unless view.drag.maxLeft
+        return unless ui.position.left > view.drag.maxLeft
+        
+        delta = ui.position.left - view.drag.offsetLeft + view.drag.originalLeft - view.drag.maxLeft
+        
+        for i in [0...view.drag.milestonesAfter.length]
+          milestone = view.drag.milestonesAfter[i]
+          originalPosition = view.drag.milestonesAfterPositions[i]
+          newPosition = originalPosition + delta
+          startDate = d3.time.monday.round(view.x.invert(newPosition))
+          milestone.set
+            startDate: startDate
+            endDate: milestone.duration().after startDate
+    
     .on 'mousedown', (e)->
       return unless view.supportsCreate
       return if e.target isnt @
@@ -105,6 +124,19 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     $(milestone).resizable
       handles: 'e'
       animate: false
+      start: _.bind(@onStartDrag, @)
+      
+      resize: (event, ui)->
+        return unless view.drag
+        
+        delta = ui.size.width - ui.originalSize.width
+        if view.drag.maxLeft
+          delta += view.drag.originalLeft - view.drag.maxLeft
+          delta = 0 if delta < 0
+        
+        view.drag.$milestonesAfter.each (i)->
+          $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
+      
       stop: (event, ui)->
         id = ui.element.attr('data-id')
         milestone = view.milestones.get(id)
@@ -113,9 +145,81 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         ui.element.css width: view.x(endDate) - ui.element.position().left
         milestone.set
           endDate: endDate
+        
+        return unless view.drag
+        return unless view.drag.maxLeft
+        
+        delta = ui.size.width - ui.originalSize.width
+        if view.drag.maxLeft
+          delta += view.drag.originalLeft - view.drag.maxLeft
+          delta = 0 if delta < 0
+        
+        return unless delta > 0
+        
+        for i in [0...view.drag.milestonesAfter.length]
+          milestone = view.drag.milestonesAfter[i]
+          originalPosition = view.drag.milestonesAfterPositions[i]
+          newPosition = originalPosition + delta
+          startDate = d3.time.monday.round(view.x.invert(newPosition))
+          milestone.set
+            startDate: startDate
+            endDate: milestone.duration().after startDate
+    
     .draggable
       snap: '.roadmap-band'
       snapMode: 'inner'
       zIndex: 10
       revertDuration: 150
+      start: _.bind(@onStartDrag, @)
+      
+      drag: (e, ui)->
+        return unless view.drag
+        if view.drag.band is view.drag.bandOver
+          ui.position.left = Math.max(ui.position.left, view.drag.minLeft)
+          delta = ui.position.left - view.drag.offsetLeft
+          if view.drag.maxLeft
+            delta += view.drag.originalLeft - view.drag.maxLeft
+            delta = 0 if delta < 0
+        else
+          delta = 0
+        view.drag.$milestonesAfter.each (i)->
+          $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
+      
+      stop: -> view.drag = null
       revert: ($target)-> !$target or !$target.is('.roadmap-band')
+
+
+  onStartDrag: (e, ui)->
+    $milestone = $(e.target)
+    band = +$milestone.closest('.roadmap-band').attr('data-band')
+    id = +$milestone.attr('data-id')
+    milestone = @milestones.get(id)
+    startDate = milestone.get 'startDate'
+    endDate = milestone.get 'endDate'
+    duration = Math.floor((endDate - startDate) / Duration.DAY).days()
+    milestonesInBand = @milestones.where(band: band)
+    minStartDate = null
+    maxStartDate = null
+    milestonesAfter = []
+    
+    for milestone in milestonesInBand
+      if milestone.get('endDate') < startDate
+        minStartDate = 2.days().after(milestone.get('endDate'))
+      else if milestone.get('startDate') > endDate
+        maxStartDate ||= duration.before(2.days().before(milestone.get('startDate')))
+        milestonesAfter.push milestone
+    
+    selector = _.map milestonesAfter, (m)-> ".roadmap-milestone[data-id=#{m.get('id')}]"
+    $milestonesAfter = @$el.find(selector.join(', '))
+    milestonesAfterPositions = $milestonesAfter.map -> $(@).position().left
+    
+    @drag = 
+      milestone: milestone
+      band: band
+      minLeft: if minStartDate then @x(minStartDate) else 0
+      maxLeft: if maxStartDate then @x(maxStartDate) else 0
+      milestonesAfter: milestonesAfter
+      $milestonesAfter: $milestonesAfter
+      milestonesAfterPositions: milestonesAfterPositions
+      offsetLeft: ui.position.left
+      originalLeft: $milestone.position().left
