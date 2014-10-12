@@ -57,13 +57,10 @@ private
     SQL
       .map { |milestone_id, _, closed, tasks, completed_tasks| 
         [ milestone_id.to_i,
-          completed_tasks.to_i + (closed == "t" ? 1 : 0),
-          tasks.to_i + 1 ] }
-      .group_by { |(milestone_id, _, _)| milestone_id }
-      .map { |(milestone_id, set)|
-        [milestone_id, 
-          set.sum { |(_, completed_tasks, _)| completed_tasks }.to_f /
-          set.sum { |(_, _, open_tasks)| open_tasks }] }]
+          closed == "t" ? 1.0 : (completed_tasks.to_f / (tasks.to_i + 1)) ] }
+      .group_by { |(milestone_id, _)| milestone_id }
+      .map { |(milestone_id, tickets)|
+        [milestone_id, (tickets.sum { |(_, percent)| percent } / tickets.length)] }]
   end
   
   def milestone_ids
