@@ -30,6 +30,10 @@ module Houston
         authorize! :read, @project.milestones.build
         
         @milestones = @project.milestones.all
+        
+        if request.format.json?
+          render json: Houston::Roadmap::MilestonePresenter.new(@milestones)
+        end
       end
       
       def update

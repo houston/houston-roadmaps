@@ -12,7 +12,8 @@ class Roadmap.RoadmapView
     @height = 24
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
-    @milestones.bind 'reset', @update, @
+    @milestones.bind 'remove', @update, @
+    @milestones.bind 'reset', @reset, @
     $(window).resize (e)=>
       @updateWindow() if e.target is window
   
@@ -44,6 +45,9 @@ class Roadmap.RoadmapView
     
     @updateWindow()
   
+  reset: ->
+    window.setTimeout _.bind(@updateViewport, @)
+  
   updateWindow: ->
     width = @$el.width() || 960
     return if @width is width
@@ -73,7 +77,7 @@ class Roadmap.RoadmapView
     @update(transition: false)
   
   update: (options)->
-    transition = options.transition ? true
+    transition = options?.transition ? true
     view = @
     @today = new Date()
     
@@ -107,7 +111,7 @@ class Roadmap.RoadmapView
     
     
     milestones = bands.selectAll('.roadmap-milestone')
-      .data(((band)-> band.milestones), (milestone)-> milestone.id)
+      .data(((band)-> band.milestones), (milestone)-> milestone.cid)
     
     newMilestones = if @linkMilestones
       milestones.enter().append('a')
@@ -122,7 +126,7 @@ class Roadmap.RoadmapView
     newMilestones
       .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
       .attr('class', 'roadmap-milestone')
-      .attr('data-id', (milestone)-> milestone.id)
+      .attr('data-cid', (milestone)-> milestone.cid)
       .each -> view.initializeMilestone.apply(view, [@])
       
       # Put the milestone name into a span so that Midori can render it correctly
@@ -169,7 +173,8 @@ class Roadmap.RoadmapView
   
   groupMilestonesIntoBands: ->
     milestoneBands = {}
-    for milestone in @milestones.toJSON() when milestone.startDate and milestone.endDate
+    milestones = (@toJSON(milestone) for milestone in @milestones.models)
+    for milestone in milestones when milestone.startDate and milestone.endDate
       key = "#{milestone.projectId}-#{milestone.band}"
       (milestoneBands[key] ||=
         key: key
@@ -179,6 +184,11 @@ class Roadmap.RoadmapView
         milestones: []).milestones.push(milestone)
     
     _.values(milestoneBands)
+  
+  toJSON: (milestone)->
+    json = milestone.toJSON()
+    json.cid = milestone.cid
+    json
   
   initializeBand: ->
   initializeMilestone: ->

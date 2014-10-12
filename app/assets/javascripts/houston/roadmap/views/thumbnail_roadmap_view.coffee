@@ -75,8 +75,7 @@ class Roadmap.ThumbnailRoadmapView
       .innerTickSize(4)
     @xAxis.transition(150).call(timeline)
     
-    @viewer.transition(150)
-      .attr('style', (viewport)=> "top: 1px; height: #{@height - 2}px; left: #{@x(viewport.get('start'))}px; width: #{@x(viewport.get('end')) - @x(viewport.get('start'))}px;")
+    @viewer.attr('style', (viewport)=> "top: 1px; height: #{@height - 2}px; left: #{@x(viewport.get('start'))}px; width: #{@x(viewport.get('end')) - @x(viewport.get('start'))}px;")
     
     @update()
   

@@ -19,7 +19,9 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
         project: {id: @projectId, color: @projectColor}
         showWeekends: true
       .createMilestone(_.bind(@createMilestone, @))
-    @milestones.bind 'change', _.bind(@indicateIfRoadmapHasChanged, @)
+    @milestones.bind 'change', @indicateIfRoadmapHasChanged, @
+    @milestones.bind 'add', @indicateIfRoadmapHasChanged, @
+    @milestones.bind 'remove', @indicateIfRoadmapHasChanged, @
     super
   
   render: ->
@@ -35,14 +37,13 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   createMilestone: (attributes, callback)->
     attributes.projectId = @projectId
     if attributes.name = prompt('Name:')
-      @milestones.create attributes,
-        wait: true
-        success: (milestone)=>
-          callback()
-        error: (milestone, jqXhr)=>
-          callback()
-          console.log('error', arguments)
-          alert(jqXhr.responseText)
+      attributes.tickets = 0
+      attributes.ticketsCompleted = 0
+      attributes.locked = false
+      attributes.completed = false
+      milestone = new Roadmap.Milestone(attributes)
+      @milestones.add(milestone)
+      callback()
     else
       callback()
   
@@ -73,7 +74,8 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
         message: message)
         .success =>
           $buttons.prop('disabled', false)
-          @milestones.clearChangesSinceSave()
+          @milestones.url = "/roadmap/by_project/#{@projectSlug}"
+          @milestones.fetch(reset: true, parse: true)
         .error (response)->
           $buttons.prop('disabled', false)
           errors = Errors.fromResponse(response)

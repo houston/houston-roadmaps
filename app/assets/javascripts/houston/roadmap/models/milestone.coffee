@@ -54,16 +54,20 @@ class Roadmap.Milestones extends Backbone.Collection
   end: -> _.max @pluck('endDate')
   
   revert: ->
-    @each (milestone)-> milestone.revert()
-  
-  clearChangesSinceSave: ->
-    @each (milestone)-> milestone.clearChangesSinceSave()
+    @each (milestone)=>
+      if milestone.get('id')
+        milestone.revert()
+      else
+        @remove(milestone)
   
   changes: ->
-    for milestone in @models when _.keys(changes = milestone.changesSinceSave()).length > 0
-      change = id: milestone.id
-      for attribute, [originalView, newValue] of changes
-        [attribute, newValue] = ['start_date', App.serverDateFormat(newValue)] if attribute is 'startDate'
-        [attribute, newValue] = ['end_date', App.serverDateFormat(newValue)] if attribute is 'endDate'
-        change[attribute] = newValue 
-      change
+    for milestone in @models when !milestone.id or _.keys(changes = milestone.changesSinceSave()).length > 0
+      if milestone.id
+        change = id: milestone.id
+        for attribute, [originalView, newValue] of changes
+          [attribute, newValue] = ['start_date', App.serverDateFormat(newValue)] if attribute is 'startDate'
+          [attribute, newValue] = ['end_date', App.serverDateFormat(newValue)] if attribute is 'endDate'
+          change[attribute] = newValue 
+        change
+      else
+        milestone.toJSON(emulateHTTP: true)

@@ -12,10 +12,15 @@ private
   
   def commit_milestone_changes
     milestone_changes.each do |change|
-      milestone = project.milestones.find(change.delete(:id))
-      milestone.update_attributes!(change)
+      id = change.delete(:id)
+      milestone = project.milestones.find_by_id(id)
+      if milestone
+        milestone.update_attributes!(change)
+      else
+        milestone = project.create_milestone!(change.pick(:band, :name, :start_date, :end_date))
+      end
       version = milestone.versions.at(milestone.version)
-      version.update_column :roadmap_commit_id, id
+      version.update_column :roadmap_commit_id, self.id
     end
   end
   
