@@ -73,8 +73,9 @@ class Roadmap.RoadmapView
     @update(transition: false)
   
   update: (options)->
+    transition = options.transition ? true
     view = @
-    today = new Date()
+    @today = new Date()
     
     bands = @roadmap.selectAll('.roadmap-band')
       .data(@groupMilestonesIntoBands(), (band)-> band.key)
@@ -97,7 +98,7 @@ class Roadmap.RoadmapView
         .attr('class', 'roadmap-weekend')
         .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
       
-      update = if options.transition then weeks.transition(150) else weeks
+      update = if transition then weeks.transition(150) else weeks
       update
         .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
       
@@ -128,15 +129,15 @@ class Roadmap.RoadmapView
       .append('span')
         .text((milestone)-> milestone.name)
     
-    update = if options.transition then milestones.transition(150) else milestones
+    update = if transition then milestones.transition(150) else milestones
     update
-      .attr 'class', (milestone)->
+      .attr 'class', (milestone)=>
         classes = ['roadmap-milestone']
         classes.push(if milestone.locked then 'locked' else 'unlocked')
         classes.push(if milestone.completed then 'completed' else 'uncompleted')
-        if milestone.startDate > today
+        if milestone.startDate > @today
           classes.push 'upcoming'
-        else if milestone.endDate < today
+        else if milestone.endDate < @today
           classes.push 'past'
         else
           classes.push 'active'
@@ -154,15 +155,15 @@ class Roadmap.RoadmapView
     
     
     if @showToday
-      today = @roadmap.selectAll('.roadmap-today')
+      todayLine = @roadmap.selectAll('.roadmap-today')
         .data([@today])
       
-      today.enter()
+      todayLine.enter()
         .append('div')
           .attr('class', 'roadmap-today')
           .attr('style', (date)=> "left: #{@x(date)}px;")
       
-      update = if options.transition then today.transition(150) else today
+      update = if transition then todayLine.transition(150) else todayLine
       update
         .attr('style', (date)=> "left: #{@x(date)}px;")
   
