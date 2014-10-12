@@ -115,8 +115,11 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       return if e.target isnt @
       view.newMilestoneX = e.screenX
       view.$el.addClass('drag-create')
+      
+      startDate = d3.time.monday.round(view.x.invert(e.offsetX))
+      
       view.$newMilestone = $('<div class="roadmap-milestone-placeholder">&nbsp;</div>')
-        .css(left: e.offsetX)
+        .css(left: view.x(startDate))
         .appendTo(@)
   
   initializeMilestone: (milestone)->
