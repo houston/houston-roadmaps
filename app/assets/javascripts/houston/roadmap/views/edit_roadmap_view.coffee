@@ -45,7 +45,17 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       return unless @$newMilestone and @supportsCreate
       newMilestoneWidth = e.screenX - @newMilestoneX
       newMilestoneWidth = 0 if newMilestoneWidth < 0
+      
+      startDate = @x.invert(@$newMilestone.position().left)
+      endDate = d3.time.saturday.round(@x.invert(@$newMilestone.position().left + newMilestoneWidth))
+      milliseconds = endDate.getTime() - startDate.getTime() + 2 * Duration.DAY
+      weeks = Math.floor(milliseconds / Duration.WEEK)
+      
       @$newMilestone.css(width: newMilestoneWidth)
+      if weeks < 2
+        @$newMilestone.html("&nbsp;")
+      else
+        @$newMilestone.html("<span>#{weeks}&nbsp;weeks</span>")
   
   
   cancelCreate: ->
