@@ -8,5 +8,5 @@ Handlebars.registerHelper 'durationOfMilestone', (milestone)->
   "#{weeks} weeks"
 
 Handlebars.registerHelper 'milestonePercentComplete', (milestone)->
-  return "" if milestone.tickets == 0
-  App.formatPercent milestone.ticketsCompleted / milestone.tickets
+  return "" if !milestone.percentComplete?
+  App.formatPercent milestone.percentComplete

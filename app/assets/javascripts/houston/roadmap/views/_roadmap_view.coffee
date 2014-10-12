@@ -152,7 +152,7 @@ class Roadmap.RoadmapView
       .select('.roadmap-milestone-progress')
         .attr 'style', (milestone)->
           return "width: 0" if milestone.tickets is 0
-          "width: #{milestone.ticketsCompleted * 100 / milestone.tickets}%"
+          "width: #{milestone.percentComplete * 100}%"
     
     milestones.exit().remove()
     
