@@ -76,9 +76,11 @@ class Roadmap.EditMilestoneView extends @TicketsView
   
   removeTicket: (e)->
     e.preventDefault()
+    e.stopImmediatePropagation()
     $button = $(e.target)
     $button.prop 'disabled', true
     $ticket = $button.closest('.ticket')
+    $ticket.addClass('deleting')
     id = +$ticket.attr('data-id')
     $.destroy("/roadmap/milestones/#{@id}/tickets/#{id}")
       .error =>
