@@ -68,7 +68,9 @@ class Roadmap.EditMilestoneView extends @TicketsView
   
   rerenderTickets: ->
     template = HandlebarsTemplates['houston/roadmap/milestone/ticket']
-    $tickets = @$el.find('#tickets').empty()
+    $tickets = @$el.find('#tickets')
+    return @render() if $tickets.length is 0
+    $tickets.empty()
     for ticket in @tickets.models
       json = ticket.toJSON()
       json.estimatedEffort = ticket.estimatedEffort()
