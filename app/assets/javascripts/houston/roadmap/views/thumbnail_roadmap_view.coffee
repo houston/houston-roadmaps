@@ -4,7 +4,6 @@ class Roadmap.ThumbnailRoadmapView
     @milestones = options.milestones
     @parent = options.parent
     @viewport = options.viewport
-    @viewerStart = 3.weeks().ago()
     @milestones.bind 'add', @update, @
     @milestones.bind 'remove', @update, @
     @milestones.bind 'change', @update, @
@@ -76,6 +75,9 @@ class Roadmap.ThumbnailRoadmapView
     else
       @startDate = 3.weeks().ago()
       @endDate = 12.weeks().fromNow()
+    
+    @startDate = @viewport.get('start') if @viewport.get('start') < @startDate
+    @endDate = @viewport.get('end') if @viewport.get('end') > @endDate
     
     @x = d3.time.scale()
       .domain([@startDate, @endDate])
