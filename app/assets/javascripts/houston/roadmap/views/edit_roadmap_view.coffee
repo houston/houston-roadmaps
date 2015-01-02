@@ -26,11 +26,12 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     
     @$el.on 'mouseup', (e)=>
       return unless @$newMilestone and @supportsCreate
-      newMilestoneWidth = e.screenX - @newMilestoneX
+      newMilestoneWidth = @$newMilestone.outerWidth()
       if newMilestoneWidth > 10
         band = +@$newMilestone.closest('.roadmap-band').attr('data-band')
-        startDate = @x.invert(@$newMilestone.position().left)
-        endDate = @x.invert(@$newMilestone.position().left + @$newMilestone.width())
+        left = @$newMilestone.position().left
+        startDate = @x.invert(left)
+        endDate = @x.invert(left + newMilestoneWidth)
         attributes = 
           band: band
           lanes: 1
@@ -48,8 +49,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       newMilestoneWidth = e.screenX - @newMilestoneX
       newMilestoneWidth = 0 if newMilestoneWidth < 0
       
-      startDate = @x.invert(@$newMilestone.position().left)
+      left = @$newMilestone.position().left
+      startDate = @x.invert(left)
       endDate = d3.time.saturday.round(@x.invert(@$newMilestone.position().left + newMilestoneWidth))
+      newMilestoneWidth = @x(endDate) - left
       milliseconds = endDate.getTime() - startDate.getTime() + 2 * Duration.DAY
       weeks = Math.floor(milliseconds / Duration.WEEK)
       
