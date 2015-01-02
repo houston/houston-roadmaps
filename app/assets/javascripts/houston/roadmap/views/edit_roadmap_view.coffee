@@ -142,6 +142,16 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       resize: (event, ui)->
         return unless view.drag
         
+        # If we're _only_ changing the number of lanes
+        # this milestone covers, update its duration as
+        # its height is changed.
+        if view.drag.handle is 'ui-resizable-s'
+          originalLanes = (ui.originalSize.height + 8) / 38 # space between lanes is 8; height if lane + space is 38
+          lanes = (ui.size.height + 8) / 38 # space between lanes is 8; height if lane + space is 38
+          lanesDelta = lanes - originalLanes
+          ui.size.width = ui.originalSize.width * Math.pow(2, -lanesDelta)
+          $(@).css(width: ui.size.width)
+        
         delta = ui.size.width - ui.originalSize.width
         if view.drag.maxLeft
           delta += view.drag.originalLeft - view.drag.maxLeft
@@ -212,6 +222,8 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
 
 
   onStartDrag: (e, ui)->
+    handle = $(e.originalEvent.target).attr('class')
+    handle = handle.split(' ')[1] if handle
     $milestone = $(e.target)
     band = +$milestone.closest('.roadmap-band').attr('data-band')
     id = $milestone.attr('data-cid')
@@ -249,6 +261,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       milestonesAfterPositions: milestonesAfterPositions
       offsetLeft: ui.position.left
       originalLeft: $milestone.position().left
+      handle: handle
 
 
 
