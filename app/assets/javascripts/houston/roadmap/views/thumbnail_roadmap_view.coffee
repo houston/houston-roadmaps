@@ -93,10 +93,6 @@ class Roadmap.ThumbnailRoadmapView
       .key (milestone)-> milestone.band
       .entries(visibleMilestones)
     
-    startDate = d3.min(visibleMilestones, (milestone)-> milestone.startDate)
-    startDate ||= d3.time.format('%Y-%m-%d').parse('2014-08-01')
-    endDate = 2.years().after startDate
-    
     bands = @roadmap.selectAll('.roadmap-thumbnail-band')
       .data(milestoneBands, (band)-> band.key)
     
