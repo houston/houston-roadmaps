@@ -250,11 +250,12 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     $milestone.draggable 'option', 'grid', grid
     
     for milestone in milestonesInBand
-      if milestone.get('endDate') < startDate
-        minStartDate = 2.days().after(milestone.get('endDate'))
-      else if milestone.get('startDate') > endDate
-        maxStartDate ||= duration.before(2.days().before(milestone.get('startDate')))
-        milestonesAfter.push milestone
+      if milestone.get('startDate') && milestone.get('endDate')
+        if milestone.get('endDate') < startDate
+          minStartDate = 2.days().after(milestone.get('endDate'))
+        else if milestone.get('startDate') > endDate
+          maxStartDate ||= duration.before(2.days().before(milestone.get('startDate')))
+          milestonesAfter.push milestone
     
     selector = _.map milestonesAfter, (m)-> ".roadmap-milestone[data-cid=#{m.cid}]"
     $milestonesAfter = @$el.find(selector.join(', '))
