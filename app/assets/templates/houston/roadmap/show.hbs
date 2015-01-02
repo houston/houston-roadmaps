@@ -12,6 +12,7 @@
       <th class="milestone-name">Name</th>
       <th class="milestone-startDate">Starts</th>
       <th class="milestone-duration">Duration</th>
+      <th class="milestone-lanes">Lanes</th>
       <th class="milestone-tickets">Tickets</th>
       <th class="milestone-completion">Completed</th>
       <th class="milestone-locked">Locked</th>
@@ -22,6 +23,7 @@
         <td class="milestone-name"><a href="/roadmap/milestones/{{id}}">{{name}}</a></td>
         <td class="milestone-startDate date">{{{formatDateWithYear startDate}}}</td>
         <td class="milestone-duration">{{durationOfMilestone this}}</td>
+        <td class="milestone-lanes">{{lanes}}</td>
         <td class="milestone-tickets {{#if tickets}}{{else}}zero{{/if}}">
           {{#if ticketsCompleted}}{{ticketsCompleted}}/{{/if}}{{tickets}}
         </td>

@@ -20,7 +20,7 @@
   
   &.inactive .milestone-name a { display: block; }
   
-  .milestone-duration, .milestone-tickets { text-align: right; }
+  .milestone-duration, .milestone-lanes, .milestone-tickets { text-align: right; }
   .milestone-tickets.zero { color: #ccc; }
   .milestone-locked { text-align: center; width: 2.25em; }
   .milestone-completion { text-align: right; width: 2.5em; }
@@ -29,7 +29,10 @@
   .fa-unlock-alt { color: #ccc; }
 }
 
-th.milestone-startDate, th.milestone-tickets, th.milestone-duration { text-align: right; }
+th.milestone-startDate, th.milestone-tickets, th.milestone-duration, th.milestone-lanes { text-align: right; }
+th.milestone-duration { width: 5em; }
+th.milestone-lanes { width: 2.5em; }
+th.milestone-tickets { width: 3.5em; }
 th.milestone-locked { text-align: center; width: 2.25em; }
 th.milestone-completion { text-align: right; width: 2.5em; }
 

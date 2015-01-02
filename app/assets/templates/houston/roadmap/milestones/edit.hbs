@@ -1,6 +1,7 @@
 <td class="milestone-name"><input type="text" name="name" value="{{name}}" autofocus /></td>
 <td class="milestone-startDate date">{{{formatDateWithYear startDate}}}</td>
 <td class="milestone-duration">{{durationOfMilestone this}}</td>
+<td class="milestone-lanes">{{lanes}}</td>
 <td class="milestone-tickets {{#if tickets}}{{else}}zero{{/if}}">
   {{#if ticketsCompleted}}{{ticketsCompleted}}/{{/if}}{{tickets}}
 </td>
