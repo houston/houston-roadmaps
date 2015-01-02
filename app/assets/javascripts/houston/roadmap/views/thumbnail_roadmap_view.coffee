@@ -112,7 +112,10 @@ class Roadmap.ThumbnailRoadmapView
     
     # update
     milestones
-      .attr('class', (milestone)-> 'roadmap-thumbnail-milestone')
+      .attr 'class', (milestone)->
+        css = ['roadmap-thumbnail-milestone']
+        css.push 'completed' if milestone.completed
+        css.join(' ')
       .transition(150)
         .attr('width', (milestone)=> @x(milestone.endDate) - @x(milestone.startDate))
         .attr('x', (milestone)=> @x(milestone.startDate))
@@ -124,7 +127,10 @@ class Roadmap.ThumbnailRoadmapView
       .attr('height', (milestone)-> milestone.lanes * 6 - 1)
       .attr('width', (milestone)=> @x(milestone.endDate) - @x(milestone.startDate))
       .attr('x', (milestone)=> @x(milestone.startDate))
-      .attr('class', (milestone)-> 'roadmap-thumbnail-milestone')
+      .attr 'class', (milestone)->
+        css = ['roadmap-thumbnail-milestone']
+        css.push 'completed' if milestone.completed
+        css.join(' ')
     
     # exit
     milestones.exit().remove()
