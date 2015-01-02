@@ -113,6 +113,7 @@ class Roadmap.ThumbnailRoadmapView
         css.push 'completed' if milestone.completed
         css.join(' ')
       .transition(150)
+        .attr('height', (milestone)-> milestone.lanes * 6 - 1)
         .attr('width', (milestone)=> @x(milestone.endDate) - @x(milestone.startDate))
         .attr('x', (milestone)=> @x(milestone.startDate))
   
