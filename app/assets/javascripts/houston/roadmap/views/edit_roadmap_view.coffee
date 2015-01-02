@@ -150,6 +150,9 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
       
       stop: (event, ui)->
+        ui.element.resizable 'option', 'grid', false
+        ui.element.draggable 'option', 'grid', false
+        
         id = ui.element.attr('data-cid')
         milestone = view.milestones.get(id)
         return unless milestone
@@ -197,7 +200,11 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         view.drag.$milestonesAfter.each (i)->
           $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
       
-      stop: -> view.drag = null
+      stop: (e, ui)->
+        view.drag = null
+        $(e.target).resizable 'option', 'grid', false
+        $(e.target).draggable 'option', 'grid', false
+        
       revert: ($target)-> !$target or !$target.is('.roadmap-band')
 
 
@@ -213,6 +220,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     minStartDate = null
     maxStartDate = null
     milestonesAfter = []
+    
+    grid = [@weekWidth(), @bandHeight()]
+    $milestone.resizable 'option', 'grid', grid
+    $milestone.draggable 'option', 'grid', grid
     
     for milestone in milestonesInBand
       if milestone.get('endDate') < startDate
@@ -235,3 +246,12 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       milestonesAfterPositions: milestonesAfterPositions
       offsetLeft: ui.position.left
       originalLeft: $milestone.position().left
+
+
+
+  bandHeight: ->
+    38
+
+  weekWidth: ->
+    date = d3.time.saturdays(@x.domain()...)[0]
+    @x(7.days().after(date)) - @x(date)
