@@ -69,10 +69,10 @@ class Roadmap.ThumbnailRoadmapView
   update: ->
     if @milestones.length > 0
       @startDate = 3.weeks().before d3.min(@milestones.pluck('startDate'))
-      @endDate = 6.weeks().after d3.max(@milestones.pluck('endDate'))
+      @endDate = 12.weeks().after d3.max(@milestones.pluck('endDate'))
     else
       @startDate = 3.weeks().ago()
-      @endDate = 2.years().after(startDate)
+      @endDate = 12.weeks().fromNow()
     
     @x = d3.time.scale()
       .domain([@startDate, @endDate])
