@@ -68,9 +68,11 @@ class Roadmap.ThumbnailRoadmapView
     @update()
   
   update: ->
-    if @milestones.length > 0
-      @startDate = 3.weeks().before d3.min(@milestones.pluck('startDate'))
-      @endDate = 12.weeks().after d3.max(@milestones.pluck('endDate'))
+    visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate
+    
+    if visibleMilestones.length > 0
+      @startDate = 3.weeks().before d3.min(visibleMilestones, (m)-> m.startDate)
+      @endDate = 12.weeks().after d3.max(visibleMilestones, (m)-> m.endDate)
     else
       @startDate = 3.weeks().ago()
       @endDate = 12.weeks().fromNow()
@@ -87,8 +89,6 @@ class Roadmap.ThumbnailRoadmapView
     @viewer.attr('style', (viewport)=> "top: 1px; height: #{@height - 2}px; left: #{@x(viewport.get('start'))}px; width: #{@x(viewport.get('end')) - @x(viewport.get('start'))}px;")
     
     
-    
-    visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate
     
     milestoneBands = d3.nest()
       .key (milestone)-> milestone.band
