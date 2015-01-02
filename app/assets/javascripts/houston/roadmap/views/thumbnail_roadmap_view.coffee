@@ -4,9 +4,7 @@ class Roadmap.ThumbnailRoadmapView
     @milestones = options.milestones
     @parent = options.parent
     @viewport = options.viewport
-    @startDate = d3.min @milestones.pluck('startDate').concat(3.weeks().ago())
-    @endDate = d3.max @milestones.pluck('endDate').concat(2.years().after(@startDate))
-    @viewerStart = @startDate
+    @viewerStart = 3.weeks().ago()
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'reset', @update, @
@@ -66,6 +64,16 @@ class Roadmap.ThumbnailRoadmapView
     
     @parent.select('.roadmap-thumbnail').transition(150).attr('width', @width)
     
+    @update()
+  
+  update: ->
+    if @milestones.length > 0
+      @startDate = 3.weeks().before d3.min(@milestones.pluck('startDate'))
+      @endDate = 6.weeks().after d3.max(@milestones.pluck('endDate'))
+    else
+      @startDate = 3.weeks().ago()
+      @endDate = 2.years().after(startDate)
+    
     @x = d3.time.scale()
       .domain([@startDate, @endDate])
       .range([0, @width])
@@ -77,9 +85,8 @@ class Roadmap.ThumbnailRoadmapView
     
     @viewer.attr('style', (viewport)=> "top: 1px; height: #{@height - 2}px; left: #{@x(viewport.get('start'))}px; width: #{@x(viewport.get('end')) - @x(viewport.get('start'))}px;")
     
-    @update()
-  
-  update: ->
+    
+    
     visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate
     
     milestoneBands = d3.nest()
