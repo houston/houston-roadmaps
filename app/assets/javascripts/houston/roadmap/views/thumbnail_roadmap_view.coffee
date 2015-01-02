@@ -104,7 +104,7 @@ class Roadmap.ThumbnailRoadmapView
     bands.exit().remove()
     
     milestones = bands.selectAll('.roadmap-thumbnail-milestone')
-      .data(((band)-> band.values), (milestone)-> milestone.id)
+      .data(((band)-> band.values), (milestone)-> milestone.cid)
     
     # update
     milestones

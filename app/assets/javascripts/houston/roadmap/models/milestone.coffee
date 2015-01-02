@@ -40,6 +40,7 @@ class Roadmap.Milestone extends Backbone.Model
   
   toJSON: (options)->
     json = super(options)
+    json.cid = @cid
     if 'emulateHTTP' of (options || {})
       json.start_date = App.serverDateFormat(json.startDate) if json.startDate
       delete json.startDate
