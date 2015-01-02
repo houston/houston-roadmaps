@@ -121,7 +121,7 @@ class Roadmap.ThumbnailRoadmapView
     milestones.enter().append('rect')
       .attr('rx', 1)
       .attr('ry', 1)
-      .attr('height', 5)
+      .attr('height', (milestone)-> milestone.lanes * 6 - 1)
       .attr('width', (milestone)=> @x(milestone.endDate) - @x(milestone.startDate))
       .attr('x', (milestone)=> @x(milestone.startDate))
       .attr('class', (milestone)-> 'roadmap-thumbnail-milestone')
