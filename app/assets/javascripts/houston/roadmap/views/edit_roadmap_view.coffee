@@ -7,6 +7,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   
   constructor: (milestones, options={})->
     @project = options.project
+    @gapWeeks = options.gapWeeks ? 0
     super(milestones, options)
     $(document.body).on 'keyup', (e)=>
       return unless @$newMilestone and @supportsCreate
@@ -109,13 +110,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         return unless view.drag
         return unless view.drag.band is view.drag.bandOver
         
-        delta = ui.position.left - view.drag.offsetLeft + view.drag.originalLeft - view.drag.maxLeft
-        return if delta <= 0
-        
         for i in [0...view.drag.milestonesAfter.length]
           milestone = view.drag.milestonesAfter[i]
-          originalPosition = view.drag.milestonesAfterPositions[i]
-          newPosition = originalPosition + delta
+          $milestone = $ view.drag.$milestonesAfter[i]
+          newPosition = $milestone.position().left
           startDate = d3.time.monday.round(view.x.invert(newPosition))
           endDate = d3.time.saturday.round(milestone.duration().after(startDate))
           milestone.set
@@ -159,8 +157,12 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           delta += view.drag.originalLeft - view.drag.maxLeft
           delta = 0 if delta < 0
         
+        lastRight = ui.position.left + ui.size.width
         view.drag.$milestonesAfter.each (i)->
-          $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
+          left = view.drag.milestonesAfterPositions[i]
+          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0
+          $(@).css(left: left)
+          lastRight = left + $(@).outerWidth()
       
       stop: (event, ui)->
         ui.element.resizable 'option', 'grid', false
@@ -177,19 +179,11 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           lanes: lanes
         
         return unless view.drag
-        return unless view.drag.maxLeft
-        
-        delta = ui.size.width - ui.originalSize.width
-        if view.drag.maxLeft
-          delta += view.drag.originalLeft - view.drag.maxLeft
-          delta = 0 if delta < 0
-        
-        return unless delta > 0
         
         for i in [0...view.drag.milestonesAfter.length]
           milestone = view.drag.milestonesAfter[i]
-          originalPosition = view.drag.milestonesAfterPositions[i]
-          newPosition = originalPosition + delta
+          $milestone = $ view.drag.$milestonesAfter[i]
+          newPosition = $milestone.position().left
           startDate = d3.time.monday.round(view.x.invert(newPosition))
           endDate = d3.time.saturday.round(milestone.duration().after(startDate))
           milestone.set
@@ -213,8 +207,13 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
             delta = 0 if delta < 0
         else
           delta = 0
+        
+        lastRight = ui.position.left + ui.helper.outerWidth()
         view.drag.$milestonesAfter.each (i)->
-          $(@).css(left: view.drag.milestonesAfterPositions[i] + delta)
+          left = view.drag.milestonesAfterPositions[i]
+          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0
+          $(@).css(left: left)
+          lastRight = left + $(@).outerWidth()
       
       stop: (e, ui)->
         view.drag = null
@@ -265,6 +264,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       offsetLeft: ui.position.left
       originalLeft: $milestone.position().left
       handle: handle
+      minGap: @minGap()
 
 
 
@@ -274,3 +274,9 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   weekWidth: ->
     date = d3.time.saturdays(@x.domain()...)[0]
     @x(7.days().after(date)) - @x(date)
+
+  minGap: ->
+    date = d3.time.saturdays(@x.domain()...)[0]
+    weekend = @x(2.days().after(date)) - @x(date)
+    week = @x(7.days().after(date)) - @x(date)
+    weekend + (week * @gapWeeks)
