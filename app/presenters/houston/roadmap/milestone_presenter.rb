@@ -20,7 +20,7 @@ class Houston::Roadmap::MilestonePresenter
       completed: milestone.completed?,
       band: milestone.band,
       lanes: milestone.lanes,
-      locked: milestone.locked?,
+      locked: milestone.locked? || milestone.completed?,
       startDate: milestone.start_date,
       endDate: milestone.end_date }
   end
