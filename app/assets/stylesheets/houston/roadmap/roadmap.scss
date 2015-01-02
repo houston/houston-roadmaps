@@ -206,6 +206,20 @@ a.roadmap-milestone {
     width: 14px;
   }
   
+  .ui-resizable-s {
+    cursor: ns-resize;
+    cursor: row-resize;
+    height: 14px;
+  }
+  
+  .ui-resizable-se {
+    right: -2px;
+    bottom: -2px;
+    height: 16px;
+    width: 16px;
+    background: none;
+  }
+  
   &.ui-resizable-resizing {
     z-index: 10;
   }

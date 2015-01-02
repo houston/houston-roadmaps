@@ -19,6 +19,7 @@ class Houston::Roadmap::MilestonePresenter
       percentComplete: percent_complete(milestone),
       completed: milestone.completed?,
       band: milestone.band,
+      lanes: milestone.lanes,
       locked: milestone.locked?,
       startDate: milestone.start_date,
       endDate: milestone.end_date }

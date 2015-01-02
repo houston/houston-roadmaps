@@ -124,7 +124,10 @@ class Roadmap.RoadmapView
         .attr('class', 'roadmap-milestone-progress')
     
     newMilestones
-      .attr('style', (milestone)=> "left: #{@x(milestone.startDate)}px; width: #{@x(milestone.endDate) - @x(milestone.startDate)}px;")
+      .attr 'style', (milestone)=>
+        [ "left: #{@x(milestone.startDate)}px",
+          "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px",
+          "height: #{milestone.lanes * 38 - 8}px" ].join('; ')
       .attr('class', 'roadmap-milestone')
       .attr('data-cid', (milestone)-> milestone.cid)
       .each -> view.initializeMilestone.apply(view, [@])
@@ -148,7 +151,8 @@ class Roadmap.RoadmapView
         classes.join(' ')
       .attr 'style', (milestone)=>
         [ "left: #{@x(milestone.startDate)}px",
-          "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px" ].join('; ')
+          "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px",
+          "height: #{milestone.lanes * 38 - 8}px" ].join('; ')
       .select('.roadmap-milestone-progress')
         .attr 'style', (milestone)->
           return "width: 0" if milestone.tickets is 0

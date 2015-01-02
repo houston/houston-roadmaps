@@ -86,6 +86,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     
     $(band).droppable
       hoverClass: 'sort-active'
+      tolerance: 'pointer'
       over: (event, ui)->
         return unless view.drag
         view.drag.bandOver = +$(@).attr('data-band')
@@ -134,7 +135,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   initializeMilestone: (milestone)->
     view = @
     $(milestone).resizable
-      handles: 'e'
+      handles: 'e, s, se'
       animate: false
       start: _.bind(@onStartDrag, @)
       
@@ -158,8 +159,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         return unless milestone
         endDate = d3.time.saturday.round(view.x.invert(ui.position.left + ui.size.width))
         ui.element.css width: view.x(endDate) - ui.element.position().left
+        lanes = (ui.size.height + 8) / 38 # space between lanes is 8; height if lane + space is 38
         milestone.set
           endDate: endDate
+          lanes: lanes
         
         return unless view.drag
         return unless view.drag.maxLeft
