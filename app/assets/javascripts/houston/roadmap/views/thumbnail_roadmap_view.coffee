@@ -6,6 +6,7 @@ class Roadmap.ThumbnailRoadmapView
     @viewport = options.viewport
     @viewerStart = 3.weeks().ago()
     @milestones.bind 'add', @update, @
+    @milestones.bind 'remove', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'reset', @update, @
     $(window).resize (e)=>
