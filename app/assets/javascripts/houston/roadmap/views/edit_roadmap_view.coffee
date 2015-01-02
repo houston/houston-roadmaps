@@ -99,11 +99,12 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         
         startDate = d3.time.monday.round(view.x.invert(ui.position.left))
         ui.draggable.css left: view.x(startDate)
+        endDate = d3.time.saturday.round(milestone.duration().after(startDate))
         
         milestone.set
           band: band
           startDate: startDate
-          endDate: milestone.duration().after startDate
+          endDate: endDate
         
         return unless view.drag
         return unless view.drag.band is view.drag.bandOver
@@ -116,9 +117,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           originalPosition = view.drag.milestonesAfterPositions[i]
           newPosition = originalPosition + delta
           startDate = d3.time.monday.round(view.x.invert(newPosition))
+          endDate = d3.time.saturday.round(milestone.duration().after(startDate))
           milestone.set
             startDate: startDate
-            endDate: milestone.duration().after startDate
+            endDate: endDate
     
     .on 'mousedown', (e)->
       return unless view.supportsCreate
@@ -189,9 +191,10 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
           originalPosition = view.drag.milestonesAfterPositions[i]
           newPosition = originalPosition + delta
           startDate = d3.time.monday.round(view.x.invert(newPosition))
+          endDate = d3.time.saturday.round(milestone.duration().after(startDate))
           milestone.set
             startDate: startDate
-            endDate: milestone.duration().after startDate
+            endDate: endDate
     
     .draggable
       snap: '.roadmap-band'
