@@ -222,6 +222,8 @@ a.roadmap-milestone {
     background: none;
   }
   
+  &.locked .ui-resizable-handle { display: none; }
+  
   &.ui-resizable-resizing {
     z-index: 10;
   }

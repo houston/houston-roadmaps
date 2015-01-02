@@ -112,13 +112,14 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         
         for i in [0...view.drag.milestonesAfter.length]
           milestone = view.drag.milestonesAfter[i]
-          $milestone = $ view.drag.$milestonesAfter[i]
-          newPosition = $milestone.position().left
-          startDate = d3.time.monday.round(view.x.invert(newPosition))
-          endDate = d3.time.saturday.round(milestone.duration().after(startDate))
-          milestone.set
-            startDate: startDate
-            endDate: endDate
+          unless milestone.get('locked')
+            $milestone = $ view.drag.$milestonesAfter[i]
+            newPosition = $milestone.position().left
+            startDate = d3.time.monday.round(view.x.invert(newPosition))
+            endDate = d3.time.saturday.round(milestone.duration().after(startDate))
+            milestone.set
+              startDate: startDate
+              endDate: endDate
     
     .on 'mousedown', (e)->
       return unless view.supportsCreate
@@ -160,7 +161,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         lastRight = ui.position.left + ui.size.width
         view.drag.$milestonesAfter.each (i)->
           left = view.drag.milestonesAfterPositions[i]
-          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0
+          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0 and !$(@).hasClass('locked')
           $(@).css(left: left)
           lastRight = left + $(@).outerWidth()
       
@@ -182,13 +183,14 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         
         for i in [0...view.drag.milestonesAfter.length]
           milestone = view.drag.milestonesAfter[i]
-          $milestone = $ view.drag.$milestonesAfter[i]
-          newPosition = $milestone.position().left
-          startDate = d3.time.monday.round(view.x.invert(newPosition))
-          endDate = d3.time.saturday.round(milestone.duration().after(startDate))
-          milestone.set
-            startDate: startDate
-            endDate: endDate
+          unless milestone.get('locked')
+            $milestone = $ view.drag.$milestonesAfter[i]
+            newPosition = $milestone.position().left
+            startDate = d3.time.monday.round(view.x.invert(newPosition))
+            endDate = d3.time.saturday.round(milestone.duration().after(startDate))
+            milestone.set
+              startDate: startDate
+              endDate: endDate
     
     .draggable
       snap: '.roadmap-band'
@@ -211,7 +213,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         lastRight = ui.position.left + ui.helper.outerWidth()
         view.drag.$milestonesAfter.each (i)->
           left = view.drag.milestonesAfterPositions[i]
-          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0
+          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0 and !$(@).hasClass('locked')
           $(@).css(left: left)
           lastRight = left + $(@).outerWidth()
       
@@ -227,6 +229,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     handle = $(e.originalEvent.target).attr('class')
     handle = handle.split(' ')[1] if handle
     $milestone = $(e.target)
+    return false if $milestone.hasClass('locked')
     band = +$milestone.closest('.roadmap-band').attr('data-band')
     id = $milestone.attr('data-cid')
     milestone = @milestones.get(id)
