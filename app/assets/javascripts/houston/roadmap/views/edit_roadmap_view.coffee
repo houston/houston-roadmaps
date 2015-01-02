@@ -106,10 +106,9 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         
         return unless view.drag
         return unless view.drag.band is view.drag.bandOver
-        return unless view.drag.maxLeft
-        return unless ui.position.left > view.drag.maxLeft
         
         delta = ui.position.left - view.drag.offsetLeft + view.drag.originalLeft - view.drag.maxLeft
+        return if delta <= 0
         
         for i in [0...view.drag.milestonesAfter.length]
           milestone = view.drag.milestonesAfter[i]
