@@ -33,6 +33,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         endDate = @x.invert(@$newMilestone.position().left + @$newMilestone.width())
         attributes = 
           band: band
+          lanes: 1
           startDate: d3.time.monday.round(startDate)
           endDate: d3.time.saturday.round(endDate)
         @$newMilestone.addClass('creating').text('Saving...')
