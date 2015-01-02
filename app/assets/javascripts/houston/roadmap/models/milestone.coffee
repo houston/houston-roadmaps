@@ -55,9 +55,12 @@ class Roadmap.Milestones extends Backbone.Collection
   end: -> _.max @pluck('endDate')
   
   revert: ->
-    @each (milestone)=>
+    i = 0
+    while i < @length
+      milestone = @models[i]
       if milestone.get('id')
         milestone.revert()
+        i++
       else
         @remove(milestone)
   
