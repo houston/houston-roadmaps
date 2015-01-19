@@ -1,0 +1,66 @@
+<div id="graph" class="burndown-chart callout callout-banner"></div>
+
+
+<h2 class="light">Goal</h2>
+<div class="milestone-goal inline-editable">
+  <div class="inline-editable-link markdown">
+    {{#if milestone/goal}}{{{markdown milestone/goal}}}{{else}}<span class="blank">Write a goal</span>{{/if}}
+  </div>
+  <textarea id="goal" name="goal">{{milestone/goal}}</textarea>
+  <button class="btn btn-default btn-cancel">Cancel</button>
+  <button id="save_goal" class="btn btn-primary btn-save">Save</button>
+</div>
+
+{{#if usesFeedback}}
+<h2 class="light">Feedback</h2>
+<div class="milestone-feedback inline-editable">
+  <div class="inline-editable-link milestone-feedback-query">
+    {{#if milestone/feedbackQuery}}{{milestone/feedbackQuery}}{{else}}<span class="blank">Write a feedback query</span>{{/if}}
+  </div>
+  {{#if milestone/feedbackQuery}}
+    {{{linkToFeedbackQuery projectSlug milestone/feedbackQuery}}}
+  {{/if}}
+  <input type="text" id="feedback_query" name="feedback_query" value="{{milestone/feedbackQuery}}" />
+  <button class="btn btn-default btn-cancel">Cancel</button>
+  <button id="save_feedback_query" class="btn btn-primary btn-save">Save</button>
+</div>
+{{/if}}
+
+
+<div>
+  <h2 class="light">Tickets</h2>
+  
+  <a class="btn" id="show_completed_tickets" data-toggle="button">Show Completed Tickets</a>
+  
+  <div class="score score-medium milestone-progress">
+    <p class="positive">
+      <span class="score-count" id="milestone_progress"></span>
+      <span class="score-label">Complete</span>
+    </p>
+  </div>
+</div>
+
+
+<div id="find_or_create_ticket_view"></div>
+
+<hr />
+
+{{#if tickets}}
+<table class="table table-milestone-tickets">
+  <thead>
+    <tr>
+      <td></td>
+      <th class="ticket-number">#</th>
+      <th class="ticket-summary">Summary</th>
+      <th class="ticket-effort">Effort</th>
+      <th class="ticket-status">Status</th>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody id="tickets">
+    {{#tickets}}{{> milestoneTicket}}{{/tickets}}
+  </tbody>
+</table>
+{{else}}
+<div class="alert alert-info">There are no tickets in this milestone.</div>
+{{/if}}

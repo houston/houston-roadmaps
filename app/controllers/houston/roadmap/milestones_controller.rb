@@ -108,7 +108,7 @@ module Houston
       end
       
       def milestone_attributes
-        params.fetch(:milestone).pick(:name, :band, :lanes, :start_date, :end_date, :locked)
+        params.fetch(:milestone).pick(:name, :band, :lanes, :start_date, :end_date, :locked, :goal, :feedback_query)
       end
       
     end

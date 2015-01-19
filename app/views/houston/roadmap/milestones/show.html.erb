@@ -1,6 +1,6 @@
 <%= render partial: "projects/header", locals: {project: @project, postfix: @milestone.name} %>
 
-<div id="milestone_view" class="hide-completed"><div>
+<div id="milestone_view" class="hide-completed <%= can?(:update, @milestone) ? "editable" : "readonly" %>"><div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
@@ -8,14 +8,33 @@
     var tickets = <%=raw Houston::Roadmap::TicketPresenter.new(@tickets).to_json %>;
     tickets = new Tickets(tickets, {parse: true});
     
-    new Roadmap.EditMilestoneView({
-      el: $('#milestone_view')[0],
+    var milestone = {
       id: <%= @milestone.id %>,
-      project: <%=raw @project.slug.to_json %>,
-      projectTicketTracker: <%=raw @project.ticket_tracker_name.to_json %>,
-      tickets: tickets,
-      openTickets: <%=raw Houston::Roadmap::TicketPresenter.new(@open_tickets).to_json %>
-    }).render();
+      goal: <%=raw @milestone.goal.to_json %> };
+    <% if defined?(Houston::Feedback) -%>
+    milestone.feedbackQuery = <%=raw @milestone.feedback_query.to_json %>;
+    <% end -%>
+    
+    <% if can?(:update, @milestone) %>
+      new Roadmap.EditMilestoneView({
+        el: $('#milestone_view')[0],
+        milestone: milestone,
+        project: <%=raw @project.slug.to_json %>,
+        projectTicketTracker: <%=raw @project.ticket_tracker_name.to_json %>,
+        tickets: tickets,
+        usesFeedback: <%= !!defined?(Houston::Feedback) %>,
+        openTickets: <%=raw Houston::Roadmap::TicketPresenter.new(@open_tickets).to_json %>
+      }).render();
+    <% else %>
+      new Roadmap.ShowMilestoneView({
+        el: $('#milestone_view')[0],
+        milestone: milestone,
+        project: <%=raw @project.slug.to_json %>,
+        projectTicketTracker: <%=raw @project.ticket_tracker_name.to_json %>,
+        tickets: tickets,
+        usesFeedback: <%= !!defined?(Houston::Feedback) %>,
+      }).render();
+    <% end %>
   });
 </script>
 <% end %>

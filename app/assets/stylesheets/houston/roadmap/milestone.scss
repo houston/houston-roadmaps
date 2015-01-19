@@ -16,7 +16,7 @@
 }
 .table .ui-sortable-helper td { border-bottom: none; background: white; }
 
-td.ticket-handle {
+.editable td.ticket-handle {
   background-image: url(/images/drag-grip.png);
   background-repeat: no-repeat;
   background-position: 9px 8px;
@@ -24,10 +24,30 @@ td.ticket-handle {
   width: 6px;
 }
 
+.readonly .remove-ticket-button { display: none; }
+
 td.ticket-status { white-space: nowrap; }
 
 td, th {
   &.ticket-number, &.ticket-effort { text-align: right; }
 }
 
-.milestone-progress { float: right; }
+.milestone-progress {
+  float: right;
+  margin-top: 30.1px !important;
+}
+
+.milestone-goal, .milestone-feedback {
+  &.inline-editable {
+    input, textarea, button { display: none; }
+    
+    .inline-editable-link:hover { color: #005580; }
+    
+    .blank { font-style: italic; }
+    
+    &.in-edit {
+      input, textarea, button { display: inline-block; vertical-align: top; }
+      .inline-editable-link { display: none; }
+    }
+  }
+}

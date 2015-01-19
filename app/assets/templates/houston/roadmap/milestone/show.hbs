@@ -1,0 +1,52 @@
+<div id="graph" class="burndown-chart callout callout-banner"></div>
+
+{{#if milestone/goal}}
+<h2 class="light">Goal</h2>
+<div class="milestone-goal markdown">{{{markdown milestone/goal}}}</div>
+{{/if}}
+
+{{#if milestone/feedbackQuery}}
+<h2 class="light">Feedback</h2>
+<div class="milestone-feedback">
+  {{#if milestone/feedbackQuery}}
+    {{{linkToFeedbackQuery projectSlug milestone/feedbackQuery}}}
+  {{/if}}
+</div>
+{{/if}}
+
+<div>
+  <h2 class="light">Tickets</h2>
+  
+  <a class="btn" id="show_completed_tickets" data-toggle="button">Show Completed Tickets</a>
+  
+  <div class="score score-medium milestone-progress">
+    <p class="positive">
+      <span class="score-count" id="milestone_progress"></span>
+      <span class="score-label">Complete</span>
+    </p>
+  </div>
+</div>
+
+<div id="find_or_create_ticket_view"></div>
+
+<hr />
+
+{{#if tickets}}
+<table class="table table-milestone-tickets">
+  <thead>
+    <tr>
+      <td></td>
+      <th class="ticket-number">#</th>
+      <th class="ticket-summary">Summary</th>
+      <th class="ticket-effort">Effort</th>
+      <th class="ticket-status">Status</th>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody id="tickets">
+    {{#tickets}}{{> milestoneTicket}}{{/tickets}}
+  </tbody>
+</table>
+{{else}}
+<div class="alert alert-info">There are no tickets in this milestone.</div>
+{{/if}}

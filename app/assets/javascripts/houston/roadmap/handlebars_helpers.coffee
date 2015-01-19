@@ -10,3 +10,8 @@ Handlebars.registerHelper 'durationOfMilestone', (milestone)->
 Handlebars.registerHelper 'milestonePercentComplete', (milestone)->
   return "" if !milestone.percentComplete?
   App.formatPercent milestone.percentComplete
+
+Handlebars.registerHelper 'linkToFeedbackQuery', (projectSlug, feedbackQuery)->
+  q = encodeURIComponent(feedbackQuery)
+  path = "/feedback/by_project/#{projectSlug}?q=#{q}"
+  "<a href=\"#{path}\">See comments</a>"
