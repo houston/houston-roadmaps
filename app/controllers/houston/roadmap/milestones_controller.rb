@@ -48,7 +48,7 @@ module Houston
       
       
       def add_ticket
-        authorize! :update, milestone
+        authorize! :update_tickets, milestone
         ticket = Ticket.find params[:ticket_id]
         ticket.update_attribute :milestone_id, milestone.id
         head :ok
@@ -56,7 +56,7 @@ module Houston
       
       
       def create_ticket
-        authorize! :update, milestone
+        authorize! :update_tickets, milestone
         authorize! :create, milestone.tickets.build
         
         ticket = project.create_ticket!(
@@ -74,7 +74,7 @@ module Houston
       
       
       def remove_ticket
-        authorize! :update, milestone
+        authorize! :update_tickets, milestone
         ticket = Ticket.find params[:ticket_id]
         ticket.update_attribute :milestone_id, nil
         head :ok
@@ -82,6 +82,8 @@ module Houston
       
       
       def update_order
+        authorize! :update_tickets, milestone
+        
         ids = Array.wrap(params[:order]).map(&:to_i).reject(&:zero?)
         
         ::Ticket.transaction do
