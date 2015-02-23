@@ -7,15 +7,17 @@
   $(function() {
     Roadmap.milestones = new Roadmap.Milestones(<%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>, {parse: true});
     
+    var viewport = new Roadmap.Viewport({
+      start: new Date(<%=raw @range.begin.to_json %>),
+      end: new Date(<%=raw @range.end.to_json %>)
+    });
+    
     view = new Roadmap.ShowRoadmapView({
       milestones: Roadmap.milestones,
       showToday: true,
       showThumbnail: false,
       showProgress: true,
-      viewport: new Roadmap.Viewport({
-        start: new Date(<%=raw @range.begin.to_json %>),
-        end: new Date(<%=raw @range.end.to_json %>)
-      })
+      viewport: viewport
     });
     
     view.render();
@@ -24,8 +26,12 @@
       .container('#container')
       .interval(45 * Duration.MINUTE)
       .callback(function() {
-        $.getJSON(window.location.path, function(milestones) {
-          Roadmap.milestones.reset(milestones, {parse: true});
+        $.getJSON(window.location.path, function(response) {
+          Roadmap.milestones.reset(response.milestones, {parse: true});
+          viewport.set({
+            start: new Date(response.range.start),
+            end: new Date(response.range.end)
+          });
         });
       }).render();
   });

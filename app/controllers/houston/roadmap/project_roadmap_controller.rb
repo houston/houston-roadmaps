@@ -18,7 +18,9 @@ module Houston
         @title = "Current Goals"
         respond_to do |format|
           format.html { render layout: "houston/roadmap/dashboard" }
-          format.json { render json: Houston::Roadmap::MilestonePresenter.new(@milestones) }
+          format.json { render json: {
+            range: {start: @range.begin, end: @range.end},
+            milestones: Houston::Roadmap::MilestonePresenter.new(@milestones) } }
         end
       end
       
