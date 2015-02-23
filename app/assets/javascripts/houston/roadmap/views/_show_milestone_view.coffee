@@ -15,6 +15,7 @@ class Roadmap.ShowMilestoneView extends @TicketsView
   render: ->
     tickets = for ticket in @tickets.models
       json = ticket.toJSON()
+      json.estimatedEffortCompleted = ticket.estimatedEffortCompleted()
       json.estimatedEffort = ticket.estimatedEffort()
       json
     
@@ -44,6 +45,7 @@ class Roadmap.ShowMilestoneView extends @TicketsView
     $tickets.empty()
     for ticket in @tickets.models
       json = ticket.toJSON()
+      json.estimatedEffortCompleted = ticket.estimatedEffortCompleted()
       json.estimatedEffort = ticket.estimatedEffort()
       $tickets.append template(json)
   

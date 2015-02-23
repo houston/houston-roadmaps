@@ -10,6 +10,9 @@
   <td class="ticket-effort">
     {{estimatedEffort}}
   </td>
+  <td class="ticket-progress">
+    {{{ticketPercentComplete this}}}
+  </td>
   <td class="ticket-status">
     {{#if closedAt}}
       <i class="fa fa-ban"></i> Closed

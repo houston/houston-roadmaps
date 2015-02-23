@@ -29,7 +29,7 @@
 td.ticket-status { white-space: nowrap; }
 
 td, th {
-  &.ticket-number, &.ticket-effort { text-align: right; }
+  &.ticket-number, &.ticket-effort, &.ticket-progress { text-align: right; }
 }
 
 .milestone-progress {

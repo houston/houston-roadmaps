@@ -11,6 +11,11 @@ Handlebars.registerHelper 'milestonePercentComplete', (milestone)->
   return "" if !milestone.percentComplete?
   App.formatPercent milestone.percentComplete
 
+Handlebars.registerHelper 'ticketPercentComplete', (ticket)->
+  return "" unless ticket.estimatedEffort? and ticket.estimatedEffortCompleted?
+  percent = ticket.estimatedEffortCompleted / ticket.estimatedEffort
+  App.formatPercent percent
+
 Handlebars.registerHelper 'linkToFeedbackQuery', (projectSlug, feedbackQuery)->
   q = encodeURIComponent(feedbackQuery)
   path = "/feedback/by_project/#{projectSlug}?q=#{q}"
