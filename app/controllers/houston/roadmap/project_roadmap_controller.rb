@@ -13,7 +13,7 @@ module Houston
       
       def dashboard
         today = Date.today
-        @range = 3.weeks.before(today)..6.weeks.after(today)
+        @range = 6.months.before(today)..6.months.after(today)
         @milestones = Milestone.during(@range)
         @title = "Current Goals"
         respond_to do |format|
