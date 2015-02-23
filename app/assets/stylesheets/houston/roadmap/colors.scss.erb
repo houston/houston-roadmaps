@@ -1,3 +1,13 @@
+// Add percentage of white to a color
+@function tint($color, $percent){
+  @return mix(white, $color, $percent);
+}
+ 
+// Add percentage of black to a color
+@function shade($color, $percent){
+  @return mix(black, $color, $percent);
+}
+
 <% Houston.config.project_colors.each do |name, value| %>
   $<%= name %>: <%= value.rgb %>;
 <% end %>
@@ -15,11 +25,20 @@
 body.dashboard .roadmap-band {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      .roadmap-milestone { border-color: <%= value.rgb %>; }
-      .roadmap-milestone-progress { background: rgba(<%= value.rgb %>, 0.75); }
+      .roadmap-milestone {
+        border-color: <%= value.rgb %>;
+        & > span { color: hsl(hue($<%= name %>), saturation($<%= name %>), 80); }
+        .roadmap-milestone-progress { background: shade($<%= name %>, 25%); }
+      }
+      
       .roadmap-milestone.completed {
-        color: rgba(255, 255, 255, 0.66);
-        .roadmap-milestone-progress { background: <%= value.rgb %>; }
+        .roadmap-milestone-progress { background: $<%= name %>; }
+        & > span { color: black; }
+      }
+      
+      .roadmap-milestone.upcoming {
+        border-color: shade(<%= value.rgb %>, 50%);
+        & > span { color: shade(hsl(hue($<%= name %>), saturation($<%= name %>), 80), 50%); }
       }
     }
   <% end %>

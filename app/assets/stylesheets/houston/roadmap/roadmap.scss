@@ -93,19 +93,21 @@ body.dashboard {
   
   .roadmap-milestone {
     background: black;
-    padding: 8px;
     border-width: 1px;
     border-style: solid;
     border-radius: 4px;
-    
-    &::before { display: none; }
-    
-    &.upcoming { opacity: 0.5; }
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.25em;
+    padding: 0 4px;
+    overflow: hidden;
     
     & > span {
       -webkit-font-smoothing: antialiased;
-      color: rgba(255, 255, 255, 0.45);
+      white-space: normal;
     }
+    
+    &::before { display: none; }
   }
   
   .roadmap-today {
@@ -150,10 +152,6 @@ to {background-position: 30px 0;}
       border-top-left-radius: 2px;
       border-bottom-left-radius: 2px;
     }
-  }
-  
-  &.completed {
-    opacity: 0.5;
   }
   
   &::before {
