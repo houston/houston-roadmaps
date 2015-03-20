@@ -99,12 +99,15 @@ body.dashboard {
     font-size: 11px;
     font-weight: 500;
     line-height: 1.25em;
-    padding: 0 4px;
-    overflow: hidden;
-    
+    padding: 0;
+
     & > span {
       -webkit-font-smoothing: antialiased;
       white-space: normal;
+
+      display: block;
+      overflow: hidden;
+      height: 100%;
     }
     
     &::before { display: none; }
