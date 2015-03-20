@@ -165,7 +165,8 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         lastRight = ui.position.left + ui.size.width
         view.drag.$milestonesAfter.each (i)->
           left = view.drag.milestonesAfterPositions[i]
-          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0 and !$(@).hasClass('locked')
+          gap = if i is 0 then 0 else view.drag.minGap
+          left = Math.max(left + delta, lastRight + gap) if delta > 0 and !$(@).hasClass('locked')
           $(@).css(left: left)
           lastRight = left + $(@).outerWidth()
       
@@ -217,7 +218,8 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         lastRight = ui.position.left + ui.helper.outerWidth()
         view.drag.$milestonesAfter.each (i)->
           left = view.drag.milestonesAfterPositions[i]
-          left = Math.max(left + delta, lastRight + view.drag.minGap) if delta > 0 and !$(@).hasClass('locked')
+          gap = if i is 0 then 0 else view.drag.minGap
+          left = Math.max(left + delta, lastRight + gap) if delta > 0 and !$(@).hasClass('locked')
           $(@).css(left: left)
           lastRight = left + $(@).outerWidth()
       
