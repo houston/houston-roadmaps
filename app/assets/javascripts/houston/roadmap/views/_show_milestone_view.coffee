@@ -2,15 +2,14 @@ class Roadmap.ShowMilestoneView extends @TicketsView
   supportsSorting: false
   template: HandlebarsTemplates['houston/roadmap/milestone/show']
   
-  events:
-    'click #show_completed_tickets': 'toggleShowCompleted'
-  
   initialize: ->
     @milestone = @options.milestone
     @id = @milestone.id
     @projectTicketTracker = @options.projectTicketTracker
     @usesFeedback = @options.usesFeedback
     super
+
+    @$el.on 'click', '#show_completed_tickets', _.bind(@toggleShowCompleted, @)
   
   render: ->
     tickets = for ticket in @tickets.models
@@ -179,7 +178,7 @@ class Roadmap.ShowMilestoneView extends @TicketsView
       sum_xx += _x * _x
       sum_xy += _x * _y
     m = (n*sum_xy - sum_x*sum_y) / (n*sum_xx - sum_x*sum_x)
-    b = (sum_y - m*sum_x)/n
+    b = (sum_y - m*sum_x) / n
     
     # No progress is being made
     return null if m == 0
