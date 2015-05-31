@@ -187,7 +187,7 @@ class Roadmap.RoadmapView
         number: milestone.band
         milestones: []).milestones.push(milestone)
     
-    _.values(milestoneBands)
+    _.sortBy(_.values(milestoneBands), 'projectId')
   
   toJSON: (milestone)->
     json = milestone.toJSON()
