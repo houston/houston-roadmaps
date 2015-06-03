@@ -15,7 +15,7 @@ module Houston
         today = Date.today
         @range = 6.months.before(today)..6.months.after(today)
         @milestones = Milestone.during(@range)
-        @title = "Current Goals"
+        @title = "Roadmap"
         respond_to do |format|
           format.html { render layout: "houston/roadmap/dashboard" }
           format.json { render json: {
