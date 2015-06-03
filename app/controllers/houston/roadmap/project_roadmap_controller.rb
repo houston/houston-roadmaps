@@ -52,6 +52,14 @@ module Houston
       end
       
       
+      def history
+        @project = Project.find_by_slug!(params[:slug])
+        authorize! :read, @project.milestones.build
+
+        
+      end
+      
+      
     end
   end
 end

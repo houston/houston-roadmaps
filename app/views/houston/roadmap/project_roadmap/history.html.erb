@@ -1,0 +1,7 @@
+<%= render partial: "projects/header", locals: {project: @project, subtitle: "Roadmap"} %>
+
+<ul>
+  <% RoadmapCommit.where(project: @project).order(created_at: :desc).each do |commit| %>
+    <li><%= commit.created_at.strftime("%b %-d, %Y") %> <%= avatar_for commit.user %> <%= commit.message %></li>
+  <% end %>
+</ul>

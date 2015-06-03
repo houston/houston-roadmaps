@@ -1,10 +1,11 @@
 class RoadmapCommit < ActiveRecord::Base
-  attr_accessor :milestone_changes, :project
+  attr_accessor :milestone_changes
   
+  belongs_to :project
   belongs_to :user
   has_many :milestone_versions
   
-  validates :user, :message, :milestone_changes, presence: true
+  validates :user, :message, :project, :milestone_changes, presence: true
   
   after_save :commit_milestone_changes
   

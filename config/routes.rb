@@ -3,6 +3,7 @@ Houston::Roadmap::Engine.routes.draw do
   get "", :to => "project_roadmap#index", :as => :project_roadmaps
   get "dashboard", :to => "project_roadmap#dashboard"
   get "by_project/:slug", :to => "project_roadmap#show", :as => :project_roadmap
+  get "by_project/:slug/history", :to => "project_roadmap#history", :as => :project_roadmap_history
   put "by_project/:slug", :to => "project_roadmap#update"
   
   post "milestones", :to => "milestones#create"
