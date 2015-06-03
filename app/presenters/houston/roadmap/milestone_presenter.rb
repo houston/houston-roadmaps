@@ -47,7 +47,7 @@ private
       AS open_tasks
         ON open_tasks.ticket_id=tickets.id
       LEFT OUTER JOIN (
-        SELECT ticket_Id, COUNT(id) "count"
+        SELECT ticket_id, COUNT(id) "count"
         FROM tasks
         WHERE tasks.completed_at IS NOT NULL
         GROUP BY ticket_id)
