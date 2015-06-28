@@ -1,9 +1,12 @@
 class Roadmap.ThumbnailRoadmapView
+  today: new Date()
   
   constructor: (options)->
     @milestones = options.milestones
     @parent = options.parent
     @viewport = options.viewport
+    @showToday = options.showToday
+    @markers = options.markers
     @milestones.bind 'add', @update, @
     @milestones.bind 'remove', @update, @
     @milestones.bind 'change', @update, @
@@ -134,3 +137,37 @@ class Roadmap.ThumbnailRoadmapView
     
     # exit
     milestones.exit().remove()
+    
+    
+    if @showToday
+      todayLine = @roadmap.selectAll('.thumbnail-roadmap-today')
+        .data([@today])
+      
+      todayLine.enter()
+        .append('rect')
+          .attr('class', 'thumbnail-roadmap-today')
+          .attr('height', @graphHeight - 1)
+          .attr('width', 1)
+          .attr('x', (date)=> @x(date))
+          .attr('y', 1)
+      
+      todayLine
+        .attr('x', (date)=> @x(date))
+    
+    
+    
+    markers = @roadmap.selectAll('.thumbnail-roadmap-marker')
+      .data(@markers)
+    
+    markers.enter()
+      .append('rect')
+        .attr('class', 'thumbnail-roadmap-marker')
+        .attr('height', @graphHeight - 1)
+        .attr('width', 1)
+        .attr('x', ({date})=> @x(date))
+        .attr('y', 1)
+    
+    markers
+      .attr('x', ({date})=> @x(date))
+  
+    markers.exit().remove()

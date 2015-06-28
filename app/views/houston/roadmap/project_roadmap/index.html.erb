@@ -15,6 +15,7 @@
     Roadmap.milestones = new Roadmap.Milestones(milestones, {parse: true});
     new Roadmap.ShowRoadmapView({
       milestones: Roadmap.milestones,
+      markers: <%=raw @markers.to_json %>,
       linkMilestones: true
     }).render();
   });

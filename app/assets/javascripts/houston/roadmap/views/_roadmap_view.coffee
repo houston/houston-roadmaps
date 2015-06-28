@@ -10,6 +10,9 @@ class Roadmap.RoadmapView
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
+    @markers = options.markers ? []
+    for marker in @markers
+      marker.date = App.serverDateFormat.parse(marker.date)
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'remove', @update, @
@@ -28,6 +31,8 @@ class Roadmap.RoadmapView
     if @showThumbnail
       @thumbnail = new Roadmap.ThumbnailRoadmapView
         milestones: @milestones
+        markers: @markers
+        showToday: @showToday
         viewport: @viewport
         parent: d3.select('#roadmap')
       @thumbnail.render()
@@ -174,6 +179,22 @@ class Roadmap.RoadmapView
       update = if transition then todayLine.transition(150) else todayLine
       update
         .attr('style', (date)=> "left: #{@x(date)}px;")
+    
+    
+    
+    markers = @roadmap.selectAll('.roadmap-marker')
+      .data(@markers)
+    
+    markers.enter()
+      .append('div')
+        .attr('class', 'roadmap-marker')
+        .attr('style', ({date})=> "left: #{@x(date)}px;")
+    
+    update = if transition then markers.transition(150) else markers
+    update
+      .attr('style', ({date})=> "left: #{@x(date)}px;")
+  
+    markers.exit().remove()
   
   groupMilestonesIntoBands: ->
     milestoneBands = {}

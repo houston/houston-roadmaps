@@ -8,6 +8,7 @@ module Houston
         authorize! :read, Milestone
         
         @milestones = Milestone.visible
+        @markers = Houston::Roadmap.config.markers
         @title = "Roadmap"
       end
       
@@ -32,6 +33,7 @@ module Houston
         authorize! :read, @project.milestones.build
         
         @milestones = @project.milestones.all
+        @markers = Houston::Roadmap.config.markers
         
         if request.format.json?
           render json: Houston::Roadmap::MilestonePresenter.new(@milestones)

@@ -13,12 +13,14 @@
       projectId: <%= @project.id %>,
       projectSlug: '<%= @project.slug %>',
       projectColor: '<%= @project.color %>',
+      markers: <%=raw @markers.to_json %>,
       milestones: Roadmap.milestones
     }).render();
     <% else %>
     new Roadmap.ShowProjectRoadmapView({
       el: $('#roadmap_view')[0],
       projectId: <%= @project.id %>,
+      markers: <%=raw @markers.to_json %>,
       milestones: Roadmap.milestones,
       showWeekends: true
     }).render();

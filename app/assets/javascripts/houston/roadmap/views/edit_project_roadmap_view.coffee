@@ -19,6 +19,7 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
         project: {id: @projectId, color: @projectColor}
         showWeekends: true
         gapWeeks: 1
+        markers: @options.markers
       .createMilestone(_.bind(@createMilestone, @))
     @milestones.bind 'change', @indicateIfRoadmapHasChanged, @
     @milestones.bind 'add', @indicateIfRoadmapHasChanged, @
