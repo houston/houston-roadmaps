@@ -16,7 +16,7 @@ class Roadmap.RoadmapView
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'remove', @update, @
-    @milestones.bind 'reset', @reset, @
+    @milestones.bind 'reset', @update, @
     $(window).resize (e)=>
       @updateWindow() if e.target is window
   
@@ -49,9 +49,6 @@ class Roadmap.RoadmapView
     @xAxis = svg.append('g').attr('class', 'x axis')
     
     @updateWindow()
-  
-  reset: ->
-    window.setTimeout _.bind(@updateViewport, @)
   
   updateWindow: ->
     width = @$el.width() || 960
@@ -212,7 +209,7 @@ class Roadmap.RoadmapView
   
   toJSON: (milestone)->
     json = milestone.toJSON()
-    json.cid = milestone.cid
+    json.cid = milestone.id # Use `id` because the view is readonly
     json
   
   initializeBand: ->

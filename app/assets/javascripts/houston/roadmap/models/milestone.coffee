@@ -34,8 +34,8 @@ class Roadmap.Milestone extends Backbone.Model
   
   
   parse: (milestone)->
-    milestone.startDate = App.serverDateFormat.parse(milestone.startDate) if milestone.startDate
-    milestone.endDate = App.serverDateFormat.parse(milestone.endDate) if milestone.endDate
+    milestone.startDate = App.serverDateFormat.parse(milestone.startDate) if milestone.startDate and !_.isDate(milestone.startDate)
+    milestone.endDate = App.serverDateFormat.parse(milestone.endDate) if milestone.endDate and !_.isDate(milestone.endDate)
     milestone
   
   toJSON: (options)->

@@ -1,7 +1,33 @@
 <%= render partial: "projects/header", locals: {project: @project, subtitle: "Roadmap"} %>
 
-<ul>
-  <% RoadmapCommit.where(project: @project).order(created_at: :desc).each do |commit| %>
-    <li><%= commit.created_at.strftime("%b %-d, %Y") %> <%= avatar_for commit.user %> <%= commit.message %></li>
-  <% end %>
-</ul>
+<div id="roadmap_history_view"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var milestones = <%= raw Houston::Roadmap::MilestonePresenter.new(@milestones).to_json %>;
+    new Roadmap.ProjectRoadmapHistoryView({
+      milestones: milestones,
+      commitId: <%= @commit_id %>,
+      commits: <%=raw @commits.map { |commit| {
+        id: commit.id,
+        createdAt: commit.created_at,
+        user: commit.user && {
+          email: commit.user.email,
+          name: commit.user.name },
+        message: commit.message,
+        changes: commit.milestone_versions.map { |version| {
+          milestoneId: version.versioned_id,
+          number: version.number,
+          modifications: Hash[version.modifications.map { |key, change|
+            key = "startDate" if key == "start_date"
+            key = "endDate" if key == "end_date"
+            [key, change]
+          }] } }
+      } }.to_json %>,
+      markers: <%=raw @markers.to_json %>,
+      showWeekends: true
+    }).render();
+  });
+</script>
+<% end %>

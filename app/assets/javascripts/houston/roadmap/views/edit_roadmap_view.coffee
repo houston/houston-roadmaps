@@ -290,3 +290,8 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     weekend = @x(2.days().after(date)) - @x(date)
     week = @x(7.days().after(date)) - @x(date)
     weekend + (week * @gapWeeks)
+
+  toJSON: (milestone)->
+    json = milestone.toJSON()
+    json.cid = milestone.cid # Use `cid` because some milestones may not be saved yet
+    json

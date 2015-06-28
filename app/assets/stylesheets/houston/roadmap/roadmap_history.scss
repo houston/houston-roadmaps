@@ -1,0 +1,34 @@
+.roadmap-commit-reverted {
+  color: #ccc;
+}
+
+#roadmap_commits {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
+  border-top: 2px solid;
+  margin: 0;
+
+  ul {
+    margin: 20px 0;
+  }
+
+  input[type="radio"] {
+    margin: 0;
+  }
+}
+
+.roadmap-commit {
+  display: block;
+
+  label {
+    margin-bottom: 0;
+    padding: 2px 24px;
+  }
+
+  &:hover {
+    background: rgba(128, 212, 255, 0.1);
+  }
+}

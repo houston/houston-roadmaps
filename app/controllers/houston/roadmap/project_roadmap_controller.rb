@@ -57,8 +57,12 @@ module Houston
       def history
         @project = Project.find_by_slug!(params[:slug])
         authorize! :read, @project.milestones.build
-
         
+        @commits = RoadmapCommit.where(project: @project).order(created_at: :desc)
+        @commit_id = params[:commit_id].to_i
+        
+        @milestones = @project.milestones.all
+        @markers = Houston::Roadmap.config.markers
       end
       
       
