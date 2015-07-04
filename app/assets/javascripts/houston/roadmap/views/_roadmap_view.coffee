@@ -12,7 +12,7 @@ class Roadmap.RoadmapView
     @height = 24
     @markers = options.markers ? []
     for marker in @markers
-      marker.date = App.serverDateFormat.parse(marker.date)
+      marker.date = App.serverDateFormat.parse(marker.date).endOfDay()
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'remove', @update, @
