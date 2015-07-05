@@ -30,6 +30,13 @@ class Roadmap.Milestone extends Backbone.Model
       originalValue = @_originalAttributes[attribute]
       changes[attribute] = [originalValue, value] unless _.isEqual(originalValue, value)
     changes
+
+  bands: ->
+    band = @get('band')
+    bands = [band]
+    for i in [1...@get('lanes')]
+      bands.push band + i
+    bands
   
   
   
@@ -47,6 +54,8 @@ class Roadmap.Milestone extends Backbone.Model
       json.end_date = App.serverDateFormat(json.endDate) if json.endDate
       delete json.endDate
     json
+
+
 
 class Roadmap.Milestones extends Backbone.Collection
   model: Roadmap.Milestone
@@ -76,3 +85,34 @@ class Roadmap.Milestones extends Backbone.Collection
         change
       else
         milestone.toJSON(emulateHTTP: true)
+
+  overlappingBands: (bands)->
+    new Milestones @select (m)-> _.intersection(m.bands(), bands).length > 0
+
+  before: (milestone)->
+    startDate = milestone.get('startDate')
+    new Milestones @select (m)-> m.get('endDate') < startDate
+
+  after: (milestone)->
+    endDate = milestone.get('endDate')
+    new Milestones @select (m)-> m.get('startDate') > endDate
+
+  lastMilestoneBefore: (milestone)->
+    @before(milestone).sortBy('endDate').last()
+
+  firstMilestoneAfter: (milestone)->
+    @after(milestone).sortBy('startDate').first()
+
+  downstreamOf: (date, bands)->
+    milestones = []
+    @each (milestone)->
+      return if milestone.get('startDate') < date
+      newBands = milestone.bands()
+      return if _.intersection(newBands, bands).length is 0
+
+      # If this milestone being dragged can push this milestone,
+      # then it can also push any milestones this one can push
+      bands = _.union(bands, newBands)
+      milestones.push milestone
+    milestones
+
