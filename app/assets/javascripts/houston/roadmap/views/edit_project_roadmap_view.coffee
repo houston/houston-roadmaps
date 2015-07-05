@@ -76,7 +76,9 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
         .success =>
           $buttons.prop('disabled', false)
           @milestones.url = "/roadmap/by_project/#{@projectSlug}"
-          @milestones.fetch(reset: true, parse: true)
+          @milestones.fetch
+            parse: true
+            wait: true
         .error (response)->
           $buttons.prop('disabled', false)
           errors = Errors.fromResponse(response)
