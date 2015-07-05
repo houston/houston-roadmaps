@@ -136,6 +136,7 @@ class Roadmap.RoadmapView
       
       # Put the milestone name into a span so that Midori can render it correctly
       .append('span')
+        .attr('class', 'roadmap-milestone-name')
         .text((milestone)-> milestone.name)
     
     update = if transition then milestones.transition(150) else milestones
@@ -159,6 +160,9 @@ class Roadmap.RoadmapView
         .attr 'style', (milestone)->
           return "width: 0" if milestone.tickets is 0
           "width: #{milestone.percentComplete * 100}%"
+
+    update.select('.roadmap-milestone-name')
+      .text((milestone)-> milestone.name)
     
     milestones.exit().remove()
     

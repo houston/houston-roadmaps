@@ -130,6 +130,17 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
 
   initializeMilestone: (milestone)->
     view = @
+    $milestone = $(milestone)
+
+    $(milestone).dblclick (e)=>
+      return false if $milestone.hasClass('locked')
+      id = $milestone.attr('data-cid')
+      milestone = @milestones.get(id)
+      return false unless milestone
+
+      if name = prompt('Name:', milestone.get('name'))
+        milestone.set(name: name)
+
     $(milestone).resizable
       handles: 'e, s, se'
       animate: false
