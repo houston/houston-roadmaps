@@ -9,8 +9,11 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
     @project = options.project
     super(milestones, options)
     $(document.body).on 'keyup', (e)=>
-      return unless @$newMilestone and @supportsCreate
-      @cancelCreate() if e.keyCode is 27
+      if e.keyCode is 27
+        @cancelCreate() if @$newMilestone and @supportsCreate
+        if @drag
+          @update()
+          @drag = null
 
 
   createMilestone: (callback)->
@@ -187,7 +190,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       start: _.bind(@onStartDrag, @)
 
       drag: (e, ui)=>
-        return unless @drag
+        return false unless @drag
         @initializeDrag() unless @drag.band is @drag.bandOver
 
         ui.position.left = Math.max(ui.position.left, @drag.minLeft)
@@ -207,7 +210,8 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         $(e.target).resizable 'option', 'grid', false
         $(e.target).draggable 'option', 'grid', false
 
-      revert: ($target)-> !$target or !$target.is('.roadmap-band')
+      revert: ($target)->
+        !$target or !$target.is('.roadmap-band')
 
 
   onStartDrag: (e, ui)->
