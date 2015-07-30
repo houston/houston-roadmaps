@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ["bob.lailfamily@gmail.com"]
   s.homepage    = "https://github.com/houstonmc/houston-roadmap"
   s.summary     = "A module for Houston to facilitate managing milestones"
-  s.description = "TODO: Description of Houston Roadmap."
+  s.description = "A module for Houston to facilitate managing milestones"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
