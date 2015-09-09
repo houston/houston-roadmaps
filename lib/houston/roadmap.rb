@@ -4,10 +4,12 @@ require "houston/roadmap/configuration"
 module Houston
   module Roadmap
     extend self
-    
-    attr_reader :config
-    
+
+    def config(&block)
+      @configuration ||= Roadmap::Configuration.new
+      @configuration.instance_eval(&block) if block_given?
+      @configuration
+    end
+
   end
-  
-  Roadmap.instance_variable_set :@config, Roadmap::Configuration.new
 end

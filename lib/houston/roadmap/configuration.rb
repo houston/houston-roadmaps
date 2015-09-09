@@ -4,9 +4,6 @@ module Houston::Roadmap
     
     def initialize
       @markers = []
-      
-      config = Houston.config.module(:roadmap).config
-      instance_eval(&config) if config
     end
     
     def date(date_string, description)
