@@ -1,11 +1,11 @@
 class Roadmap.Milestone extends Backbone.Model
   urlRoot: '/roadmap/milestones'
-  
+
   initialize: ->
     super
     _.bindAll(@, 'clearChangesSinceSave', 'revert')
     @clearChangesSinceSave()
-  
+
   save: (attrs, options)->
     success = options?.success
     options.success = (response)=>
@@ -14,16 +14,16 @@ class Roadmap.Milestone extends Backbone.Model
       @clearChangesSinceSave()
     @trigger('save', @)
     super
-  
+
   duration: ->
     Math.floor((@get('endDate') - @get('startDate')) / Duration.DAY).days()
-  
+
   clearChangesSinceSave: ->
     @_originalAttributes = _.clone @attributes
-  
+
   revert: ->
     @set(@_originalAttributes) if @_originalAttributes
-  
+
   changesSinceSave: ->
     changes = {}
     for attribute, value of @attributes
@@ -37,14 +37,14 @@ class Roadmap.Milestone extends Backbone.Model
     for i in [1...@get('lanes')]
       bands.push band + i
     bands
-  
-  
-  
+
+
+
   parse: (milestone)->
     milestone.startDate = App.serverDateFormat.parse(milestone.startDate) if milestone.startDate and !_.isDate(milestone.startDate)
     milestone.endDate = App.serverDateFormat.parse(milestone.endDate) if milestone.endDate and !_.isDate(milestone.endDate)
     milestone
-  
+
   toJSON: (options)->
     json = super(options)
     json.cid = @cid
@@ -60,10 +60,10 @@ class Roadmap.Milestone extends Backbone.Model
 class Roadmap.Milestones extends Backbone.Collection
   model: Roadmap.Milestone
   comparator: 'startDate'
-  
+
   start: -> _.min @pluck('startDate')
   end: -> _.max @pluck('endDate')
-  
+
   revert: ->
     i = 0
     while i < @length
@@ -73,7 +73,7 @@ class Roadmap.Milestones extends Backbone.Collection
         i++
       else
         @remove(milestone)
-  
+
   changes: ->
     for milestone in @models when !milestone.id or _.keys(changes = milestone.changesSinceSave()).length > 0
       if milestone.id
@@ -81,7 +81,7 @@ class Roadmap.Milestones extends Backbone.Collection
         for attribute, [originalView, newValue] of changes
           [attribute, newValue] = ['start_date', App.serverDateFormat(newValue)] if attribute is 'startDate'
           [attribute, newValue] = ['end_date', App.serverDateFormat(newValue)] if attribute is 'endDate'
-          change[attribute] = newValue 
+          change[attribute] = newValue
         change
       else
         milestone.toJSON(emulateHTTP: true)
@@ -115,4 +115,3 @@ class Roadmap.Milestones extends Backbone.Collection
       bands = _.union(bands, newBands)
       milestones.push milestone
     milestones
-

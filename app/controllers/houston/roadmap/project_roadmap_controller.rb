@@ -2,16 +2,16 @@ module Houston
   module Roadmap
     class ProjectRoadmapController < ApplicationController
       layout "houston/roadmap/application"
-      
-      
+
+
       def index
         authorize! :read, Milestone
-        
+
         @milestones = Milestone.visible
         @markers = Houston::Roadmap.config.markers
         @title = "Roadmap"
       end
-      
+
       def dashboard
         today = Date.today
         @range = 6.months.before(today)..6.months.after(today)
@@ -24,48 +24,48 @@ module Houston
             milestones: Houston::Roadmap::MilestonePresenter.new(@milestones) } }
         end
       end
-      
-      
+
+
       def show
         @project = Project.find_by_slug!(params[:slug])
         @title = "Roadmap • #{@project.name}"
-        
+
         authorize! :read, @project.milestones.build
-        
+
         @milestones = @project.milestones.all
         @markers = Houston::Roadmap.config.markers
-        
+
         if request.format.json?
           render json: Houston::Roadmap::MilestonePresenter.new(@milestones)
         end
       end
-      
+
       def update
         @project = Project.find_by_slug!(params[:slug])
         authorize! :update, @project.milestones.build
-        
+
         RoadmapCommit.create!(
           user: current_user,
           project: @project,
           message: params[:message],
           milestone_changes: params.fetch(:roadmap, {}).values)
-        
+
         head :ok
       end
-      
-      
+
+
       def history
         @project = Project.find_by_slug!(params[:slug])
         authorize! :read, @project.milestones.build
-        
+
         @commits = RoadmapCommit.where(project: @project).order(created_at: :desc)
         @commit_id = params[:commit_id].to_i
-        
+
         @milestones = @project.milestones.all
         @markers = Houston::Roadmap.config.markers
       end
-      
-      
+
+
     end
   end
 end

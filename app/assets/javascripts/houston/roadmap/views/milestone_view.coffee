@@ -1,6 +1,6 @@
 class window.MilestoneView extends Neat.ModelEditor
   tagName: 'tr'
-  
+
   render: ->
     super
     @$el.attr 'data-cid', @model.cid

@@ -1,16 +1,16 @@
 class RoadmapCommit < ActiveRecord::Base
   attr_accessor :milestone_changes
-  
+
   belongs_to :project
   belongs_to :user
   has_many :milestone_versions
-  
+
   validates :user, :message, :project, :milestone_changes, presence: true
-  
+
   after_save :commit_milestone_changes
-  
+
 private
-  
+
   def commit_milestone_changes
     milestone_changes.each do |change|
       id = change.delete(:id)
@@ -24,5 +24,5 @@ private
       version.update_column :roadmap_commit_id, self.id if version
     end
   end
-  
+
 end

@@ -34,7 +34,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
         left = @$newMilestone.position().left
         startDate = @x.invert(left)
         endDate = @x.invert(left + newMilestoneWidth)
-        attributes = 
+        attributes =
           band: band
           lanes: 1
           startDate: d3.time.monday.round(startDate)
@@ -148,7 +148,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       handles: 'e, s, se'
       animate: false
       start: _.bind(@onStartDrag, @)
-      
+
       resize: (e, ui)=>
         return unless @drag
 
@@ -232,7 +232,7 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
       $milestone = $(@)
       $milestone.data('original-left', $milestone.position().left)
 
-    @drag = 
+    @drag =
       milestone: milestone
       handle: handle
 

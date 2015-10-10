@@ -4,7 +4,7 @@ class AddClosedTicketCountToMilestones < ActiveRecord::Migration
     Milestone.reset_column_information
     Milestone.find_each(&:update_closed_tickets_count!)
   end
-  
+
   def down
     remove_column :milestones, :closed_tickets_count
   end

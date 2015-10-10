@@ -4,12 +4,12 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
   sortedBy: 'startDate'
   sortOrder: 'asc'
   pageSize: Infinity
-  
+
   events:
     'click #show_completed_milestones': 'toggleShowCompleted'
     'click #reset_roadmap': 'reset'
     'click #save_roadmap': 'save'
-  
+
   initialize: ->
     @projectId = @options.projectId
     @projectSlug = @options.projectSlug
@@ -24,17 +24,17 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
     @milestones.bind 'add', @indicateIfRoadmapHasChanged, @
     @milestones.bind 'remove', @indicateIfRoadmapHasChanged, @
     super
-  
+
   render: ->
     super
     @roadmap.render()
     @indicateIfRoadmapHasChanged()
     @
-  
+
   indicateIfRoadmapHasChanged: ->
     @$el.find('.buttons button')
       .prop 'disabled', @milestones.changes().length is 0
-  
+
   createMilestone: (attributes, callback)->
     attributes.projectId = @projectId
     if attributes.name = prompt('Name:')
@@ -47,9 +47,9 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
       callback()
     else
       callback()
-  
-  
-  
+
+
+
   toggleShowCompleted: (e)->
     $button = $(e.target)
     if $button.hasClass('active')
@@ -58,11 +58,11 @@ class Roadmap.EditProjectRoadmapView extends Neat.CollectionEditor
     else
       $button.addClass('btn-success')
       @$el.removeClass('hide-completed')
-  
+
   reset: (e)->
     e.preventDefault()
     @milestones.revert()
-  
+
   save: (e)->
     e.preventDefault()
     if message = prompt('Commit message:')

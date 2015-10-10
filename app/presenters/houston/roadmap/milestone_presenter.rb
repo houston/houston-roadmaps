@@ -1,13 +1,13 @@
 class Houston::Roadmap::MilestonePresenter
-  
+
   def initialize(milestones)
     @milestones = OneOrMany.new(milestones)
   end
-  
+
   def as_json(*args)
     @milestones.map(&method(:to_hash))
   end
-  
+
   def to_hash(milestone)
     project = milestone.project
     { id: milestone.id,
@@ -24,13 +24,13 @@ class Houston::Roadmap::MilestonePresenter
       startDate: milestone.start_date,
       endDate: milestone.end_date }
   end
-  
+
 private
-  
+
   def percent_complete(milestone)
     percent_complete_by_ticket.fetch(milestone.id, 0)
   end
-  
+
   def percent_complete_by_ticket
     @percent_complete_by_ticket ||= Hash[Milestone.connection.select_rows(<<-SQL)
       SELECT
@@ -56,16 +56,16 @@ private
       WHERE tickets.destroyed_at IS NULL
       AND tickets.milestone_id IN (#{milestone_ids.join(", ")})
     SQL
-      .map { |milestone_id, _, closed, tasks, completed_tasks| 
+      .map { |milestone_id, _, closed, tasks, completed_tasks|
         [ milestone_id.to_i,
           closed == "t" ? 1.0 : (completed_tasks.to_f / (tasks.to_i + 1)) ] }
       .group_by { |(milestone_id, _)| milestone_id }
       .map { |(milestone_id, tickets)|
         [milestone_id, (tickets.sum { |(_, percent)| percent } / tickets.length)] }]
   end
-  
+
   def milestone_ids
     @milestone_ids ||= Array(@milestones.map(&:id))
   end
-  
+
 end

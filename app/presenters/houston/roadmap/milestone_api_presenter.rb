@@ -1,13 +1,13 @@
 class Houston::Roadmap::MilestoneApiPresenter
-  
+
   def initialize(milestones)
     @milestones = OneOrMany.new(milestones)
   end
-  
+
   def as_json(*args)
     @milestones.map(&method(:to_hash))
   end
-  
+
   def to_hash(milestone)
     project = milestone.project
     { id: milestone.id,
@@ -23,5 +23,5 @@ class Houston::Roadmap::MilestoneApiPresenter
       startDate: milestone.start_date,
       endDate: milestone.end_date }
   end
-  
+
 end

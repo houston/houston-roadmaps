@@ -9,7 +9,7 @@ class AddEndDateToMilestones < ActiveRecord::Migration
         AND units IS NOT NULL
     SQL
   end
-  
+
   def down
     remove_column :milestones, :end_date
   end

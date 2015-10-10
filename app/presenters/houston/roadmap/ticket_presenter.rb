@@ -1,6 +1,6 @@
 class Houston::Roadmap::TicketPresenter < TicketPresenter
   include MarkdownHelper
-  
+
   def ticket_to_json(ticket)
     reporter = ticket.reporter
     super.merge(
@@ -16,5 +16,5 @@ class Houston::Roadmap::TicketPresenter < TicketPresenter
         name: reporter.name },
       firstReleaseAt: ticket.first_release_at)
   end
-  
+
 end

@@ -40,11 +40,11 @@ td, th {
 .milestone-goal, .milestone-feedback {
   &.inline-editable {
     input, textarea, button { display: none; }
-    
+
     .inline-editable-link:hover { color: #005580; }
-    
+
     .blank { font-style: italic; }
-    
+
     &.in-edit {
       input, button { display: inline-block; vertical-align: top; }
       textarea {

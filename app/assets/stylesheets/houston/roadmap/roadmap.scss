@@ -3,12 +3,12 @@
     background-color: rgba(128, 212, 255, 0.1);
     cursor: pointer;
   }
-  
-  td { 
+
+  td {
     padding: 4px 8px;
     border-bottom: 0;
   }
-  
+
   .milestone-name {
     input {
       margin: 0;
@@ -17,15 +17,15 @@
       height: 30px;
     }
   }
-  
+
   &.inactive .milestone-name a { display: block; }
-  
+
   .milestone-duration, .milestone-lanes, .milestone-tickets { text-align: right; }
   .milestone-tickets.zero { color: #ccc; }
   .milestone-locked { text-align: center; width: 2.25em; }
   .milestone-completion { text-align: right; width: 2.5em; }
   .milestone-startDate { font-size: 0.84em; }
-  
+
   .fa-unlock-alt { color: #ccc; }
 }
 
@@ -52,12 +52,12 @@ form.freight_train { margin-bottom: 0; }
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  
+
   &.drag-create {
     cursor: ew-resize;
     cursor: col-resize;
   }
-  
+
   .roadmap-axis {
     position: absolute;
     bottom: 2em;
@@ -90,7 +90,7 @@ body.dashboard {
     margin: 4px 0;
     height: 34px;
   }
-  
+
   .roadmap-milestone {
     background: black;
     border-width: 1px;
@@ -109,10 +109,10 @@ body.dashboard {
       overflow: hidden;
       height: 100%;
     }
-    
+
     &::before { display: none; }
   }
-  
+
   .roadmap-marker {
     background: rgba(255, 255, 255, 0.15);
     width: 3px;
@@ -143,20 +143,20 @@ to {background-position: 30px 0;}
   padding: 4px 2px 4px 8px;
   box-sizing: border-box;
   z-index: 2;
-  
+
   &.unlocked {
     border: 2px dashed #ccc;
     background: #e4e4e4;
     border-radius: 4px;
     padding-top: 3px;
     padding-bottom: 3px;
-    
+
     &::before {
       border-top-left-radius: 2px;
       border-bottom-left-radius: 2px;
     }
   }
-  
+
   &::before {
     content: '.';
     color: transparent;
@@ -183,13 +183,13 @@ a.roadmap-milestone {
   display: block;
   color: inherit;
   cursor: pointer;
-  
+
   &:hover {
     text-decoration: none;
     background: #DBEBEC;
     border-color: #C3DBDD;
   }
-  
+
   &.unlocked:hover {
     background: #E3EDEE;
   }
@@ -197,7 +197,7 @@ a.roadmap-milestone {
 
 .roadmap-milestone-placeholder {
   cursor: col-resize;
-  
+
   &.creating {
     background: #d8d8d8;
     -webkit-animation: progress 1s linear infinite;
@@ -208,19 +208,19 @@ a.roadmap-milestone {
     background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.20) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.20) 50%, rgba(255, 255, 255, 0.20) 75%, transparent 75%, transparent);
   }
 }
-  
+
 .roadmap-milestone {
   .ui-resizable-e {
     cursor: ew-resize;
     cursor: col-resize;
     width: 14px;
   }
-  
+
   .ui-resizable-s {
     cursor: ns-resize;
     cursor: row-resize;
   }
-  
+
   .ui-resizable-se {
     right: -2px;
     bottom: -2px;
@@ -228,9 +228,9 @@ a.roadmap-milestone {
     width: 16px;
     background: none;
   }
-  
+
   &.locked .ui-resizable-handle { display: none; }
-  
+
   &.ui-resizable-resizing {
     z-index: 10;
   }
@@ -246,7 +246,7 @@ a.roadmap-milestone {
 
 .roadmap-thumbnail {
   margin-bottom: 16px;
-  
+
   .axis text { font-size: 11px; }
   .roadmap-thumbnail-band { fill: rgba(0,0,0,0.1); }
 }
