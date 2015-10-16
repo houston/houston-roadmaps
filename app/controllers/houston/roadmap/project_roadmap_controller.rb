@@ -51,6 +51,8 @@ module Houston
           milestone_changes: params.fetch(:roadmap, {}).values)
 
         head :ok
+      rescue ActiveRecord::RecordInvalid
+        render json: $!.record.errors, status: 422
       end
 
 
