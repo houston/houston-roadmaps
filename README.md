@@ -5,15 +5,21 @@ A module for Houston to facilitate managing milestones.
 
 ## Installation
 
-In your [Houston](https://github.com/houstonmc/houston) `config/config.rb` file, add:
+In your `Gemfile`, add:
 
-    use :roadmap
+    gem "houston-roadmap"
+
+And in `config/main.rb`, add:
+
+```ruby
+use :roadmap do
+  # TODO: specify configuration options for Houston::Roadmap here
+end
+```
 
 And then execute:
 
     $ bundle
-
-Run Houston and you can navigate to your roadmap at the path '/roadmap'
 
 
 ## Contributing
