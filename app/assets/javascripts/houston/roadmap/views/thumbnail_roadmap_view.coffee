@@ -70,7 +70,7 @@ class Roadmap.ThumbnailRoadmapView
     @update()
 
   update: ->
-    visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate
+    visibleMilestones = _.select @milestones.toJSON(), (m)-> m.startDate and m.endDate and !m.removed
 
     if visibleMilestones.length > 0
       @startDate = 3.weeks().before d3.min(visibleMilestones, (m)-> m.startDate)

@@ -22,7 +22,7 @@ class Roadmap.ProjectRoadmapHistoryView extends Backbone.View
         continue unless milestone
 
         if change.number is 1
-          currentMilestones.remove(milestone)
+          currentMilestones = _(currentMilestones).without(milestone)
         else
           for attribute, [before, after] of change.modifications
             milestone[attribute] = before

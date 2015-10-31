@@ -200,7 +200,7 @@ class Roadmap.RoadmapView
   groupMilestonesIntoBands: ->
     milestoneBands = {}
     milestones = (@toJSON(milestone) for milestone in @milestones.models)
-    for milestone in milestones when milestone.startDate and milestone.endDate
+    for milestone in milestones when milestone.startDate and milestone.endDate and !milestone.removed
       key = "#{milestone.projectId}-#{milestone.band}"
       (milestoneBands[key] ||=
         key: key

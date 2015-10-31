@@ -14,11 +14,16 @@ private
   def commit_milestone_changes
     milestone_changes.each do |change|
       id = change.delete(:id)
+      remove = change.delete(:removed)
       milestone = project.milestones.find_by_id(id)
-      if milestone
-        milestone.update_attributes!(change)
+      if remove
+        milestone.update_attributes!(destroyed_at: Time.now) if milestone
       else
-        milestone = project.create_milestone!(change.pick(:band, :lanes, :name, :start_date, :end_date))
+        if milestone
+          milestone.update_attributes!(change)
+        else
+          milestone = project.create_milestone!(change.pick(:band, :lanes, :name, :start_date, :end_date))
+        end
       end
       version = milestone.versions.at(milestone.version)
       version.update_column :roadmap_commit_id, self.id if version

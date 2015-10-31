@@ -22,6 +22,7 @@
           modifications: Hash[version.modifications.map { |key, change|
             key = "startDate" if key == "start_date"
             key = "endDate" if key == "end_date"
+            key, change = "removed", change.map(&:present?) if key == "destroyed_at"
             [key, change]
           }] } }
       } }.to_json %>,

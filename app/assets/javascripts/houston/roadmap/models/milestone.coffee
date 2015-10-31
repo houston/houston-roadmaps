@@ -20,9 +20,13 @@ class Roadmap.Milestone extends Backbone.Model
 
   clearChangesSinceSave: ->
     @_originalAttributes = _.clone @attributes
+    @_originalAttributes.removed = false
 
   revert: ->
     @set(@_originalAttributes) if @_originalAttributes
+
+  markRemoved: ->
+    @set(removed: true)
 
   changesSinceSave: ->
     changes = {}

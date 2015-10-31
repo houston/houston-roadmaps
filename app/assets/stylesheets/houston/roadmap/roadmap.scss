@@ -281,3 +281,10 @@ a.roadmap-milestone {
   top: 1px;
   bottom: 52px;
 }
+
+.roadmap-milestone:focus {
+  outline: 0;
+  background: #d3e4e8;
+  color: #254a53;
+  border-color: #5b7a82;
+}

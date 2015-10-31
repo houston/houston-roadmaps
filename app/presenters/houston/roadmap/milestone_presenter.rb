@@ -22,7 +22,8 @@ class Houston::Roadmap::MilestonePresenter
       lanes: milestone.lanes,
       locked: milestone.locked? || milestone.completed?,
       startDate: milestone.start_date,
-      endDate: milestone.end_date }
+      endDate: milestone.end_date,
+      removed: milestone.destroyed_at.present? }
   end
 
 private

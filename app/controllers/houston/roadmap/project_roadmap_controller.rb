@@ -63,7 +63,7 @@ module Houston
         @commits = RoadmapCommit.where(project: @project).order(created_at: :desc)
         @commit_id = params[:commit_id].to_i
 
-        @milestones = @project.milestones.all
+        @milestones = @project.milestones.unscope(where: :destroyed_at)
         @markers = Houston::Roadmap.config.markers
       end
 

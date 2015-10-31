@@ -134,15 +134,48 @@ class Roadmap.EditRoadmapView extends Roadmap.RoadmapView
   initializeMilestone: (milestone)->
     view = @
     $milestone = $(milestone)
+    $menu = null
 
-    $(milestone).dblclick (e)=>
+    $milestone.pseudoHover()
+    $milestone.attr "tabindex", -1
+    $milestone.blur (e)=>
+      if $menu
+        # Don't remove the menu before the click event
+        # propagates to the menu item that was clicked!
+        window.setTimeout (=>
+          $menu.remove()
+          $menu = null), 100
+    $milestone.click (e)=>
+      return if $menu
       return false if $milestone.hasClass('locked')
-      id = $milestone.attr('data-cid')
-      milestone = @milestones.get(id)
-      return false unless milestone
+      $milestone.focus()
+      html = """
+        <ul class="dropdown-menu" role="menu">
+          <li role="presentation"><a role="menuitem" tabindex="-1" class="rename-milestone-action">Rename</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" class="delete-milestone-action">Delete</a></li>
+        </ul>
+        """
+      $menu = $(html)
+        .insertAfter($milestone)
+        .css
+          display: "block"
+          left: $milestone.position().left
 
-      if name = prompt('Name:', milestone.get('name'))
-        milestone.set(name: name)
+        .on "click", ".rename-milestone-action", (e)=>
+          id = $milestone.attr('data-cid')
+          milestone = @milestones.get(id)
+          return false unless milestone
+
+          if name = prompt('Name:', milestone.get('name'))
+            milestone.set(name: name)
+
+        .on "click", ".delete-milestone-action", (e)=>
+          id = $milestone.attr('data-cid')
+          milestone = @milestones.get(id)
+          return false unless milestone
+
+          milestone.markRemoved()
+          $milestone.remove()
 
     $(milestone).resizable
       handles: 'e, s, se'
