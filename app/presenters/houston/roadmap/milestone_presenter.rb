@@ -38,15 +38,15 @@ private
         tickets.milestone_id,
         tickets.id,
         tickets.closed_at IS NOT NULL "closed",
-        open_tasks.count,
+        all_tasks.count,
         completed_tasks.count
       FROM tickets
       LEFT OUTER JOIN (
         SELECT ticket_id, COUNT(id) "count"
         FROM tasks
         GROUP BY ticket_id)
-      AS open_tasks
-        ON open_tasks.ticket_id=tickets.id
+      AS all_tasks
+        ON all_tasks.ticket_id=tickets.id
       LEFT OUTER JOIN (
         SELECT ticket_id, COUNT(id) "count"
         FROM tasks
