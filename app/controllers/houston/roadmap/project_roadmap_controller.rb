@@ -13,9 +13,27 @@ module Houston
       end
 
       def dashboard
-        today = Date.today
-        @range = 6.months.before(today)..6.months.after(today)
+        if params.key?(:range)
+          start_date, end_date = params[:range]
+            .split(/\.{2,}/)
+            .map { |date| Date.strptime(date, "%Y-%m-%d") }
+          @range = start_date..end_date
+        else
+          today = Date.today
+          @range = 6.months.before(today)..6.months.after(today)
+        end
+
         @milestones = Milestone.during(@range)
+
+        if params.key?(:projects)
+          slugs = params[:projects].split(",")
+          @milestones = @milestones
+            .joins(:project)
+            .where(Project.arel_table[:slug].in(slugs))
+        end
+
+        @show_today = params[:today] != "false"
+
         @title = "Roadmap"
         respond_to do |format|
           format.html { render layout: "houston/roadmap/dashboard" }
