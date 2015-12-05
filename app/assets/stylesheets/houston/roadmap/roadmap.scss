@@ -113,7 +113,7 @@ body.dashboard {
     &::before { display: none; }
   }
 
-  .roadmap-marker {
+  .roadmap-marker, .roadmap-today {
     background: rgba(255, 255, 255, 0.15);
     width: 3px;
   }
@@ -274,10 +274,6 @@ a.roadmap-milestone {
   width: 2px;
   background: rgba(0, 0, 0, 0.5);
   z-index: 101;
-}
-
-.roadmap-today {
-  width: 1px;
 }
 
 .roadmap-weekend {
