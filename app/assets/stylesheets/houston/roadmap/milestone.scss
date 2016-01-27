@@ -17,9 +17,9 @@
 .table .ui-sortable-helper td { border-bottom: none; background: white; }
 
 .editable td.ticket-handle {
-  background-image: url(/images/drag-grip.png);
+  background-image: image-url("drag-grip.png");
   background-repeat: no-repeat;
-  background-position: 9px 8px;
+  background-position: 9px 50%;
   cursor: pointer;
   width: 6px;
 }
