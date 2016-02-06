@@ -18,6 +18,6 @@ Houston.config do
   project_roles "Maintainer"
 
   # Mount this module on the dummy Houston application.
-  use :roadmap
+  use :roadmaps
 
 end

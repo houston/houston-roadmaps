@@ -1,4 +1,4 @@
-# Houston::Roadmap
+# Houston::Roadmaps
 
 A module for Houston to facilitate managing milestones.
 
@@ -7,13 +7,13 @@ A module for Houston to facilitate managing milestones.
 
 In your `Gemfile`, add:
 
-    gem "houston-roadmap"
+    gem "houston-roadmaps"
 
 And in `config/main.rb`, add:
 
 ```ruby
-use :roadmap do
-  # TODO: specify configuration options for Houston::Roadmap here
+use :roadmaps do
+  # TODO: specify configuration options for Houston::Roadmaps here
 end
 ```
 

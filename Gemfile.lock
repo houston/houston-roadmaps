@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    houston-roadmap (0.0.1)
+    houston-roadmaps (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -320,7 +320,7 @@ DEPENDENCIES
   bundler (~> 1.10.6)
   capybara
   houston-core (>= 0.5.3)
-  houston-roadmap!
+  houston-roadmaps!
   minitest
   minitest-reporters
   minitest-reporters-turn_reporter

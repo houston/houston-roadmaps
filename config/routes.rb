@@ -1,4 +1,4 @@
-Houston::Roadmap::Engine.routes.draw do
+Houston::Roadmaps::Engine.routes.draw do
 
   scope "roadmap" do
     get "", :to => "project_roadmap#index", :as => :project_roadmaps
