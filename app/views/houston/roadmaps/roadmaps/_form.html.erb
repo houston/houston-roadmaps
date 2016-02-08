@@ -1,0 +1,29 @@
+<%= form_for @roadmap, :html => { :class => "form-horizontal" } do |f| %>
+  <fieldset>
+    <div class="control-group">
+      <%= f.label :name, :class => "control-label" %>
+      <div class="controls">
+        <%= f.text_field :name, :class => "text_field" %>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Projects</label>
+      <div class="controls">
+        <% Project.unretired.with_feature("goals").pluck(:id, :name, :color).each do |project_id, project_name, project_color| %>
+          <label for="roadmap_project_ids_<%= project_id %>">
+            <%= check_box_tag "roadmap[project_ids][]", project_id, @roadmap.project_ids.member?(project_id),
+                  id: "roadmap_project_ids_#{project_id}" %>
+            <b class="bubble <%= project_color %>"></b>
+            <%= project_name %>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit nil, :class => "btn btn-primary" %>
+      <%= link_to "Cancel", (@roadmap.persisted? ? roadmap_path(@roadmap) : roadmaps_path), :class => "btn" %>
+    </div>
+  </fieldset>
+<% end %>

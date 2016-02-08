@@ -1,12 +1,16 @@
-class Roadmaps.RoadmapView
+class Roadmaps.GanttChart
   today: new Date()
 
   constructor: (@milestones, options={})->
+    @el = options.el
+    @selector = options.selector ? '#roadmap'
     @showToday = options.showToday ? true
     @showThumbnail = options.showThumbnail ? true
     @showWeekends = options.showWeekends ? false
     @linkMilestones = options.linkMilestones ? false
     @showProgress = options.showProgress ? false
+    @bandHeight = options.bandHeight ? 30
+    @bandMargin = options.bandMargin ? 8
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
@@ -26,18 +30,19 @@ class Roadmaps.RoadmapView
       end: 6.months().after(3.weeks().before(@today))
 
   render: ->
-    @$el = $('#roadmap')
+    @el = $(@selector)[0] unless @el
+    @$el = $(@el)
 
     if @showThumbnail
-      @thumbnail = new Roadmaps.ThumbnailRoadmapView
+      @thumbnail = new Roadmaps.ThumbnailGanttChart
         milestones: @milestones
         markers: @markers
         showToday: @showToday
         viewport: @viewport
-        parent: d3.select('#roadmap')
+        parent: d3.select(@el)
       @thumbnail.render()
 
-    @roadmap = d3.select('#roadmap')
+    @roadmap = d3.select(@el)
       .append('div')
         .attr('class', 'roadmap-bands')
 
@@ -88,7 +93,8 @@ class Roadmaps.RoadmapView
 
     bands.enter()
       .append('div')
-        .attr('class', (band)-> "roadmap-band #{band.color}")
+        .attr('class', (band)-> "roadmap-band")
+        .attr('style', (date)=> "height: #{@bandHeight}px; margin: #{@bandMargin}px 0;")
         .attr('data-band', (band)-> band.number)
         .each -> view.initializeBand.apply(view, [@])
 
@@ -117,7 +123,7 @@ class Roadmaps.RoadmapView
 
     newMilestones = if @linkMilestones
       milestones.enter().append('a')
-        .attr('href', (milestone)-> "/roadmap/milestones/#{milestone.id}")
+        .attr('href', (milestone)-> "/roadmap/milestones/#{milestone.milestoneId}")
     else
       milestones.enter().append('div')
 
@@ -129,9 +135,10 @@ class Roadmaps.RoadmapView
       .attr 'style', (milestone)=>
         [ "left: #{@x(milestone.startDate)}px",
           "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px",
-          "height: #{milestone.lanes * 38 - 8}px" ].join('; ')
+          "height: #{milestone.lanes * (@bandHeight + @bandMargin) - @bandMargin}px" ].join('; ')
       .attr('class', 'roadmap-milestone')
       .attr('data-cid', (milestone)-> milestone.cid)
+      .attr('data-milestone-id', (milestone)-> milestone.milestoneId)
       .each -> view.initializeMilestone.apply(view, [@])
 
       # Put the milestone name into a span so that Midori can render it correctly
@@ -142,9 +149,10 @@ class Roadmaps.RoadmapView
     update = if transition then milestones.transition(150) else milestones
     update
       .attr 'class', (milestone)=>
-        classes = ['roadmap-milestone']
+        classes = ['roadmap-milestone', milestone.projectColor]
         classes.push(if milestone.locked then 'locked' else 'unlocked')
         classes.push(if milestone.completed then 'completed' else 'uncompleted')
+        classes.push('clickable') if @linkMilestones
         if milestone.startDate > @today
           classes.push 'upcoming'
         else if milestone.endDate < @today
@@ -155,7 +163,7 @@ class Roadmaps.RoadmapView
       .attr 'style', (milestone)=>
         [ "left: #{@x(milestone.startDate)}px",
           "width: #{@x(milestone.endDate) - @x(milestone.startDate)}px",
-          "height: #{milestone.lanes * 38 - 8}px" ].join('; ')
+          "height: #{milestone.lanes * (@bandHeight + @bandMargin) - @bandMargin}px" ].join('; ')
       .select('.roadmap-milestone-progress')
         .attr 'style', (milestone)->
           return "width: 0" if milestone.tickets is 0
@@ -201,15 +209,11 @@ class Roadmaps.RoadmapView
     milestoneBands = {}
     milestones = (@toJSON(milestone) for milestone in @milestones.models)
     for milestone in milestones when milestone.startDate and milestone.endDate and !milestone.removed
-      key = "#{milestone.projectId}-#{milestone.band}"
-      (milestoneBands[key] ||=
-        key: key
-        projectId: milestone.projectId
-        color: milestone.projectColor
+      (milestoneBands[milestone.band] ||=
+        key: milestone.band
         number: milestone.band
         milestones: []).milestones.push(milestone)
-
-    _.sortBy(_.values(milestoneBands), 'projectId')
+    _.values(milestoneBands)
 
   toJSON: (milestone)->
     json = milestone.toJSON()

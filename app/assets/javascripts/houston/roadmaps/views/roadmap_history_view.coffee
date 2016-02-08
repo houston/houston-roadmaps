@@ -1,4 +1,4 @@
-class Roadmaps.ProjectRoadmapHistoryView extends Backbone.View
+class Roadmaps.RoadmapHistoryView extends Backbone.View
   el: '#roadmap_history_view'
   milestones: {}
 
@@ -32,8 +32,8 @@ class Roadmaps.ProjectRoadmapHistoryView extends Backbone.View
     @visibleMilestones = new Roadmaps.Milestones()
     @updateRoadmap()
 
-    @roadmap = new Roadmaps.RoadmapView(@visibleMilestones, @options)
-    @template = HandlebarsTemplates['houston/roadmaps/history']
+    @roadmap = new Roadmaps.GanttChart(@visibleMilestones, @options)
+    @template = HandlebarsTemplates['houston/roadmaps/roadmap/history']
     super
 
   render: ->
@@ -44,7 +44,7 @@ class Roadmaps.ProjectRoadmapHistoryView extends Backbone.View
     $form.css(bottom: 42) if App.meta('env') is 'development'
 
     setTop = ->
-      roadmapBottom = $('#roadmap').position().top + $('#roadmap').height() + 28 # padding
+      roadmapBottom = $('#roadmap').position().top + $('#roadmap').height() - 10
       $form.css(top: roadmapBottom)
     setTop()
     $(window).resize(setTop)

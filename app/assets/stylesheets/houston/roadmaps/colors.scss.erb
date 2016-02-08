@@ -12,31 +12,27 @@
   $<%= name %>: <%= value.rgb %>;
 <% end %>
 
-.roadmap-band {
+.roadmap-milestone, .roadmap-milestone-placeholder {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      .roadmap-milestone, .roadmap-milestone-placeholder {
-        &::before { background: <%= value.rgb %>; }
-      }
+      &::before { background: <%= value.rgb %>; }
     }
   <% end %>
 }
 
-body.dashboard .roadmap-band {
+body.dashboard .roadmap-milestone {
   <% Houston.config.project_colors.each do |name, value| %>
     &.<%= name %> {
-      .roadmap-milestone {
-        border-color: <%= value.rgb %>;
-        & > span { color: hsl(hue($<%= name %>), saturation($<%= name %>), 80); }
-        .roadmap-milestone-progress { background: shade($<%= name %>, 25%); }
-      }
-      
-      .roadmap-milestone.completed {
+      border-color: <%= value.rgb %>;
+      & > span { color: hsl(hue($<%= name %>), saturation($<%= name %>), 80); }
+      .roadmap-milestone-progress { background: shade($<%= name %>, 25%); }
+
+      &.completed {
         .roadmap-milestone-progress { background: $<%= name %>; }
         & > span { color: black; }
       }
-      
-      .roadmap-milestone.upcoming {
+
+      &.upcoming {
         border-color: shade(<%= value.rgb %>, 50%);
         & > span { color: shade(hsl(hue($<%= name %>), saturation($<%= name %>), 80), 50%); }
       }

@@ -1,4 +1,4 @@
-class Roadmaps.ThumbnailRoadmapView
+class Roadmaps.ThumbnailGanttChart
   today: new Date()
 
   constructor: (options)->
@@ -19,11 +19,11 @@ class Roadmaps.ThumbnailRoadmapView
     @graphHeight = @height - 18
 
     el = @parent.append('div')
+      .attr('class', 'roadmap-thumbnail')
       .attr('style', "position: relative; height: #{@height}px;")
 
     svg = el.append('svg')
         .attr('height', @height)
-        .attr('class', 'roadmap-thumbnail')
       .append('g')
         .attr('transform', "translate(0,0)")
 

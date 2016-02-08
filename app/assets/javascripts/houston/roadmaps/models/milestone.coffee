@@ -119,3 +119,6 @@ class Roadmaps.Milestones extends Backbone.Collection
       bands = _.union(bands, newBands)
       milestones.push milestone
     milestones
+
+  unremoved: ->
+    new Roadmaps.Milestones @where(removed: false)

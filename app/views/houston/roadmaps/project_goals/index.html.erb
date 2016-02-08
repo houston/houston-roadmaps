@@ -1,0 +1,42 @@
+<% content_for :title do %>
+<h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
+  <small>Goals for</small>
+  <%= @project.name %>
+
+  <%= render partial: "projects/keyboard_shortcuts" %>
+
+  <%= link_to "#", id: "new_goal_button", class: "project-banner-btn" do %>
+    <i class="fa fa-flag-o"></i>
+
+    <span>
+      Add<br />
+      Goal
+    </span>
+  <% end %>
+</h1>
+<% end %>
+
+<div id="project_goals_view"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var goals = <%= raw Houston::Roadmaps::MilestonePresenter.new(@milestones).to_json %>;
+    goals = new Roadmaps.Goals(goals, {parse: true});
+
+    new Roadmaps.ProjectGoalsView({
+      el: $('#project_goals_view')[0],
+      project: {
+        id: <%= @project.id %>,
+        slug: '<%= @project.slug %>',
+        color: '<%= @project.color %>' },
+      goals: goals,
+      can: {
+        create: <%= can?(:create, Milestone.new(project_id: @project.id)) %>,
+        update: <%= can?(:update, Milestone.new(project_id: @project.id)) %>,
+        destroy: <%= can?(:destroy, Milestone.new(project_id: @project.id)) %> }
+    }).render();
+
+  });
+</script>
+<% end %>

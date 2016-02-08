@@ -31,7 +31,7 @@ module Houston
 
       def update
         authorize! :update, milestone
-        milestone.updated_by = current_user
+        milestone.updated_by = current_user if milestone.respond_to?(:updated_by=)
         if milestone.update_attributes(milestone_attributes)
           render json: Houston::Roadmaps::MilestonePresenter.new(milestone)
         else

@@ -1,10 +1,10 @@
-class Roadmaps.ShowRoadmapView extends Backbone.View
+class Roadmaps.RoadmapView extends Backbone.View
 
   initialize: ->
     @setMilestones @options.milestones
 
   setMilestones: (@milestones)->
-    @roadmap = new Roadmaps.RoadmapView(@milestones, @options)
+    @roadmap = new Roadmaps.GanttChart(@milestones, @options)
     @
 
   render: ->

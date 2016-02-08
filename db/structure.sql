@@ -188,7 +188,6 @@ ALTER SEQUENCE consumer_tokens_id_seq OWNED BY consumer_tokens.id;
 CREATE TABLE deploys (
     id integer NOT NULL,
     project_id integer,
-    environment_id integer,
     sha character varying(255) NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
@@ -199,7 +198,8 @@ CREATE TABLE deploys (
     branch character varying(255),
     completed_at timestamp without time zone,
     output text,
-    user_id integer
+    user_id integer,
+    successful boolean DEFAULT false NOT NULL
 );
 
 
@@ -220,38 +220,6 @@ CREATE SEQUENCE deploys_id_seq
 --
 
 ALTER SEQUENCE deploys_id_seq OWNED BY deploys.id;
-
-
---
--- Name: historical_heads; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE historical_heads (
-    id integer NOT NULL,
-    project_id integer NOT NULL,
-    branches hstore DEFAULT ''::hstore NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: historical_heads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE historical_heads_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: historical_heads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE historical_heads_id_seq OWNED BY historical_heads.id;
 
 
 --
@@ -413,11 +381,11 @@ ALTER SEQUENCE project_quotas_id_seq OWNED BY project_quotas.id;
 
 CREATE TABLE projects (
     id integer NOT NULL,
-    name character varying(255),
-    slug character varying(255),
+    name character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    color character varying(255),
+    color character varying(255) DEFAULT 'default'::character varying NOT NULL,
     retired_at timestamp without time zone,
     category character varying(255),
     version_control_name character varying(255) DEFAULT 'None'::character varying NOT NULL,
@@ -430,9 +398,9 @@ CREATE TABLE projects (
     last_ticket_tracker_sync_at timestamp without time zone,
     ticket_tracker_sync_started_at timestamp without time zone,
     view_options hstore DEFAULT ''::hstore NOT NULL,
-    gemnasium_slug character varying(255),
     feature_states hstore DEFAULT ''::hstore NOT NULL,
-    selected_features text[]
+    selected_features text[],
+    head_sha character varying
 );
 
 
@@ -456,6 +424,16 @@ ALTER SEQUENCE projects_id_seq OWNED BY projects.id;
 
 
 --
+-- Name: projects_roadmaps; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE projects_roadmaps (
+    project_id integer NOT NULL,
+    roadmap_id integer NOT NULL
+);
+
+
+--
 -- Name: pull_requests; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -472,7 +450,12 @@ CREATE TABLE pull_requests (
     base_sha character varying(255) NOT NULL,
     head_ref character varying(255) NOT NULL,
     head_sha character varying(255) NOT NULL,
-    labels text DEFAULT ''::text NOT NULL
+    body text,
+    props jsonb DEFAULT '{}'::jsonb,
+    avatar_url character varying,
+    json_labels jsonb DEFAULT '[]'::jsonb,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -501,7 +484,6 @@ ALTER SEQUENCE pull_requests_id_seq OWNED BY pull_requests.id;
 
 CREATE TABLE releases (
     id integer NOT NULL,
-    environment_id integer,
     name character varying(255),
     commit0 character varying(255),
     commit1 character varying(255),
@@ -514,7 +496,8 @@ CREATE TABLE releases (
     environment_name character varying(255) DEFAULT 'Production'::character varying NOT NULL,
     release_changes text DEFAULT ''::text NOT NULL,
     commit_before_id integer,
-    commit_after_id integer
+    commit_after_id integer,
+    search_vector tsvector
 );
 
 
@@ -565,9 +548,10 @@ CREATE TABLE roadmap_commits (
     id integer NOT NULL,
     user_id integer NOT NULL,
     message character varying(255) NOT NULL,
-    project_id integer NOT NULL,
+    project_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    roadmap_id integer
 );
 
 
@@ -588,6 +572,69 @@ CREATE SEQUENCE roadmap_commits_id_seq
 --
 
 ALTER SEQUENCE roadmap_commits_id_seq OWNED BY roadmap_commits.id;
+
+
+--
+-- Name: roadmap_milestones; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roadmap_milestones (
+    id integer NOT NULL,
+    milestone_id integer NOT NULL,
+    roadmap_id integer NOT NULL,
+    band integer DEFAULT 1 NOT NULL,
+    start_date date NOT NULL,
+    end_date date NOT NULL,
+    lanes integer DEFAULT 1 NOT NULL
+);
+
+
+--
+-- Name: roadmap_milestones_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE roadmap_milestones_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: roadmap_milestones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE roadmap_milestones_id_seq OWNED BY roadmap_milestones.id;
+
+
+--
+-- Name: roadmaps; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roadmaps (
+    id integer NOT NULL,
+    name character varying NOT NULL
+);
+
+
+--
+-- Name: roadmaps_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE roadmaps_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: roadmaps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE roadmaps_id_seq OWNED BY roadmaps.id;
 
 
 --
@@ -719,8 +766,6 @@ CREATE TABLE tasks (
     first_release_at timestamp without time zone,
     first_commit_at timestamp without time zone,
     sprint_id integer,
-    checked_out_at timestamp without time zone,
-    checked_out_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     project_id integer NOT NULL,
@@ -990,9 +1035,6 @@ CREATE TABLE tickets (
     destroyed_at timestamp without time zone,
     resolution character varying(255) DEFAULT ''::character varying NOT NULL,
     first_release_at timestamp without time zone,
-    sprint_id integer,
-    checked_out_at timestamp without time zone,
-    checked_out_by_id integer,
     priority character varying(255) DEFAULT 'normal'::character varying NOT NULL,
     reopened_at timestamp without time zone,
     prerequisites integer[]
@@ -1084,7 +1126,6 @@ CREATE TABLE users (
     unfuddle_id integer,
     first_name character varying(255),
     last_name character varying(255),
-    old_environments_subscribed_to character varying(255) DEFAULT ''::character varying NOT NULL,
     retired_at timestamp without time zone,
     view_options hstore DEFAULT ''::hstore NOT NULL,
     email_addresses text[],
@@ -1210,13 +1251,6 @@ ALTER TABLE ONLY deploys ALTER COLUMN id SET DEFAULT nextval('deploys_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY historical_heads ALTER COLUMN id SET DEFAULT nextval('historical_heads_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY measurements ALTER COLUMN id SET DEFAULT nextval('measurements_id_seq'::regclass);
 
 
@@ -1267,6 +1301,20 @@ ALTER TABLE ONLY releases ALTER COLUMN id SET DEFAULT nextval('releases_id_seq':
 --
 
 ALTER TABLE ONLY roadmap_commits ALTER COLUMN id SET DEFAULT nextval('roadmap_commits_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY roadmap_milestones ALTER COLUMN id SET DEFAULT nextval('roadmap_milestones_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY roadmaps ALTER COLUMN id SET DEFAULT nextval('roadmaps_id_seq'::regclass);
 
 
 --
@@ -1399,14 +1447,6 @@ ALTER TABLE ONLY deploys
 
 
 --
--- Name: historical_heads_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY historical_heads
-    ADD CONSTRAINT historical_heads_pkey PRIMARY KEY (id);
-
-
---
 -- Name: measurements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1468,6 +1508,22 @@ ALTER TABLE ONLY releases
 
 ALTER TABLE ONLY roadmap_commits
     ADD CONSTRAINT roadmap_commits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roadmap_milestones_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roadmap_milestones
+    ADD CONSTRAINT roadmap_milestones_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roadmaps_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roadmaps
+    ADD CONSTRAINT roadmaps_pkey PRIMARY KEY (id);
 
 
 --
@@ -1768,6 +1824,20 @@ CREATE INDEX index_project_quotas_on_week ON project_quotas USING btree (week);
 
 
 --
+-- Name: index_projects_on_slug; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_projects_on_slug ON projects USING btree (slug);
+
+
+--
+-- Name: index_projects_roadmaps_on_project_id_and_roadmap_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_projects_roadmaps_on_project_id_and_roadmap_id ON projects_roadmaps USING btree (project_id, roadmap_id);
+
+
+--
 -- Name: index_pull_requests_on_project_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1803,6 +1873,13 @@ CREATE INDEX index_releases_on_project_id_and_environment_name ON releases USING
 
 
 --
+-- Name: index_releases_on_search_vector; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_releases_on_search_vector ON releases USING gin (search_vector);
+
+
+--
 -- Name: index_releases_tasks_on_release_id_and_task_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1814,6 +1891,13 @@ CREATE UNIQUE INDEX index_releases_tasks_on_release_id_and_task_id ON releases_t
 --
 
 CREATE UNIQUE INDEX index_releases_tickets_on_release_id_and_ticket_id ON releases_tickets USING btree (release_id, ticket_id);
+
+
+--
+-- Name: index_roadmap_milestones_on_milestone_id_and_roadmap_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_roadmap_milestones_on_milestone_id_and_roadmap_id ON roadmap_milestones USING btree (milestone_id, roadmap_id);
 
 
 --
@@ -1954,13 +2038,6 @@ CREATE INDEX index_tickets_on_milestone_id ON tickets USING btree (milestone_id)
 --
 
 CREATE INDEX index_tickets_on_resolution ON tickets USING btree (resolution);
-
-
---
--- Name: index_tickets_on_sprint_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_tickets_on_sprint_id ON tickets USING btree (sprint_id);
 
 
 --
@@ -2445,4 +2522,36 @@ INSERT INTO schema_migrations (version) VALUES ('20150902010629');
 INSERT INTO schema_migrations (version) VALUES ('20150902010853');
 
 INSERT INTO schema_migrations (version) VALUES ('20150927014445');
+
+INSERT INTO schema_migrations (version) VALUES ('20151108221505');
+
+INSERT INTO schema_migrations (version) VALUES ('20151108223154');
+
+INSERT INTO schema_migrations (version) VALUES ('20151108233510');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201042126');
+
+INSERT INTO schema_migrations (version) VALUES ('20151202005557');
+
+INSERT INTO schema_migrations (version) VALUES ('20151202011812');
+
+INSERT INTO schema_migrations (version) VALUES ('20151205204922');
+
+INSERT INTO schema_migrations (version) VALUES ('20151205214647');
+
+INSERT INTO schema_migrations (version) VALUES ('20151209004458');
+
+INSERT INTO schema_migrations (version) VALUES ('20151209030113');
+
+INSERT INTO schema_migrations (version) VALUES ('20151226154901');
+
+INSERT INTO schema_migrations (version) VALUES ('20151226155305');
+
+INSERT INTO schema_migrations (version) VALUES ('20151228183704');
+
+INSERT INTO schema_migrations (version) VALUES ('20160120145757');
+
+INSERT INTO schema_migrations (version) VALUES ('20160206214746');
+
+INSERT INTO schema_migrations (version) VALUES ('20160207154530');
 

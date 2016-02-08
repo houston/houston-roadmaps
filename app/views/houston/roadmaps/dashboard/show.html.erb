@@ -5,14 +5,16 @@
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
-    Roadmaps.milestones = new Roadmaps.Milestones(<%= raw Houston::Roadmaps::MilestonePresenter.new(@milestones).to_json %>, {parse: true});
-    
+    Roadmaps.milestones = new Roadmaps.Milestones(
+      <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>,
+      {parse: true});
+
     var viewport = new Roadmaps.Viewport({
       start: new Date(<%=raw @range.begin.to_json %>),
       end: new Date(<%=raw @range.end.to_json %>)
     });
-    
-    view = new Roadmaps.ShowRoadmapView({
+
+    view = new Roadmaps.RoadmapView({
       milestones: Roadmaps.milestones,
       showToday: <%= @show_today %>,
       showThumbnail: false,
@@ -20,9 +22,9 @@
       linkMilestones: true,
       viewport: viewport
     });
-    
+
     view.render();
-    
+
     new Refresher()
       .container('#container')
       .interval(45 * Duration.MINUTE)

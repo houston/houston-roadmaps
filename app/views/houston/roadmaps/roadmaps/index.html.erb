@@ -1,0 +1,24 @@
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  Roadmaps
+  <%= link_to "New Roadmap", new_roadmap_path, :class => "btn btn-primary" if can?(:create, Roadmap) %>
+
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
+
+<div id="roadmaps_view"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var roadmaps = <%= raw Houston::Roadmaps::RoadmapPresenter.new(@roadmaps).to_json %>;
+    Roadmaps.all = new Roadmaps.Roadmaps(roadmaps, {parse: true});
+
+    new Roadmaps.RoadmapsView({
+      el: $('#roadmaps_view')[0],
+      roadmaps: Roadmaps.all
+    }).render();
+  });
+</script>
+<% end %>

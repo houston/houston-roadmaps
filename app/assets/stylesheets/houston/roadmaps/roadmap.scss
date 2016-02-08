@@ -1,53 +1,17 @@
-.milestone {
-  &.neat-interactive:hover td {
-    background-color: rgba(128, 212, 255, 0.1);
-    cursor: pointer;
-  }
+$roadmap-padding: 1.33em;
 
-  td {
-    padding: 4px 8px;
-    border-bottom: 0;
-  }
-
-  .milestone-name {
-    input {
-      margin: 0;
-      width: 100%;
-      box-sizing: border-box;
-      height: 30px;
-    }
-  }
-
-  &.inactive .milestone-name a { display: block; }
-
-  .milestone-duration, .milestone-lanes, .milestone-tickets { text-align: right; }
-  .milestone-tickets.zero { color: #ccc; }
-  .milestone-locked { text-align: center; width: 2.25em; }
-  .milestone-completion { text-align: right; width: 2.5em; }
-  .milestone-startDate { font-size: 0.84em; }
-
-  .fa-unlock-alt { color: #ccc; }
+.callout.roadmap {
+  padding-left: 0;
+  padding-right: 0;
+  border-top: 0;
+  padding-top: 0;
+  padding-bottom: $roadmap-padding;
 }
-
-th.milestone-startDate, th.milestone-tickets, th.milestone-duration, th.milestone-lanes { text-align: right; }
-th.milestone-duration { width: 5em; }
-th.milestone-lanes { width: 2.5em; }
-th.milestone-tickets { width: 3.5em; }
-th.milestone-locked { text-align: center; width: 2.25em; }
-th.milestone-completion { text-align: right; width: 2.5em; }
-
-#roadmap_view {
-  #show_completed_milestones { margin-bottom: 12px; }
-  &.hide-completed #milestones_view .completed { display: none; }
-}
-
-form.freight_train { margin-bottom: 0; }
-
 
 
 #roadmap {
   position: relative;
-  overflow: hidden;
+  overflow: hidden; // so the roadmap can't be scrolled left and right
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -60,15 +24,13 @@ form.freight_train { margin-bottom: 0; }
 
   .roadmap-axis {
     position: absolute;
-    bottom: 2em;
+    bottom: 0;
     width: 100%;
   }
 }
 
 .roadmap-band {
   position: relative;
-  height: 30px;
-  margin: 8px 0;
 
   &.sort-active {
     &::before {
@@ -180,24 +142,39 @@ rect.roadmap-thumbnail-milestone.completed { opacity: 0.5; }
 }
 
 a.roadmap-milestone {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
   display: block;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
 }
 
-#roadmap:not(.roadmap-dashboard) {
-  a.roadmap-milestone {
-    &:hover {
-      text-decoration: none;
-      background: #DBEBEC;
-      border-color: #C3DBDD;
-    }
+body:not(.dashboard) {
+  .roadmap-milestone {
+    &.clickable:hover {
+      background: #DAE7EA;
+      color: #254a53;
+      border-color: #BACFD4;
 
-    &.unlocked:hover {
-      background: #E3EDEE;
+      &::before {
+        background: #89A6AD !important;
+      }
     }
   }
+}
+
+.roadmap-milestone:focus {
+  outline: 0;
+}
+
+.roadmap-milestone.dropdown-open {
+  background: #d3e4e8;
+  color: #254a53;
+  border-color: #5b7a82;
 }
 
 .roadmap-milestone-placeholder {
@@ -250,8 +227,9 @@ a.roadmap-milestone {
 }
 
 .roadmap-thumbnail {
-  margin-bottom: 16px;
+  margin-bottom: $roadmap-padding;
 
+  svg { width: 100%; }
   .axis text { font-size: 11px; }
   .roadmap-thumbnail-band { fill: rgba(0,0,0,0.1); }
 }
@@ -264,13 +242,13 @@ a.roadmap-milestone {
 
 .roadmap-bands {
   position: relative;
-  padding: 8px 0 52px;
+  padding: 1px 0 24px;
 }
 
 .roadmap-marker, .roadmap-today {
   position: absolute;
-  top: 1px;
-  bottom: 52px;
+  top: 0;
+  bottom: 24px;
   width: 2px;
   background: rgba(0, 0, 0, 0.5);
   z-index: 101;
@@ -280,12 +258,19 @@ a.roadmap-milestone {
   background: rgba(255, 255, 255, 0.4);
   position: absolute;
   top: 1px;
-  bottom: 52px;
+  bottom: 24px;
 }
 
-.roadmap-milestone:focus {
-  outline: 0;
-  background: #d3e4e8;
-  color: #254a53;
-  border-color: #5b7a82;
+#goals_view {
+  position: fixed;
+  border-top: 2px solid;
+  bottom: 46px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  overflow-y: scroll;
+
+  .goal-project {
+    width: 9em;
+  }
 }

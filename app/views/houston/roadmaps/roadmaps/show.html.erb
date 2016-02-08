@@ -1,0 +1,27 @@
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  <small>Roadmap:</small>
+  <%= @roadmap.name %>
+
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
+
+<div id="roadmap" class="roadmap callout callout-banner"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var milestones = new Roadmaps.Milestones(
+      <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>,
+      {parse: true});
+
+    new Roadmaps.RoadmapView({
+      el: $('#roadmap')[0],
+      milestones: milestones,
+      showWeekends: true,
+      linkMilestones: true
+    }).render();
+  });
+</script>
+<% end %>

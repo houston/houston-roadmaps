@@ -1,12 +1,19 @@
-<%= render partial: "projects/header", locals: {project: @project, subtitle: "Roadmap"} %>
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  <small>Roadmap:</small>
+  <%= @roadmap.name %>
+
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
 
 <div id="roadmap_history_view"></div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
-    var milestones = <%= raw Houston::Roadmaps::MilestonePresenter.new(@milestones).to_json %>;
-    new Roadmaps.ProjectRoadmapHistoryView({
+    var milestones = <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>;
+    new Roadmaps.RoadmapHistoryView({
       milestones: milestones,
       commitId: <%= @commit_id %>,
       commits: <%=raw @commits.map { |commit| {

@@ -1,0 +1,35 @@
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  <small>Roadmap:</small>
+  <%= @roadmap.name %>
+  <%= link_to "Edit", edit_roadmap_path(@roadmap), class: "btn btn-primary" %>
+
+  <span class="buttons" style="float: right;">
+    <button id="reset_roadmap" class="btn">Reset</button>
+    <button id="save_roadmap" class="btn btn-primary">Save</button>
+  </span>
+</h1>
+<% end %>
+
+<div id="roadmap_view"></div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var milestones = new Roadmaps.Milestones(
+      <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>,
+      {parse: true});
+
+    var goals = new Roadmaps.Goals(
+      <%= raw Houston::Roadmaps::MilestonePresenter.new(@goals).to_json %>,
+      {parse: true});
+
+    new Roadmaps.EditRoadmapView({
+      el: $('#roadmap_view')[0],
+      id: <%= @roadmap.id %>,
+      milestones: milestones,
+      goals: goals
+    }).render();
+  });
+</script>
+<% end %>

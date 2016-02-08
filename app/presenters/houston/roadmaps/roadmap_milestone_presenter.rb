@@ -1,4 +1,4 @@
-class Houston::Roadmaps::MilestonePresenter
+class Houston::Roadmaps::RoadmapMilestonePresenter
 
   def initialize(milestones)
     @milestones = OneOrMany.new(milestones)
@@ -12,17 +12,13 @@ class Houston::Roadmaps::MilestonePresenter
     project = milestone.project
     { id: milestone.id,
       name: milestone.name,
-      roadmaps: milestone.roadmap_ids,
+      milestoneId: milestone.milestone_id,
       projectId: project.id,
       projectColor: project.color,
-      projectName: project.name,
-      tickets: milestone.tickets_count,
-      ticketsCompleted: milestone.closed_tickets_count,
       percentComplete: percent_complete(milestone),
       completed: milestone.completed?,
       band: milestone.band,
       lanes: milestone.lanes,
-      locked: milestone.locked? || milestone.completed?,
       startDate: milestone.start_date,
       endDate: milestone.end_date,
       removed: milestone.destroyed_at.present? }
@@ -31,7 +27,7 @@ class Houston::Roadmaps::MilestonePresenter
 private
 
   def percent_complete(milestone)
-    percent_complete_by_ticket.fetch(milestone.id, 0)
+    percent_complete_by_ticket.fetch(milestone.milestone_id, 0)
   end
 
   def percent_complete_by_ticket
@@ -68,7 +64,7 @@ private
   end
 
   def milestone_ids
-    @milestone_ids ||= Array(@milestones.map(&:id))
+    @milestone_ids ||= Array(@milestones.map(&:milestone_id))
   end
 
 end
