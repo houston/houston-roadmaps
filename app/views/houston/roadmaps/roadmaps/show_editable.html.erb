@@ -21,7 +21,13 @@
       {parse: true});
 
     var goals = new Roadmaps.Goals(
-      <%= raw Houston::Roadmaps::MilestonePresenter.new(@goals).to_json %>,
+      <%= raw MultiJson.dump(@goals.map { |goal| {
+            id: goal.id,
+            name: goal.name,
+            projectId: goal.project.id,
+            projectColor: goal.project.color,
+            projectName: goal.project.name
+          } }) %>,
       {parse: true});
 
     new Roadmaps.EditRoadmapView({

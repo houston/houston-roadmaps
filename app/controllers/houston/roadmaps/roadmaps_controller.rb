@@ -15,8 +15,8 @@ module Houston
       def show
         authorize! :read, @roadmap
         @title = @roadmap.name
-        @goals = @roadmap.projects.goals
-        @milestones = @roadmap.milestones
+        @goals = @roadmap.projects.goals.preload(:project)
+        @milestones = @roadmap.milestones.preload(milestone: :project)
 
         render template: "houston/roadmaps/roadmaps/show_editable" if can?(:update, @roadmap)
       end
@@ -26,10 +26,10 @@ module Houston
         authorize! :read, @roadmap
         @title = "#{@roadmap.name} History"
 
-        @commits = @roadmap.commits.order(created_at: :desc)
+        @commits = @roadmap.commits.order(created_at: :desc).preload(:milestone_versions, :user)
         @commit_id = params[:commit_id].to_i
 
-        @milestones = @roadmap.milestones.including_destroyed
+        @milestones = @roadmap.milestones.including_destroyed.preload(milestone: :project)
         @markers = Houston::Roadmaps.config.markers
       end
 
