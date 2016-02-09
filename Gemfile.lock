@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    houston-roadmaps (0.0.1)
+    houston-roadmaps (0.1.0)
       houston-core (>= 0.6.2)
       neat-rails (>= 0.2.0)
 
