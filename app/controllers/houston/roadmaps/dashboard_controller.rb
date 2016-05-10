@@ -16,6 +16,7 @@ module Houston
         end
 
         @milestones = RoadmapMilestone.during(@range).preload(:milestone => :project)
+        @milestones = @milestones.where(roadmap_id: params[:roadmap_id]) if params.key?(:roadmap_id)
 
         @show_today = params[:today] != "false"
 

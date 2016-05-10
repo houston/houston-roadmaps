@@ -1,6 +1,7 @@
 Houston::Roadmaps::Engine.routes.draw do
 
   get "roadmaps/dashboard", to: "dashboard#show"
+  get "roadmaps/:roadmap_id/dashboard", to: "dashboard#show"
 
   resources :roadmaps do
     member do
