@@ -1897,7 +1897,7 @@ CREATE UNIQUE INDEX index_releases_tickets_on_release_id_and_ticket_id ON releas
 -- Name: index_roadmap_milestones_on_milestone_id_and_roadmap_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_roadmap_milestones_on_milestone_id_and_roadmap_id ON roadmap_milestones USING btree (milestone_id, roadmap_id);
+CREATE INDEX index_roadmap_milestones_on_milestone_id_and_roadmap_id ON roadmap_milestones USING btree (milestone_id, roadmap_id);
 
 
 --
@@ -2554,4 +2554,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160120145757');
 INSERT INTO schema_migrations (version) VALUES ('20160206214746');
 
 INSERT INTO schema_migrations (version) VALUES ('20160207154530');
+
+INSERT INTO schema_migrations (version) VALUES ('20160520201427');
 
