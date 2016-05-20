@@ -7,6 +7,7 @@ class Roadmaps.EditRoadmapView extends Backbone.View
     @roadmapId = @options.id
     @milestonesUrl = "/roadmaps/#{@roadmapId}/milestones"
     @milestones = @options.milestones
+    @projects = @options.projects
     @goals = @options.goals
 
     $('#reset_roadmap').click _.bind(@reset, @)
@@ -24,6 +25,7 @@ class Roadmaps.EditRoadmapView extends Backbone.View
     @roadmap = new Roadmaps.EditGanttChart @milestones,
       removeMilestoneByDroppingOn: @$goals_view
       showWeekends: true
+    @roadmap.createMilestone(_.bind(@createMilestone, @))
     @roadmap.render()
     @milestoneChanged()
 
@@ -54,6 +56,29 @@ class Roadmaps.EditRoadmapView extends Backbone.View
     @
 
 
+
+  createMilestone: (attributes, callback)->
+    $modal = $(HandlebarsTemplates["houston/roadmaps/milestone/new"](
+      projects: @projects
+    )).modal()
+    $modal.find("#create_milestone_button").click (e) =>
+      e.preventDefault()
+      attributes.name = $modal.find("#milestone_name").val()
+      attributes.projectId = +$modal.find("#milestone_project_id").val()
+      project = _.findWhere(@projects, id: attributes.projectId)
+      attributes.projectColor = project.color
+      attributes.projectName = project.name
+      attributes.tickets = 0
+      attributes.ticketsCompleted = 0
+      attributes.locked = false
+      attributes.completed = false
+      milestone = new Roadmaps.Milestone(attributes)
+      @milestones.add(milestone)
+      $modal.modal "hide"
+    $modal.on 'hidden', ->
+      $modal.remove()
+      callback()
+    $modal.find("#milestone_name").focus()
 
   reset: (e)->
     e.preventDefault()

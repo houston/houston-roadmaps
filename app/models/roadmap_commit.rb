@@ -22,9 +22,14 @@ private
         milestone_attributes = change.pick(:band, :lanes, :start_date, :end_date)
         if milestone
           milestone.update_attributes!(milestone_attributes)
-        else
+        elsif change.key?(:milestoneId)
           milestone = roadmap.milestones.create!(
             milestone_attributes.merge(milestone_id: change[:milestoneId]))
+        elsif change.key?(:name) && change.key?(:projectId)
+          project = Project.find(change[:projectId])
+          project_milestone = project.create_milestone!(name: change[:name])
+          milestone = roadmap.milestones.create!(
+            milestone_attributes.merge(milestone: project_milestone))
         end
       end
       version = milestone.versions.at(milestone.version)

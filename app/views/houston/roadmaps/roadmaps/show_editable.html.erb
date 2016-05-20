@@ -34,6 +34,11 @@
       el: $('#roadmap_view')[0],
       id: <%= @roadmap.id %>,
       milestones: milestones,
+      projects: <%= raw MultiJson.dump(@roadmap.projects.map { |project| {
+        id: project.id,
+        color: project.color,
+        name: project.name
+      } }) %>,
       goals: goals
     }).render();
   });
