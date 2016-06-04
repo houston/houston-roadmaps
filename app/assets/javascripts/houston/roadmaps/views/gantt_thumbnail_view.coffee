@@ -95,12 +95,8 @@ class Roadmaps.ThumbnailGanttChart
 
 
 
-    milestoneBands = d3.nest()
-      .key (milestone)-> milestone.band
-      .entries(visibleMilestones)
-
     bands = @roadmap.selectAll('.roadmap-thumbnail-band')
-      .data(milestoneBands, (band)-> band.key)
+      .data(@groupMilestonesIntoBands(), (band)-> band.key)
 
     bands.enter()
       .append('g')
@@ -110,7 +106,7 @@ class Roadmaps.ThumbnailGanttChart
     bands.exit().remove()
 
     milestones = bands.selectAll('.roadmap-thumbnail-milestone')
-      .data(((band)-> band.values), (milestone)-> milestone.cid)
+      .data(((band)-> band.milestones), (milestone)-> milestone.cid)
 
     # update
     milestones
@@ -171,3 +167,18 @@ class Roadmaps.ThumbnailGanttChart
       .attr('x', ({date})=> @x(date))
 
     markers.exit().remove()
+
+  groupMilestonesIntoBands: ->
+    milestoneBands = {}
+    milestones = (@toJSON(milestone) for milestone in @milestones.models)
+    for milestone in milestones when milestone.startDate and milestone.endDate and !milestone.removed
+      (milestoneBands[milestone.band] ||=
+        key: milestone.band
+        number: milestone.band
+        milestones: []).milestones.push(milestone)
+    _.values(milestoneBands)
+
+  toJSON: (milestone)->
+    json = milestone.toJSON()
+    json.cid = milestone.id # Use `id` because the view is readonly
+    json
