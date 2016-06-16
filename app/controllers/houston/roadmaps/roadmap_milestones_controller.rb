@@ -7,7 +7,8 @@ module Houston
 
       def index
         authorize! :read, Roadmap
-        render json: Houston::Roadmaps::RoadmapMilestonePresenter.new(@roadmap.milestones)
+        render json: Houston::Roadmaps::RoadmapMilestonePresenter.new(
+          @roadmap.milestones.preload(milestone: :project))
       end
 
 
