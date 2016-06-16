@@ -26,4 +26,8 @@ class RoadmapMilestone < ActiveRecord::Base
     end
   end
 
+  def update_name!(name)
+    milestone.update_attributes! name: name
+  end
+
 end

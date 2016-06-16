@@ -20,11 +20,18 @@ private
         milestone.update_attributes!(destroyed_at: Time.now) if milestone
       else
         milestone_attributes = change.pick(:band, :lanes, :start_date, :end_date)
+
+        # Update a milestone
         if milestone
+          milestone.update_name! change[:name] if change.key?(:name)
           milestone.update_attributes!(milestone_attributes)
+
+        # Add a milestone to the roadmap
         elsif change.key?(:milestoneId)
           milestone = roadmap.milestones.create!(
             milestone_attributes.merge(milestone_id: change[:milestoneId]))
+
+        # Create a milestone on te roadmap
         elsif change.key?(:name) && change.key?(:projectId)
           project = Project.find(change[:projectId])
           project_milestone = project.create_milestone!(name: change[:name])
