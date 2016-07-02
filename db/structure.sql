@@ -55,6 +55,44 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: authorizations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE authorizations (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    provider_id integer,
+    scope character varying,
+    access_token character varying,
+    refresh_token character varying,
+    secret character varying,
+    expires_in integer,
+    expires_at timestamp without time zone,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: authorizations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE authorizations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: authorizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE authorizations_id_seq OWNED BY authorizations.id;
+
+
+--
 -- Name: commits; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -223,6 +261,72 @@ ALTER SEQUENCE deploys_id_seq OWNED BY deploys.id;
 
 
 --
+-- Name: errors; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE errors (
+    id integer NOT NULL,
+    sha character varying NOT NULL,
+    message text NOT NULL,
+    backtrace text NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: errors_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE errors_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: errors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE errors_id_seq OWNED BY errors.id;
+
+
+--
+-- Name: jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE jobs (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    started_at timestamp without time zone NOT NULL,
+    finished_at timestamp without time zone,
+    succeeded boolean,
+    error_id integer
+);
+
+
+--
+-- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE jobs_id_seq OWNED BY jobs.id;
+
+
+--
 -- Name: measurements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -343,6 +447,42 @@ ALTER SEQUENCE milestones_id_seq OWNED BY milestones.id;
 
 
 --
+-- Name: oauth_providers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE oauth_providers (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    site character varying NOT NULL,
+    authorize_path character varying NOT NULL,
+    token_path character varying NOT NULL,
+    client_id character varying NOT NULL,
+    client_secret character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: oauth_providers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE oauth_providers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: oauth_providers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE oauth_providers_id_seq OWNED BY oauth_providers.id;
+
+
+--
 -- Name: project_quotas; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -400,7 +540,8 @@ CREATE TABLE projects (
     view_options hstore DEFAULT ''::hstore NOT NULL,
     feature_states hstore DEFAULT ''::hstore NOT NULL,
     selected_features text[],
-    head_sha character varying
+    head_sha character varying,
+    props jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -455,7 +596,9 @@ CREATE TABLE pull_requests (
     avatar_url character varying,
     json_labels jsonb DEFAULT '[]'::jsonb,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    closed_at timestamp without time zone,
+    merged_at timestamp without time zone
 );
 
 
@@ -1114,7 +1257,7 @@ CREATE TABLE users (
     last_sign_in_ip character varying(255),
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    invitation_token character varying(60),
+    invitation_token character varying,
     invitation_sent_at timestamp without time zone,
     invitation_accepted_at timestamp without time zone,
     invitation_limit integer,
@@ -1133,7 +1276,8 @@ CREATE TABLE users (
     environments_subscribed_to text[] DEFAULT '{}'::text[] NOT NULL,
     current_project_id integer,
     nickname character varying(255),
-    username character varying(255)
+    username character varying(255),
+    props jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -1230,6 +1374,13 @@ ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY authorizations ALTER COLUMN id SET DEFAULT nextval('authorizations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY commits ALTER COLUMN id SET DEFAULT nextval('commits_id_seq'::regclass);
 
 
@@ -1251,6 +1402,20 @@ ALTER TABLE ONLY deploys ALTER COLUMN id SET DEFAULT nextval('deploys_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY errors ALTER COLUMN id SET DEFAULT nextval('errors_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY jobs ALTER COLUMN id SET DEFAULT nextval('jobs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY measurements ALTER COLUMN id SET DEFAULT nextval('measurements_id_seq'::regclass);
 
 
@@ -1266,6 +1431,13 @@ ALTER TABLE ONLY milestone_versions ALTER COLUMN id SET DEFAULT nextval('milesto
 --
 
 ALTER TABLE ONLY milestones ALTER COLUMN id SET DEFAULT nextval('milestones_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY oauth_providers ALTER COLUMN id SET DEFAULT nextval('oauth_providers_id_seq'::regclass);
 
 
 --
@@ -1423,6 +1595,14 @@ ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq':
 
 
 --
+-- Name: authorizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY authorizations
+    ADD CONSTRAINT authorizations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1447,6 +1627,22 @@ ALTER TABLE ONLY deploys
 
 
 --
+-- Name: errors_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY errors
+    ADD CONSTRAINT errors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY jobs
+    ADD CONSTRAINT jobs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: measurements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1468,6 +1664,14 @@ ALTER TABLE ONLY milestone_versions
 
 ALTER TABLE ONLY milestones
     ADD CONSTRAINT milestones_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: oauth_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY oauth_providers
+    ADD CONSTRAINT oauth_providers_pkey PRIMARY KEY (id);
 
 
 --
@@ -1740,6 +1944,20 @@ CREATE INDEX index_deploys_on_project_id_and_environment_name ON deploys USING b
 
 
 --
+-- Name: index_errors_on_sha; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_errors_on_sha ON errors USING btree (sha);
+
+
+--
+-- Name: index_jobs_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_jobs_on_name ON jobs USING btree (name);
+
+
+--
 -- Name: index_measurements_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1835,6 +2053,13 @@ CREATE UNIQUE INDEX index_projects_on_slug ON projects USING btree (slug);
 --
 
 CREATE UNIQUE INDEX index_projects_roadmaps_on_project_id_and_roadmap_id ON projects_roadmaps USING btree (project_id, roadmap_id);
+
+
+--
+-- Name: index_pull_requests_on_closed_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_pull_requests_on_closed_at ON pull_requests USING btree (closed_at);
 
 
 --
@@ -2555,5 +2780,23 @@ INSERT INTO schema_migrations (version) VALUES ('20160206214746');
 
 INSERT INTO schema_migrations (version) VALUES ('20160207154530');
 
+INSERT INTO schema_migrations (version) VALUES ('20160317140151');
+
+INSERT INTO schema_migrations (version) VALUES ('20160419230411');
+
+INSERT INTO schema_migrations (version) VALUES ('20160420000616');
+
+INSERT INTO schema_migrations (version) VALUES ('20160507135209');
+
+INSERT INTO schema_migrations (version) VALUES ('20160507135846');
+
+INSERT INTO schema_migrations (version) VALUES ('20160510233329');
+
 INSERT INTO schema_migrations (version) VALUES ('20160520201427');
+
+INSERT INTO schema_migrations (version) VALUES ('20160625203412');
+
+INSERT INTO schema_migrations (version) VALUES ('20160625221840');
+
+INSERT INTO schema_migrations (version) VALUES ('20160625230420');
 
