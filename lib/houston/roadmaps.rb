@@ -12,4 +12,21 @@ module Houston
     end
 
   end
+
+
+
+  add_navigation_renderer :roadmaps do
+    name "Roadmaps"
+    icon "fa-map"
+    path { Houston::Roadmaps::Engine.routes.url_helpers.roadmaps_path }
+    ability { |ability| ability.can?(:read, Roadmap) }
+  end
+
+  add_project_feature :goals do
+    name "Goals"
+    icon "fa-flag"
+    path { |project| Houston::Roadmaps::Engine.routes.url_helpers.project_goals_path(project) }
+    ability { |ability, project| ability.can?(:read, project.milestones.build) }
+  end
+
 end
