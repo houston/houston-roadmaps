@@ -2,7 +2,8 @@ class Roadmaps.EditRoadmapView extends Backbone.View
   template: HandlebarsTemplates['houston/roadmaps/roadmap/show']
   renderGoal: HandlebarsTemplates['houston/roadmaps/roadmap/goal']
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     super
     @roadmapId = @options.id
     @milestonesUrl = "/roadmaps/#{@roadmapId}/milestones"

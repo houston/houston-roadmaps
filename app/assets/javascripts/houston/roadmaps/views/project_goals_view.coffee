@@ -4,7 +4,8 @@ class Roadmaps.ProjectGoalsView extends Neat.CollectionEditor
   viewPath: 'houston/roadmaps/goals'
   pageSize: Infinity
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @project = @options.project
     @can = @options.can
     @goals = @collection = @options.goals

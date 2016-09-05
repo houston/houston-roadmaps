@@ -5,7 +5,8 @@ class Roadmaps.RoadmapHistoryView extends Backbone.View
   events:
     'click :radio': 'changeCommit'
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @commits = @options.commits
     @commitId = @options.commitId
 

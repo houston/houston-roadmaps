@@ -1,6 +1,7 @@
 class Roadmaps.RoadmapsView extends Backbone.View
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @roadmaps = @options.roadmaps
     @template = HandlebarsTemplates['houston/roadmaps/roadmaps/index']
     @renderRoadmap = HandlebarsTemplates['houston/roadmaps/roadmaps/show']

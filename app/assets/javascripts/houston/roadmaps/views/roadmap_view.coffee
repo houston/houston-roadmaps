@@ -1,6 +1,7 @@
 class Roadmaps.RoadmapView extends Backbone.View
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @setMilestones @options.milestones
 
   setMilestones: (@milestones)->

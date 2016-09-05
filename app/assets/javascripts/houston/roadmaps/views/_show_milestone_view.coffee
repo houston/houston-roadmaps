@@ -2,7 +2,8 @@ class Roadmaps.ShowMilestoneView extends @TicketsView
   supportsSorting: false
   template: HandlebarsTemplates['houston/roadmaps/milestone/show']
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @milestone = @options.milestone
     @id = @milestone.id
     @projectTicketTracker = @options.projectTicketTracker

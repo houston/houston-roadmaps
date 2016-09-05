@@ -8,7 +8,8 @@ class Roadmaps.EditMilestoneView extends Roadmaps.ShowMilestoneView
     'click #save_goal': 'saveGoal'
     'click #save_feedback_query': 'saveFeedbackQuery'
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @openTickets = @options.openTickets
     super
 
