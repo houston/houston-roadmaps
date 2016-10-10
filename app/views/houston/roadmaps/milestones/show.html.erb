@@ -1,21 +1,21 @@
 <%= render partial: "projects/header", locals: {project: @project, postfix: @milestone.name} %>
 
-<div id="milestone_view" class="hide-completed <%= can?(:update_tickets, @milestone) ? "editable" : "readonly" %>"><div>
+<div id="milestone_view" class="hide-completed <%= can?(:update, @project.tickets.build) ? "editable" : "readonly" %>"><div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
     var tickets = <%=raw Houston::Roadmaps::TicketPresenter.new(@tickets).to_json %>;
     tickets = new Tickets(tickets, {parse: true});
-    
+
     var milestone = {
       id: <%= @milestone.id %>,
       goal: <%=raw @milestone.goal.to_json %> };
     <% if defined?(Houston::Feedback) -%>
     milestone.feedbackQuery = <%=raw @milestone.feedback_query.to_json %>;
     <% end -%>
-    
-    <% if can?(:update_tickets, @milestone) %>
+
+    <% if can?(:update, @project.tickets.build) %>
       new Roadmaps.EditMilestoneView({
         el: $('#milestone_view')[0],
         milestone: milestone,
