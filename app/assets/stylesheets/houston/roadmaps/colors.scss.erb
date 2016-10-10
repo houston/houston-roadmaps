@@ -2,7 +2,7 @@
 @function tint($color, $percent){
   @return mix(white, $color, $percent);
 }
- 
+
 // Add percentage of black to a color
 @function shade($color, $percent){
   @return mix(black, $color, $percent);
@@ -35,6 +35,8 @@ body.dashboard .roadmap-milestone {
       &.upcoming {
         border-color: shade(<%= value.rgb %>, 50%);
         & > span { color: shade(hsl(hue($<%= name %>), saturation($<%= name %>), 80), 50%); }
+        &.active > span { color: rgba(hsl(hue($<%= name %>), saturation($<%= name %>), 80), 0.5); }
+        .roadmap-milestone-progress { background: shade($<%= name %>, 50%); }
       }
     }
   <% end %>

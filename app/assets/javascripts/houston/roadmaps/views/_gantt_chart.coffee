@@ -159,6 +159,7 @@ class Roadmaps.GanttChart
           classes.push 'past'
         else
           classes.push 'active'
+        classes.push 'active' if milestone.percentComplete > 0
         classes.join(' ')
       .attr 'style', (milestone)=>
         [ "left: #{@x(milestone.startDate)}px",
