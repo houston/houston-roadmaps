@@ -56,8 +56,7 @@ private
       AND tickets.milestone_id IN (#{milestone_ids.join(", ")})
     SQL
       .map { |milestone_id, _, closed, tasks, completed_tasks|
-        [ milestone_id.to_i,
-          closed == "t" ? 1.0 : (completed_tasks.to_f / tasks.to_i) ] }
+        [ milestone_id, (closed ? tasks : completed_tasks).to_f / tasks ] }
       .group_by { |(milestone_id, _)| milestone_id }
       .map { |(milestone_id, tickets)|
         [milestone_id, (tickets.sum { |(_, percent)| percent } / tickets.length)] }]
