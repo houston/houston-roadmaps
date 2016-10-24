@@ -56,8 +56,7 @@ module Houston
 
 
       def create_ticket
-        authorize! :update, milestone.project.tickets.build
-        authorize! :create, milestone.tickets.build
+        authorize! :create, milestone.project.tickets.build
 
         ticket = project.create_ticket!(
           milestone_id: milestone.id,
