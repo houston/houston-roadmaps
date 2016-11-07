@@ -7,23 +7,42 @@
       </div>
     </div>
 
-    <div class="control-group">
-      <label class="control-label">Projects</label>
+    <div id="teams_checkboxes" class="control-group">
+      <label class="control-label">Teams</label>
       <div class="controls">
-        <% Project.unretired.with_feature("goals").pluck(:id, :name, :color).each do |project_id, project_name, project_color| %>
-          <label for="roadmap_project_ids_<%= project_id %>">
-            <%= check_box_tag "roadmap[project_ids][]", project_id, @roadmap.project_ids.member?(project_id),
-                  id: "roadmap_project_ids_#{project_id}" %>
-            <b class="bubble <%= project_color %>"></b>
-            <%= project_name %>
+        <% @teams.pluck(:id, :name).each do |team_id, team_name| %>
+          <label for="roadmap_team_ids_<%= team_id %>">
+            <%= check_box_tag "roadmap[team_ids][]", team_id, @roadmap.team_ids.member?(team_id),
+                  id: "roadmap_team_ids_#{team_id}" %>
+            <%= team_name %>
           </label>
         <% end %>
       </div>
     </div>
 
     <div class="form-actions">
-      <%= f.submit nil, :class => "btn btn-primary" %>
+      <%= f.submit nil, :class => "btn btn-primary", disabled: true %>
       <%= link_to "Cancel", (@roadmap.persisted? ? roadmap_path(@roadmap) : roadmaps_path), :class => "btn" %>
     </div>
   </fieldset>
+<% end %>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var $submit = $('input[type="submit"]');
+    function enableSubmit() {
+      $submit.prop('disabled', $('#teams_checkboxes :checkbox:checked').length == 0);
+    }
+    $('#teams_checkboxes').on('click', ':checkbox', enableSubmit);
+
+    var $checkboxes = $('#teams_checkboxes :checkbox');
+    if($checkboxes.length == 1) {
+      $checkboxes.eq(0).prop('checked', true);
+      $submit.prop('disabled', false);
+    }
+
+    $('#roadmap_name').select();
+  });
+</script>
 <% end %>

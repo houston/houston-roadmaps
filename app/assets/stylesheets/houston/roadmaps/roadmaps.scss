@@ -24,13 +24,13 @@ li.roadmap {
     padding: 6px 0 0 4px;
     vertical-align: top;
     display: inline-block;
-    line-height: 0.92em;
+    line-height: 1;
     width: 20%;
 
-    .bubble {
-      width: 8px;
-      height: 8px;
-      margin: 0;
+    .roadmap-team {
+      font-size: 0.75em;
+      font-weight: 600;
+      color: #a0a0a0;
     }
   }
 

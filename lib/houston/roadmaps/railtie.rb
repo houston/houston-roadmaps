@@ -1,5 +1,6 @@
 require "houston/roadmaps/milestone_ext"
 require "houston/roadmaps/project_ext"
+require "houston/roadmaps/team_ext"
 
 module Houston
   module Roadmaps
@@ -10,6 +11,7 @@ module Houston
       config.to_prepare do
         ::Milestone.send(:include, Houston::Roadmaps::MilestoneExt)
         ::Project.send(:include, Houston::Roadmaps::ProjectExt)
+        ::Team.send(:include, Houston::Roadmaps::TeamExt)
       end
 
     end

@@ -8,7 +8,7 @@ module Houston
       def index
         authorize! :read, Roadmap
         @title = "Roadmaps"
-        @roadmaps = Roadmap.all.preload(:projects, :milestones => {:milestone => :project}).order(:name)
+        @roadmaps = current_user.teams.roadmaps.preload(:projects, :milestones => {:milestone => :project}).order(:name)
       end
 
 
@@ -36,13 +36,14 @@ module Houston
 
       def edit
         authorize! :update, @roadmap
+        @teams = current_user.teams.select { |team| can?(:update, Roadmap.new(team_ids: [team.id])) }
       end
 
 
       def update
         authorize! :update, @roadmap
         if @roadmap.update_attributes params[:roadmap]
-          redirect_to roadmaps_url, notice: "Roadmap created"
+          redirect_to roadmap_url(@roadmap), notice: "Roadmap updated"
         else
           render action: :edit
         end
@@ -50,16 +51,18 @@ module Houston
 
 
       def new
-        authorize! :create, Roadmap
+        @teams = current_user.teams.select { |team| can?(:create, Roadmap.new(team_ids: [team.id])) }
+        authorize! :create, Roadmap.new(team_ids: @teams.map(&:id))
         @roadmap = Roadmap.new
       end
 
 
       def create
-        authorize! :create, Roadmap
-        @roadmap = Roadmap.create params[:roadmap]
-        if @roadmap.persisted?
-          redirect_to roadmaps_url, notice: "Roadmap created"
+        @roadmap = Roadmap.new params[:roadmap]
+        authorize! :create, @roadmap
+
+        if @roadmap.save
+          redirect_to roadmap_url(@roadmap)
         else
           render action: :new
         end

@@ -8,6 +8,9 @@
     <input id="milestone_name" type="text" name="name" autocomplete="off"/>
 
     <label for="milestone_project_id">Project</label>
+    <div style="float: right; width: 280px; font-size: 0.96em; line-height: 1.33em; color: #555;">
+      Don't see the project you're looking for? Make sure the <b>Goals</b> feature is turned on in Project Settings.
+    </div>
     <select id="milestone_project_id" name="project_id">
       {{#each projects}}
         <option value="{{id}}">{{name}}</option>

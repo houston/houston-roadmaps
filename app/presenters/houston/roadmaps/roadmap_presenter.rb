@@ -11,6 +11,9 @@ class Houston::Roadmaps::RoadmapPresenter
   def to_hash(roadmap)
     { id: roadmap.id,
       name: roadmap.name,
+      teams: roadmap.teams.map { |team| {
+        id: team.id,
+        name: team.name } },
       projects: roadmap.projects.map { |project| {
         id: project.id,
         name: project.name,
