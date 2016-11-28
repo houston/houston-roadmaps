@@ -24,6 +24,10 @@ class RoadmapMilestone < ActiveRecord::Base
     def during(range)
       where(arel_table[:start_date].lteq(range.end)).where(arel_table[:end_date].gteq(range.begin))
     end
+
+    def current
+      during Date.today..Date.today
+    end
   end
 
   def update_name!(name)

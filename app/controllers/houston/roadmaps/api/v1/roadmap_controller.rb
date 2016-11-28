@@ -8,7 +8,8 @@ module Houston
 
 
           def current
-            milestones = Milestone.current.includes(:tickets)
+            roadmaps = current_user.teams.roadmaps
+            milestones = RoadmapMilestone.current.joins(:roadmap).merge(roadmaps).includes(milestone: :tickets).map(&:milestone)
             render json: Houston::Roadmaps::MilestoneApiPresenter.new(milestones)
           end
 
