@@ -14,7 +14,7 @@ class Houston::Roadmaps::TicketPresenter < TicketPresenter
       reporter: reporter && {
         email: reporter.email,
         name: reporter.name },
-      firstReleaseAt: ticket.first_release_at)
+      closedAt: ticket.closed_at)
   end
 
 end

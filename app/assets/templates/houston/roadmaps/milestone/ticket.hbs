@@ -1,4 +1,4 @@
-<tr id="ticket_{{id}}" class="ticket {{#firstReleaseAt}}ticket-released{{/firstReleaseAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" rel="ticket" data-number="{{number}}" data-id="{{id}}">
+<tr id="ticket_{{id}}" class="ticket {{#closedAt}}ticket-released{{/closedAt}} {{#resolved}}ticket-resolved{{/resolved}} {{#closedAt}}ticket-closed{{/closedAt}}" rel="ticket" data-number="{{number}}" data-id="{{id}}">
   <td class="ticket-handle"></td>
   <td class="ticket-number">#{{number}}</td>
   <td class="ticket-summary">
@@ -16,7 +16,7 @@
   <td class="ticket-status">
     {{#if closedAt}}
       <i class="fa fa-ban"></i> Closed
-    {{else}}{{#if firstReleaseAt}}
+    {{else}}{{#if closedAt}}
       <i class="fa fa-paper-plane"></i> Released
     {{else}}
       <i class="fa fa-circle-o"></i> Open

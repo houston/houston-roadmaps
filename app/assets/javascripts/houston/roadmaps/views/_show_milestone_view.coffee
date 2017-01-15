@@ -60,10 +60,10 @@ class Roadmaps.ShowMilestoneView extends @TicketsView
     mostRecentDataPoint = 0
     for ticket in tickets
       effort = +ticket.estimatedEffort()
-      if effort and ticket.get('firstReleaseAt')
-        firstReleaseAt = App.parseDate(ticket.get('firstReleaseAt'))
-        mostRecentDataPoint = +firstReleaseAt if mostRecentDataPoint < firstReleaseAt
-        sprint = @getEndOfSprint(firstReleaseAt)
+      if effort and ticket.get('closedAt')
+        closedAt = App.parseDate(ticket.get('closedAt'))
+        mostRecentDataPoint = +closedAt if mostRecentDataPoint < closedAt
+        sprint = @getEndOfSprint(closedAt)
         progressBySprint[sprint] = (progressBySprint[sprint] || 0) + effort
       totalEffort += effort
 

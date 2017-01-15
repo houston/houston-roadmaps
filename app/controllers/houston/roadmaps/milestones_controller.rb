@@ -12,8 +12,8 @@ module Houston
         authorize! :read, milestone
         @project = milestone.project
         @title = "#{milestone.name} • #{@project.name}"
-        @tickets = milestone.tickets.includes(:project, :tasks, :reporter)
-        @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
+        @tickets = milestone.tickets.includes(:project, :tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
+        @open_tickets = @project.tickets.open.includes(:tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
       end
 
 
@@ -87,10 +87,10 @@ module Houston
 
         ::Ticket.transaction do
           milestone.tickets.where(::Ticket.arel_table[:id].not_in(ids))
-            .update_all("extended_attributes = extended_attributes || 'milestoneSequence=>NULL'::hstore")
+            .update_all("props = props || '{\"roadmaps.milestoneSequence\": null}'::jsonb")
 
           ids.each_with_index do |id, i|
-            ::Ticket.unscoped.where(id: id).update_all("extended_attributes = extended_attributes || 'milestoneSequence=>#{i+1}'::hstore")
+            ::Ticket.unscoped.where(id: id).update_all("props = props || '{\"roadmaps.milestoneSequence\": #{i + 1}}'::jsonb")
           end
         end
 
