@@ -20,11 +20,7 @@ class Houston::Roadmaps::MilestonePresenter
       ticketsCompleted: milestone.closed_tickets_count,
       percentComplete: percent_complete(milestone),
       completed: milestone.completed?,
-      band: milestone.band,
-      lanes: milestone.lanes,
       locked: milestone.locked? || milestone.completed?,
-      startDate: milestone.start_date,
-      endDate: milestone.end_date,
       removed: milestone.destroyed_at.present? }
   end
 
