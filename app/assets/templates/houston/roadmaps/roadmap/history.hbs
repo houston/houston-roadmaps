@@ -14,7 +14,7 @@
           <input id="commit_id_{{id}}" name="commit_id" type="radio" value="{{id}}" />
           {{formatDateWithYear2 createdAt}}
           {{{avatar user.email 24 user.name}}}
-          <div class="roadmap-commit-message">{{{markdown message}}}</div>
+          <div class="roadmap-commit-message markdown">{{{markdown message}}}</div>
         </label>
       </li>
     {{/commits}}

@@ -25,3 +25,6 @@ end
 
 # Use the development version of houston-core
 gem "houston-core", github: "houston/houston-core", branch: "master"
+
+# Use the development version of houston-tickets
+gem "houston-tickets", github: "houston/houston-tickets", branch: "master"

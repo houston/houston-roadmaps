@@ -1,3 +1,4 @@
+require "houston/tickets"
 require "houston/roadmaps/milestone_ext"
 require "houston/roadmaps/project_ext"
 require "houston/roadmaps/team_ext"

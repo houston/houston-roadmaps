@@ -65,7 +65,7 @@ module Houston
           reporter: current_user)
 
         if ticket.persisted?
-          render json: TicketPresenter.new(ticket), status: :created, location: ticket.ticket_tracker_ticket_url
+          render json: Houston::Roadmaps::TicketPresenter.new(ticket), status: :created, location: ticket.ticket_tracker_ticket_url
         else
           render json: ticket.errors, status: :unprocessable_entity
         end

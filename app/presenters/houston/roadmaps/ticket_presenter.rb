@@ -1,4 +1,4 @@
-class Houston::Roadmaps::TicketPresenter < TicketPresenter
+class Houston::Roadmaps::TicketPresenter < Houston::Tickets::TicketPresenter
   include MarkdownHelper
 
   def ticket_to_json(ticket)

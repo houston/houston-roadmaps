@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/houston/houston-core.git
-  revision: a505c25bb50b18858513498c22b4c361f295e6ef
+  revision: d93dcf6762bf93ccd60070d135c6f9dc64755836
   branch: master
   specs:
     houston-core (0.8.0.pre)
@@ -47,11 +47,21 @@ GIT
       thor
       uglifier (>= 2.7.2)
 
+GIT
+  remote: git://github.com/houston/houston-tickets.git
+  revision: 4dc6fefc3ced1191991b5670d502fa97274cf2ff
+  branch: master
+  specs:
+    houston-tickets (0.0.1)
+      boblail-unfuddle
+      houston-core (>= 0.8.0.pre)
+
 PATH
   remote: .
   specs:
     houston-roadmaps (0.1.0)
       houston-core (>= 0.8.0.pre)
+      houston-tickets
       neat-rails (>= 0.2.0)
 
 GEM
@@ -309,6 +319,7 @@ DEPENDENCIES
   capybara
   houston-core!
   houston-roadmaps!
+  houston-tickets!
   minitest
   minitest-reporters
   minitest-reporters-turn_reporter
