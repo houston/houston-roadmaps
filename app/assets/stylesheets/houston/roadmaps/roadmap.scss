@@ -17,6 +17,10 @@ $roadmap-padding: 1.33em;
   -ms-user-select: none;
   user-select: none;
 
+  &.dragging {
+    overflow: visible; // so we can see the milestone being dragged down to goals
+  }
+
   &.drag-create {
     cursor: ew-resize;
     cursor: col-resize;

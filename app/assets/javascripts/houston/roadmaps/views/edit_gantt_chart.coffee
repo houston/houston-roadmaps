@@ -11,6 +11,12 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
     if options.removeMilestoneByDroppingOn
       $(options.removeMilestoneByDroppingOn).droppable
         tolerance: 'pointer'
+
+        activate: (e, ui) =>
+          @$el.addClass('dragging')
+        deactivate: (e, ui) =>
+          @$el.removeClass('dragging')
+
         drop: (e, ui) =>
           return unless @drag?.milestone
           @drag.milestone.markRemoved()
