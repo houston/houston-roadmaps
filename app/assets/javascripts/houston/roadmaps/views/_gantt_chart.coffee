@@ -92,7 +92,7 @@ class Roadmaps.GanttChart
       .data(@groupMilestonesIntoBands(), (band)-> band.key)
 
     bands.enter()
-      .append('div')
+      .insert('div')
         .attr('class', (band)-> "roadmap-band")
         .attr('style', (date)=> "height: #{@bandHeight}px; margin: #{@bandMargin}px 0;")
         .attr('data-band', (band)-> band.number)
