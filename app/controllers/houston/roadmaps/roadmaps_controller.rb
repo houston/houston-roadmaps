@@ -52,7 +52,7 @@ module Houston
 
       def new
         @teams = current_user.teams.select { |team| can?(:create, Roadmap.new(team_ids: [team.id])) }
-        authorize! :create, Roadmap.new(team_ids: @teams.map(&:id))
+        authorize! :create, Roadmap
         @roadmap = Roadmap.new
       end
 
