@@ -6,6 +6,7 @@ Houston::Roadmaps::Engine.routes.draw do
   resources :roadmaps do
     member do
       get "history"
+      get "play"
 
       get "milestones", to: "roadmap_milestones#index"
       put "milestones", to: "roadmap_milestones#update"

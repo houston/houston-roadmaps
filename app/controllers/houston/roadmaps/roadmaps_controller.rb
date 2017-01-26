@@ -2,7 +2,7 @@ module Houston
   module Roadmaps
     class RoadmapsController < ApplicationController
       layout "houston/roadmaps/application"
-      before_filter :find_roadmap, only: [:show, :history, :edit, :update, :update_milestones, :destroy]
+      before_filter :find_roadmap, only: [:show, :history, :play, :edit, :update, :update_milestones, :destroy]
 
 
       def index
@@ -30,6 +30,20 @@ module Houston
         @commit_id = params[:commit_id].to_i
 
         @milestones = @roadmap.milestones.including_destroyed.preload(milestone: :project)
+        @markers = Houston::Roadmaps.config.markers
+      end
+
+
+      def play
+        authorize! :read, @roadmap
+        @title = "#{@roadmap.name} History"
+        @start = Date.parse params[:start]
+        @end = Date.parse params[:end]
+        except = params.key?(:except) ? params[:except].split(",") : []
+
+        @commits = @roadmap.commits.order(created_at: :desc).preload(:milestone_versions, :user)
+
+        @milestones = @roadmap.milestones.including_destroyed.preload(milestone: :project).where.not(milestone_id: except)
         @markers = Houston::Roadmaps.config.markers
       end
 

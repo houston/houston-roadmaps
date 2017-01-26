@@ -1,0 +1,43 @@
+<% content_for :title do %>
+<h1 class="project-banner space-below">
+  <small>Roadmap:</small>
+  <%= @roadmap.name %>
+
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
+
+<div id="play_roadmap_view">
+  <div id="roadmap" class="roadmap callout callout-banner"></div>
+</div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var milestones = <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>;
+    new Roadmaps.PlayRoadmapView({
+      milestones: milestones,
+      start: new Date(<%= @start.year %>, <%= @start.month - 1 %>, <%= @start.day %>),
+      end: new Date(<%= @end.year %>, <%= @end.month - 1 %>, <%= @end.day %>),
+      commits: <%=raw @commits.map { |commit| {
+        id: commit.id,
+        createdAt: commit.created_at,
+        user: commit.user && {
+          email: commit.user.email,
+          name: commit.user.name },
+        message: commit.message,
+        changes: commit.milestone_versions.map { |version| {
+          milestoneId: version.versioned_id,
+          number: version.number,
+          modifications: Hash[version.modifications.map { |key, change|
+            key = "startDate" if key == "start_date"
+            key = "endDate" if key == "end_date"
+            key, change = "removed", change.map(&:present?) if key == "destroyed_at"
+            [key, change]
+          }] } }
+      } }.to_json %>,
+      showWeekends: true
+    }).render();
+  });
+</script>
+<% end %>

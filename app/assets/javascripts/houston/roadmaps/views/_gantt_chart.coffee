@@ -11,12 +11,13 @@ class Roadmaps.GanttChart
     @showProgress = options.showProgress ? false
     @bandHeight = options.bandHeight ? 30
     @bandMargin = options.bandMargin ? 8
+    @transitionDuration = options.transition ? 150
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
     @markers = options.markers ? []
     for marker in @markers
-      marker.date = App.serverDateFormat.parse(marker.date).endOfDay()
+      marker.date = App.parseDate(marker.date).endOfDay()
     @milestones.bind 'add', @update, @
     @milestones.bind 'change', @update, @
     @milestones.bind 'remove', @update, @
@@ -60,7 +61,7 @@ class Roadmaps.GanttChart
     return if @width is width
     @width = width
 
-    @roadmap.select('svg').transition(150).attr('width', @width)
+    @roadmap.select('svg').transition().duration(@transitionDuration).attr('width', @width)
 
     @x = d3.time.scale()
       .domain(@viewport.domain())
@@ -68,7 +69,7 @@ class Roadmaps.GanttChart
     timeline = d3.svg.axis()
       .scale(@x)
       .orient('bottom')
-    @xAxis.transition(150).call(timeline)
+    @xAxis.transition().duration(@transitionDuration).call(timeline)
 
     @update(transition: true)
 
@@ -110,7 +111,7 @@ class Roadmaps.GanttChart
         .attr('class', 'roadmap-weekend')
         .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
 
-      update = if transition then weeks.transition(150) else weeks
+      update = if transition then weeks.transition().duration(@transitionDuration) else weeks
       update
         .attr('style', (date)=> "left: #{@x(date)}px; width: #{@x(2.days().after(date)) - @x(date)}px;")
 
@@ -146,7 +147,7 @@ class Roadmaps.GanttChart
         .attr('class', 'roadmap-milestone-name')
         .text((milestone)-> milestone.name)
 
-    update = if transition then milestones.transition(150) else milestones
+    update = if transition then milestones.transition().duration(@transitionDuration) else milestones
     update
       .attr 'class', (milestone)=>
         classes = ['roadmap-milestone', milestone.projectColor]
@@ -186,21 +187,21 @@ class Roadmaps.GanttChart
           .attr('class', 'roadmap-today')
           .attr('style', (date)=> "left: #{@x(date)}px;")
 
-      update = if transition then todayLine.transition(150) else todayLine
+      update = if transition then todayLine.transition().duration(@transitionDuration) else todayLine
       update
         .attr('style', (date)=> "left: #{@x(date)}px;")
 
 
 
     markers = @roadmap.selectAll('.roadmap-marker')
-      .data(@markers)
+      .data(@markers, (marker) -> marker.id)
 
     markers.enter()
       .append('div')
         .attr('class', 'roadmap-marker')
         .attr('style', ({date})=> "left: #{@x(date)}px;")
 
-    update = if transition then markers.transition(150) else markers
+    update = if transition then markers.transition().duration(@transitionDuration) else markers
     update
       .attr('style', ({date})=> "left: #{@x(date)}px;")
 
