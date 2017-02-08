@@ -23,6 +23,10 @@
     <div class="form-actions">
       <%= f.submit nil, :class => "btn btn-primary", disabled: true %>
       <%= link_to "Cancel", (@roadmap.persisted? ? roadmap_path(@roadmap) : roadmaps_path), :class => "btn" %>
+
+      <% if @roadmap.persisted? && can?(:destroy, @roadmap) %>
+        <button class="btn btn-delete btn-danger" id="delete_roadmap_button">Delete</button>
+      <% end %>
     </div>
   </fieldset>
 <% end %>
@@ -41,6 +45,15 @@
       $checkboxes.eq(0).prop('checked', true);
       $submit.prop('disabled', false);
     }
+
+    $('#delete_roadmap_button').click(function(e) {
+      e.preventDefault();
+      App.confirmDelete({
+        resource: 'Roadmap',
+        message: 'This will delete "<%= @roadmap.name %>" and its history.',
+        url: <%=raw roadmap_path(@roadmap).to_json %>
+      });
+    });
 
     $('#roadmap_name').select();
   });

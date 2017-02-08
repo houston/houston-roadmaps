@@ -71,6 +71,13 @@ module Houston
       end
 
 
+      def destroy
+        authorize! :destroy, @roadmap
+        @roadmap.destroy
+        redirect_to roadmaps_path
+      end
+
+
       def new
         @teams = current_user.teams.select { |team| can?(:create, Roadmap.new(team_ids: [team.id])) }
         authorize! :create, Roadmap
