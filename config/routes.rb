@@ -7,6 +7,7 @@ Houston::Roadmaps::Engine.routes.draw do
     member do
       get "history"
       get "play"
+      post "duplicate"
 
       get "milestones", to: "roadmap_milestones#index"
       put "milestones", to: "roadmap_milestones#update"

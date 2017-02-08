@@ -2,7 +2,8 @@
 <h1 class="project-banner space-below">
   <small>Roadmap:</small>
   <%= @roadmap.name %>
-  <%= link_to "Edit", edit_roadmap_path(@roadmap), class: "btn btn-primary" %>
+  <%= link_to "Edit", edit_roadmap_path(@roadmap), class: "btn btn-default" %>
+  <%= button_to "Duplicate", duplicate_roadmap_path(@roadmap), class: "btn btn-default" %>
 
   <span class="buttons" style="float: right;">
     <button id="reset_roadmap" class="btn">Reset</button>

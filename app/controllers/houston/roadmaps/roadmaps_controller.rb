@@ -2,7 +2,7 @@ module Houston
   module Roadmaps
     class RoadmapsController < ApplicationController
       layout "houston/roadmaps/application"
-      before_filter :find_roadmap, only: [:show, :history, :play, :edit, :update, :update_milestones, :destroy]
+      before_filter :find_roadmap, only: [:show, :history, :play, :edit, :update, :duplicate, :destroy]
 
 
       def index
@@ -61,6 +61,13 @@ module Houston
         else
           render action: :edit
         end
+      end
+
+
+      def duplicate
+        authorize! :create, @roadmap
+        @roadmap = @roadmap.duplicate!(as: current_user)
+        redirect_to roadmap_url(@roadmap)
       end
 
 
