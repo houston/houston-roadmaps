@@ -39,6 +39,7 @@
       $submit.prop('disabled', $('#teams_checkboxes :checkbox:checked').length == 0);
     }
     $('#teams_checkboxes').on('click', ':checkbox', enableSubmit);
+    enableSubmit();
 
     var $checkboxes = $('#teams_checkboxes :checkbox');
     if($checkboxes.length == 1) {
