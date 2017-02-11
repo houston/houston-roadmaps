@@ -7,6 +7,21 @@
       </div>
     </div>
 
+    <div class="control-group">
+      <%= f.label :visibility, :class => "control-label" %>
+      <div class="controls">
+        <%= f.label :visibility_everyone do %>
+          <%= f.radio_button :visibility, "Everyone" %> Everyone
+        <% end %>
+        <%= f.label :visibility_team_members do %>
+          <%= f.radio_button :visibility, "Team Members" %> Team Members
+        <% end %>
+        <%= f.label :visibility_team_owners do %>
+          <%= f.radio_button :visibility, "Team Owners" %> Team Owners
+        <% end %>
+      </div>
+    </div>
+
     <div id="teams_checkboxes" class="control-group">
       <label class="control-label">Teams</label>
       <div class="controls">

@@ -784,7 +784,8 @@ ALTER SEQUENCE roadmap_milestones_id_seq OWNED BY roadmap_milestones.id;
 
 CREATE TABLE roadmaps (
     id integer NOT NULL,
-    name character varying NOT NULL
+    name character varying NOT NULL,
+    visibility character varying DEFAULT 'Team Members'::character varying NOT NULL
 );
 
 
@@ -2747,6 +2748,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170116002818'),
 ('20170116210225'),
 ('20170118005958'),
-('20170206002718');
+('20170206002718'),
+('20170211232146');
 
 

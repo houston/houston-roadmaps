@@ -7,6 +7,10 @@ class Roadmap < ActiveRecord::Base
 
   validates :name, presence: true
 
+  VISIBILITY = ["Everyone", "Team Members", "Team Owners"].freeze
+
+  validates :visibility, presence: true, inclusion: { in: VISIBILITY }
+
 
   def duplicate!(as:)
     Roadmap.transaction do
