@@ -8,7 +8,7 @@ module Houston
       def index
         authorize! :read, Roadmap
         @title = "Roadmaps"
-        @roadmaps = current_user.teams.roadmaps.preload(:projects, :milestones => {:milestone => :project}).order(:name)
+        @roadmaps = Roadmap.preload(:projects, :milestones => {:milestone => :project}).order(:name).find_all { |roadmap| can? :read, roadmap }
       end
 
 
