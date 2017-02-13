@@ -2,7 +2,7 @@ module Houston
   module Roadmaps
     class RoadmapsController < ApplicationController
       layout "houston/roadmaps/application"
-      before_filter :find_roadmap, only: [:show, :history, :play, :edit, :update, :duplicate, :destroy]
+      before_action :find_roadmap, only: [:show, :history, :play, :edit, :update, :duplicate, :destroy]
 
 
       def index

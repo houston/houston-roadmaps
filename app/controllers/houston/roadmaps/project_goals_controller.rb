@@ -2,7 +2,7 @@ module Houston
   module Roadmaps
     class ProjectGoalsController < ApplicationController
       layout "houston/roadmaps/application"
-      before_filter :find_project
+      before_action :find_project
 
 
       def index

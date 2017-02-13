@@ -5,7 +5,7 @@ module Houston
 
       layout "houston/roadmaps/application"
 
-      before_filter :find_milestone, only: [:show, :update, :close, :add_ticket, :create_ticket, :remove_ticket, :update_order]
+      before_action :find_milestone, only: [:show, :update, :close, :add_ticket, :create_ticket, :remove_ticket, :update_order]
 
 
       def show

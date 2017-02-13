@@ -2,7 +2,7 @@ module Houston
   module Roadmaps
     class RoadmapMilestonesController < RoadmapsController
       layout "houston/roadmaps/application"
-      before_filter :find_roadmap
+      before_action :find_roadmap
 
 
       def index

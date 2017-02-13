@@ -3,8 +3,8 @@ module Houston
     module Api
       module V1
         class RoadmapController < ApplicationController
-          before_filter :api_authenticate!
-          skip_before_filter :verify_authenticity_token
+          before_action :api_authenticate!
+          skip_before_action :verify_authenticity_token
 
 
           def current
