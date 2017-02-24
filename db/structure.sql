@@ -28,20 +28,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
---
--- Name: hstore; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
-
-
---
--- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
-
-
 SET search_path = public, pg_catalog;
 
 --
@@ -113,7 +99,6 @@ CREATE TABLE ar_internal_metadata (
 CREATE TABLE authorizations (
     id integer NOT NULL,
     name character varying NOT NULL,
-    provider_id integer,
     scope character varying,
     access_token character varying,
     refresh_token character varying,
@@ -121,7 +106,10 @@ CREATE TABLE authorizations (
     expires_in integer,
     expires_at timestamp without time zone,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    provider_name character varying NOT NULL,
+    user_id integer NOT NULL,
+    props jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -465,42 +453,6 @@ ALTER SEQUENCE milestones_id_seq OWNED BY milestones.id;
 
 
 --
--- Name: oauth_providers; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE oauth_providers (
-    id integer NOT NULL,
-    name character varying NOT NULL,
-    site character varying NOT NULL,
-    authorize_path character varying NOT NULL,
-    token_path character varying NOT NULL,
-    client_id character varying NOT NULL,
-    client_secret character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: oauth_providers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE oauth_providers_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: oauth_providers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE oauth_providers_id_seq OWNED BY oauth_providers.id;
-
-
---
 -- Name: persistent_triggers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -509,7 +461,8 @@ CREATE TABLE persistent_triggers (
     type character varying NOT NULL,
     value text NOT NULL,
     params text DEFAULT '{}'::text NOT NULL,
-    action character varying NOT NULL
+    action character varying NOT NULL,
+    user_id integer NOT NULL
 );
 
 
@@ -575,7 +528,7 @@ CREATE TABLE projects (
     slug character varying(255) NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    color character varying(255) DEFAULT 'default'::character varying NOT NULL,
+    color_name character varying(255) DEFAULT 'default'::character varying NOT NULL,
     retired_at timestamp without time zone,
     category character varying(255),
     version_control_name character varying(255) DEFAULT 'None'::character varying NOT NULL,
@@ -858,36 +811,6 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 CREATE TABLE schema_migrations (
     version character varying(255) NOT NULL
 );
-
-
---
--- Name: settings; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE settings (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    value character varying(255) NOT NULL
-);
-
-
---
--- Name: settings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE settings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: settings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE settings_id_seq OWNED BY settings.id;
 
 
 --
@@ -1357,15 +1280,12 @@ CREATE TABLE users (
     invitation_limit integer,
     invited_by_id integer,
     invited_by_type character varying(255),
-    legacy_role character varying(255) DEFAULT 'Guest'::character varying,
     authentication_token character varying(255),
-    legacy_administrator boolean DEFAULT false,
     first_name character varying(255),
     last_name character varying(255),
     retired_at timestamp without time zone,
     email_addresses text[],
     invitation_created_at timestamp without time zone,
-    environments_subscribed_to text[] DEFAULT '{}'::text[] NOT NULL,
     current_project_id integer,
     nickname character varying(255),
     username character varying(255),
@@ -1527,13 +1447,6 @@ ALTER TABLE ONLY milestones ALTER COLUMN id SET DEFAULT nextval('milestones_id_s
 
 
 --
--- Name: oauth_providers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY oauth_providers ALTER COLUMN id SET DEFAULT nextval('oauth_providers_id_seq'::regclass);
-
-
---
 -- Name: persistent_triggers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1594,13 +1507,6 @@ ALTER TABLE ONLY roadmaps ALTER COLUMN id SET DEFAULT nextval('roadmaps_id_seq':
 --
 
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
-
-
---
--- Name: settings id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY settings ALTER COLUMN id SET DEFAULT nextval('settings_id_seq'::regclass);
 
 
 --
@@ -1789,14 +1695,6 @@ ALTER TABLE ONLY milestones
 
 
 --
--- Name: oauth_providers oauth_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY oauth_providers
-    ADD CONSTRAINT oauth_providers_pkey PRIMARY KEY (id);
-
-
---
 -- Name: persistent_triggers persistent_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1866,14 +1764,6 @@ ALTER TABLE ONLY roadmaps
 
 ALTER TABLE ONLY roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
-
-
---
--- Name: settings settings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY settings
-    ADD CONSTRAINT settings_pkey PRIMARY KEY (id);
 
 
 --
@@ -2017,6 +1907,13 @@ ALTER TABLE ONLY versions
 --
 
 CREATE INDEX index_actions_on_name ON actions USING btree (name);
+
+
+--
+-- Name: index_authorizations_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_authorizations_on_user_id ON authorizations USING btree (user_id);
 
 
 --
@@ -2496,6 +2393,14 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: authorizations fk_rails_4ecef5b8c5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY authorizations
+    ADD CONSTRAINT fk_rails_4ecef5b8c5 FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -2748,7 +2653,15 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170116002818'),
 ('20170116210225'),
 ('20170118005958'),
+('20170130011016'),
+('20170205004452'),
+('20170206002030'),
 ('20170206002718'),
-('20170211232146');
+('20170206002732'),
+('20170209022159'),
+('20170211232146'),
+('20170213001453'),
+('20170215012012'),
+('20170216041034');
 
 

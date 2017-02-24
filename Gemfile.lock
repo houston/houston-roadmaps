@@ -9,14 +9,24 @@ GIT
       rugged (~> 0.25.0)
 
 GIT
+  remote: git://github.com/houston/houston-credentials.git
+  revision: aea052dc982375f5698db341bb8c56acf89e2470
+  branch: master
+  specs:
+    houston-credentials (0.0.1)
+      houston-core (>= 0.8.3)
+      strongbox (~> 0.7.2)
+
+GIT
   remote: git://github.com/houston/houston-tickets.git
-  revision: 1a62777edf3c07e485975321bfe862e86d7d414d
+  revision: 6b95ec16ff62153ce5ac8c7bb63e54e1443f8fbf
   branch: master
   specs:
     houston-tickets (0.0.1)
       boblail-unfuddle
       houston-commits
       houston-core (>= 0.8.0.pre)
+      houston-credentials
 
 PATH
   remote: .
@@ -83,7 +93,7 @@ GEM
     browser (2.3.0)
     builder (3.2.3)
     cancan (1.6.10)
-    capybara (2.12.0)
+    capybara (2.12.1)
       addressable
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -99,7 +109,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.4)
-    css_parser (1.4.8)
+    css_parser (1.4.9)
       addressable
     devise (4.2.0)
       bcrypt (~> 3.0)
@@ -107,8 +117,8 @@ GEM
       railties (>= 4.1.0, < 5.1)
       responders
       warden (~> 1.2.3)
-    devise_invitable (1.7.0)
-      actionmailer (>= 4.0.0)
+    devise_invitable (1.7.1)
+      actionmailer (>= 4.1.0)
       devise (>= 4.0.0)
     erubis (2.7.0)
     execjs (2.7.0)
@@ -126,7 +136,7 @@ GEM
       multi_json (~> 1.0)
       sprockets (>= 2.0.0)
       tilt (>= 1.2)
-    houston-core (0.8.2)
+    houston-core (0.8.3)
       activerecord-import
       activerecord-pluck_in_batches (~> 0.2.0)
       addressable (~> 2.3.8)
@@ -169,7 +179,7 @@ GEM
       activerecord (>= 3, < 6)
       activesupport (>= 3, < 6)
     htmlentities (4.3.4)
-    i18n (0.8.0)
+    i18n (0.8.1)
     jwt (1.5.6)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -286,7 +296,7 @@ GEM
     strongbox (0.7.2)
       activerecord
     thor (0.19.4)
-    thread_safe (0.3.5)
+    thread_safe (0.3.6)
     tilt (2.0.6)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -307,6 +317,7 @@ DEPENDENCIES
   bundler (~> 1.11.2)
   capybara
   houston-commits!
+  houston-credentials!
   houston-roadmaps!
   houston-tickets!
   minitest
