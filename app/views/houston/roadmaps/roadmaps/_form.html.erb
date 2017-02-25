@@ -62,6 +62,7 @@
       $submit.prop('disabled', false);
     }
 
+    <% if @roadmap.persisted? && can?(:destroy, @roadmap) %>
     $('#delete_roadmap_button').click(function(e) {
       e.preventDefault();
       App.confirmDelete({
@@ -70,6 +71,7 @@
         url: <%=raw roadmap_path(@roadmap).to_json %>
       });
     });
+    <% end %>
 
     $('#roadmap_name').select();
   });
