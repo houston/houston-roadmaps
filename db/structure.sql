@@ -674,7 +674,8 @@ CREATE TABLE roadmap_commits (
     project_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    roadmap_id integer
+    roadmap_id integer,
+    diffs jsonb NOT NULL
 );
 
 
@@ -2662,6 +2663,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170211232146'),
 ('20170213001453'),
 ('20170215012012'),
-('20170216041034');
+('20170216041034'),
+('20170224025652');
 
 

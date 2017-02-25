@@ -12,27 +12,12 @@
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
-    var milestones = <%= raw Houston::Roadmaps::RoadmapMilestonePresenter.new(@milestones).to_json %>;
+    var milestones = <%=raw Houston::Roadmaps::RoadmapCommitMilestonesPresenter.new(@milestones).to_json %>;
+    var commits = <%=raw Houston::Roadmaps::RoadmapCommitPresenter.new(@commits).to_json %>;
     new Roadmaps.RoadmapHistoryView({
-      milestones: milestones,
+      milestones: Roadmaps.getMilestonesByCommit(milestones, commits),
+      commits: commits,
       commitId: <%= @commit_id %>,
-      commits: <%=raw @commits.map { |commit| {
-        id: commit.id,
-        createdAt: commit.created_at,
-        user: commit.user && {
-          email: commit.user.email,
-          name: commit.user.name },
-        message: commit.message,
-        changes: commit.milestone_versions.map { |version| {
-          milestoneId: version.versioned_id,
-          number: version.number,
-          modifications: Hash[version.modifications.map { |key, change|
-            key = "startDate" if key == "start_date"
-            key = "endDate" if key == "end_date"
-            key, change = "removed", change.map(&:present?) if key == "destroyed_at"
-            [key, change]
-          }] } }
-      } }.to_json %>,
       markers: <%=raw @markers.to_json %>,
       showWeekends: true
     }).render();

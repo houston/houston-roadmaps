@@ -5,33 +5,21 @@ class Roadmaps.PlayRoadmapView extends Backbone.View
   initialize: (options)->
     @options = options
     @commits = @options.commits
+    @milestones = @options.milestones
 
     @options.viewport = new Roadmaps.Viewport
       start: @options.start,
       end: @options.end
     @options.showThumbnail = false
     @options.showToday = false
-
-    dup = (milestones)-> _.clone(milestone) for milestone in milestones
-
-    # The current state of the Roadmap
-    # is the result of the last commit
-    currentMilestones = @options.milestones
-    @milestones[0] = dup(currentMilestones)
+    # @options.transition = 50
+    # marker =
+    #   id: 1,
+    #   date: @options.start
+    # @options.markers = [marker]
 
     for commit in @commits
       commit.createdAt = App.serverTimeFormat.parse(commit.createdAt)
-      for change in commit.changes
-        milestone = _(currentMilestones).findWhere(id: change.milestoneId)
-        continue unless milestone
-
-        if change.number is 1
-          currentMilestones = _(currentMilestones).without(milestone)
-        else
-          for attribute, [before, after] of change.modifications
-            milestone[attribute] = before
-
-      @milestones[commit.id] = dup(currentMilestones)
 
     @visibleMilestones = new Roadmaps.Milestones()
 
@@ -48,7 +36,7 @@ class Roadmaps.PlayRoadmapView extends Backbone.View
 
   reset: ->
     console.log('reset')
-    @commitId = @commits.last().id
+    @commitId = @commits.first().id
     @updateRoadmap()
     clearInterval(@player) if @player
     @todayLine = @roadmap.roadmap.selectAll('.roadmap-today')
@@ -87,7 +75,8 @@ class Roadmaps.PlayRoadmapView extends Backbone.View
     @
 
   showLastCommitBefore: (date)->
-    commit = _.find @commits, (commit)-> commit.createdAt < date
+    i = _.findLastIndex @commits, (commit)-> commit.createdAt < date
+    commit = @commits[i]
     unless @commitId is (commit && commit.id)
       @commitId = commit && commit.id
       @updateRoadmap()

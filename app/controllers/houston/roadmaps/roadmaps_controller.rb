@@ -8,7 +8,7 @@ module Houston
       def index
         authorize! :read, Roadmap
         @title = "Roadmaps"
-        @roadmaps = Roadmap.preload(:projects, :milestones => {:milestone => :project}).order(:name).find_all { |roadmap| can? :read, roadmap }
+        @roadmaps = Roadmap.preload(:commits).order(:name).find_all { |roadmap| can? :read, roadmap }
       end
 
 
@@ -16,7 +16,7 @@ module Houston
         authorize! :read, @roadmap
         @title = @roadmap.name
         @goals = @roadmap.projects.goals.preload(:project)
-        @milestones = @roadmap.milestones.preload(milestone: :project)
+        @milestones = @roadmap.milestones
 
         render template: "houston/roadmaps/roadmaps/show_editable" if can?(:update, @roadmap)
       end
@@ -26,10 +26,12 @@ module Houston
         authorize! :read, @roadmap
         @title = "#{@roadmap.name} History"
 
-        @commits = @roadmap.commits.order(created_at: :desc).preload(:milestone_versions, :user)
-        @commit_id = params[:commit_id].to_i
+        @commits = @roadmap.commits.preload(:user)
+        milestone_ids = @commits.flat_map { |commit| commit.diffs.flat_map { |diff| diff["milestone_id"] } }.uniq
+        @milestones = Milestone.where(id: milestone_ids).preload(:project)
 
-        @milestones = @roadmap.milestones.including_destroyed.preload(milestone: :project)
+        @commit_id = params.fetch(:commit_id, @commits.last.id).to_i
+
         @markers = Houston::Roadmaps.config.markers
       end
 
@@ -41,9 +43,10 @@ module Houston
         @end = Date.parse params[:end]
         except = params.key?(:except) ? params[:except].split(",") : []
 
-        @commits = @roadmap.commits.order(created_at: :desc).preload(:milestone_versions, :user)
+        @commits = @roadmap.commits.preload(:user)
+        milestone_ids = @commits.flat_map { |commit| commit.diffs.flat_map { |diff| diff["milestone_id"] } }.uniq
+        @milestones = Milestone.where(id: milestone_ids).preload(:project)
 
-        @milestones = @roadmap.milestones.including_destroyed.preload(milestone: :project).where.not(milestone_id: except)
         @markers = Houston::Roadmaps.config.markers
       end
 
@@ -100,7 +103,7 @@ module Houston
     protected
 
       def find_roadmap
-        @roadmap = Roadmap.find params[:id]
+        @roadmap = Roadmap.preload(:commits).find params[:id]
       end
 
     end

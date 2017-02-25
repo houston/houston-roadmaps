@@ -7,8 +7,7 @@ module Houston
 
       def index
         authorize! :read, Roadmap
-        render json: Houston::Roadmaps::RoadmapMilestonePresenter.new(
-          @roadmap.milestones.preload(milestone: :project))
+        render json: Houston::Roadmaps::RoadmapMilestonePresenter.new(@roadmap.milestones)
       end
 
 
@@ -17,6 +16,7 @@ module Houston
 
         @roadmap.commits.create!(
           user: current_user,
+          roadmap: @roadmap,
           message: params[:message],
           milestone_changes: params.fetch(:roadmap, {}).values)
 
@@ -29,7 +29,7 @@ module Houston
     private
 
       def find_roadmap
-        @roadmap = Roadmap.find params[:id]
+        @roadmap = Roadmap.preload(:commits).find params[:id]
       end
 
     end

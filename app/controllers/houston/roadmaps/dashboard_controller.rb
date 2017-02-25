@@ -15,8 +15,8 @@ module Houston
           @range = 6.months.before(today)..6.months.after(today)
         end
 
-        @milestones = RoadmapMilestone.during(@range).preload(:milestone => :project)
-        @milestones = @milestones.where(roadmap_id: params[:roadmap_id]) if params.key?(:roadmap_id)
+        roadmap = Roadmap.preload(:commits).find(params[:roadmap_id])
+        @milestones = roadmap.milestones.find_all { |milestone| milestone["start_date"].to_date <= @range.end && milestone["end_date"].to_date >= @range.begin }
 
         @show_today = params[:today] != "false"
 

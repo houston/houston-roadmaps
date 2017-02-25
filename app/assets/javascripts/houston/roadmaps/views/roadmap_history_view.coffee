@@ -8,27 +8,8 @@ class Roadmaps.RoadmapHistoryView extends Backbone.View
   initialize: (options)->
     @options = options
     @commits = @options.commits
+    @milestones = @options.milestones
     @commitId = @options.commitId
-
-    dup = (milestones)-> _.clone(milestone) for milestone in milestones
-
-    # The current state of the Roadmap
-    # is the result of the last commit
-    currentMilestones = @options.milestones
-    @milestones[0] = dup(currentMilestones)
-
-    for commit in @commits
-      for change in commit.changes
-        milestone = _(currentMilestones).findWhere(id: change.milestoneId)
-        continue unless milestone
-
-        if change.number is 1
-          currentMilestones = _(currentMilestones).without(milestone)
-        else
-          for attribute, [before, after] of change.modifications
-            milestone[attribute] = before
-
-      @milestones[commit.id] = dup(currentMilestones)
 
     @visibleMilestones = new Roadmaps.Milestones()
     @updateRoadmap()
@@ -39,7 +20,7 @@ class Roadmaps.RoadmapHistoryView extends Backbone.View
 
   render: ->
     @$el.html @template
-      commits: @commits
+      commits: _(@commits).reverse()
 
     $form = @$el.find('form')
     $form.css(bottom: 42) if App.meta('env') is 'development'
@@ -51,15 +32,15 @@ class Roadmaps.RoadmapHistoryView extends Backbone.View
     $(window).resize(setTop)
     addResizeListener $('#roadmap')[0], setTop
 
-    @$el.find(':radio').first().prop('checked', true)
+    @$el.find(":radio[name=commit_id][value=#{@commitId}]").first().prop('checked', true)
     @roadmap.render()
     @
 
   changeCommit: (e)->
     $radio = $(e.target)
     $commit = $radio.closest('.roadmap-commit')
-    $commit.prevAll().andSelf().addClass('roadmap-commit-reverted')
-    $commit.nextAll().removeClass('roadmap-commit-reverted')
+    $commit.prevAll().addClass('roadmap-commit-reverted')
+    $commit.nextAll().andSelf().removeClass('roadmap-commit-reverted')
     @commitId = +$radio.val()
     @updateRoadmap()
 

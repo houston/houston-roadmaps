@@ -1,33 +1,35 @@
 class Houston::Roadmaps::RoadmapMilestonePresenter
 
   def initialize(milestones)
-    @milestones = OneOrMany.new(milestones)
+    @milestones = milestones
   end
 
   def as_json(*args)
     @milestones.map(&method(:to_hash))
   end
 
-  def to_hash(milestone)
+  def to_hash(attributes)
+    milestone = Milestone.unscope(where: :destroyed_at).find(attributes["id"])
     project = milestone.project
-    { id: milestone.id,
-      name: milestone.name,
-      milestoneId: milestone.milestone_id,
+    { id: attributes["id"],
+      milestoneId: attributes["id"], # <-- TODO: can the frontend just use `id`?
+      name: attributes["name"],
       projectId: project.id,
       projectColor: project.color,
-      percentComplete: percent_complete(milestone),
-      completed: milestone.completed?,
-      band: milestone.band,
-      lanes: milestone.lanes,
-      startDate: milestone.start_date,
-      endDate: milestone.end_date,
-      removed: milestone.destroyed_at.present? }
+      band: attributes["band"],
+      lanes: attributes["lanes"],
+      startDate: attributes["start_date"],
+      endDate: attributes["end_date"],
+
+      percentComplete: percent_complete(attributes["id"]),
+      completed: milestone.completed?, # <-- TODO: can we just derive this from percentComplete?
+      removed: false } # <-- TODO: why `removed`? (milestone.destroyed_at.present?)
   end
 
 private
 
-  def percent_complete(milestone)
-    percent_complete_by_ticket.fetch(milestone.milestone_id, 0)
+  def percent_complete(milestone_id)
+    percent_complete_by_ticket.fetch(milestone_id, 0)
   end
 
   def percent_complete_by_ticket
@@ -63,7 +65,7 @@ private
   end
 
   def milestone_ids
-    @milestone_ids ||= Array(@milestones.map(&:milestone_id))
+    @milestone_ids ||= Array(@milestones.map { |attributes| attributes["id"] })
   end
 
 end

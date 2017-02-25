@@ -1,7 +1,6 @@
 class Roadmap < ActiveRecord::Base
 
-  has_many :milestones, class_name: "RoadmapMilestone"
-  has_many :commits, class_name: "RoadmapCommit"
+  has_many :commits, -> { order(created_at: :asc) }, class_name: "RoadmapCommit"
   has_and_belongs_to_many :teams
   has_many :projects, -> { unretired.with_feature("goals") }, through: :teams
 
@@ -11,6 +10,11 @@ class Roadmap < ActiveRecord::Base
 
   validates :visibility, presence: true, inclusion: { in: VISIBILITY }
 
+
+  def milestones
+    return [] if commits.none?
+    commits.last.milestones
+  end
 
   def duplicate!(as:)
     Roadmap.transaction do
