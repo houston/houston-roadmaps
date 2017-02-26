@@ -40,8 +40,16 @@ class RoadmapCommit < ActiveRecord::Base
         attributes[key] = value
       end
 
-      if change.key?(:milestoneId) && !change.key?(:id)
+      if !change.key?(:id)
+        if change.key?(:name) && change.key?(:projectId)
+          project = Project.find(change[:projectId])
+          project_milestone = project.create_milestone!(name: change[:name])
+          change[:milestoneId] = project_milestone.id
+        end
+
+        next unless change.key?(:milestoneId)
         next if removed
+
         id = change.fetch(:milestoneId).to_i
         diffs.push milestone_id: id, status: "added", attributes: new_attributes
         next
