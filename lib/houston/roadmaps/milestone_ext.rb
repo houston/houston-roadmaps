@@ -5,6 +5,7 @@ module Houston
     module MilestoneExt
       extend ActiveSupport::Concern
 
+      # TODO: is this used anywhere?
       included do
         has_and_belongs_to_many :roadmaps, join_table: "roadmap_milestones"
       end

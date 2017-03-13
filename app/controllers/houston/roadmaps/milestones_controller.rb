@@ -12,8 +12,10 @@ module Houston
         authorize! :read, milestone
         @project = milestone.project
         @title = "#{milestone.name} • #{@project.name}"
-        @tickets = milestone.tickets.includes(:project, :tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
-        @open_tickets = @project.tickets.open.includes(:tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
+        @tickets = milestone.tickets.includes(:project, :tasks, :reporter)
+          .reorder("tickets.props->'roadmaps.milestoneSequence'")
+        @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
+          .reorder("tickets.props->'roadmaps.milestoneSequence'")
       end
 
 

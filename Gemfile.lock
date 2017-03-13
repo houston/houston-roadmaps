@@ -1,12 +1,53 @@
 GIT
   remote: git://github.com/houston/houston-commits.git
-  revision: a8d830c273b6a6b50ee12b743bbbd75c7baaf230
+  revision: 927e7ecd2eb20dd5e137cb380b4c10a98d32f4ff
   branch: master
   specs:
     houston-commits (0.0.1)
       houston-core (>= 0.8.0)
-      octokit (~> 4.4.1)
+      octokit (~> 4.6.2)
       rugged (~> 0.25.0)
+
+GIT
+  remote: git://github.com/houston/houston-core.git
+  revision: 87b2c331e46959ee8e8ee531070ce4449adfa983
+  branch: 0.9-dev
+  specs:
+    houston-core (0.9.0.pre.dev)
+      activerecord-import
+      activerecord-pluck_in_batches (~> 0.2.0)
+      addressable (~> 2.3.8)
+      attentive (>= 0.3.9)
+      browser (~> 2.3.0)
+      cancancan (~> 1.16.0)
+      coffee-rails (~> 4.1.0)
+      concurrent-ruby (~> 1.0.2)
+      devise
+      devise_invitable
+      faraday (~> 0.9.2)
+      faraday-http-cache (~> 1.2.2)
+      faraday-raise-errors (~> 0.2.0)
+      gemoji (~> 2.1.0)
+      handlebars_assets (~> 0.23.0)
+      houston-vestal_versions
+      kramdown
+      neat-rails
+      nested_editor_for
+      nokogiri
+      oauth2
+      oj (~> 2.18)
+      openxml-xlsx (>= 0.2.0)
+      pg (~> 0.19.0)
+      pg_search (~> 1.0.5)
+      premailer (~> 1.10.0)
+      progressbar (~> 0.21.0)
+      rack-utf8_sanitizer (~> 1.3.1)
+      rails (~> 5.0.0)
+      rufus-scheduler (~> 3.3.4)
+      sass-rails (~> 5.0)
+      slackdown (>= 0.2.1)
+      thor
+      uglifier (>= 2.7.2)
 
 GIT
   remote: git://github.com/houston/houston-credentials.git
@@ -19,7 +60,7 @@ GIT
 
 GIT
   remote: git://github.com/houston/houston-tickets.git
-  revision: 6b95ec16ff62153ce5ac8c7bb63e54e1443f8fbf
+  revision: c705c275c4c951d202582f8bd5b53e97ac2f1432
   branch: master
   specs:
     houston-tickets (0.0.1)
@@ -27,6 +68,14 @@ GIT
       houston-commits
       houston-core (>= 0.8.0.pre)
       houston-credentials
+
+GIT
+  remote: git://github.com/houston/houston-todolists.git
+  revision: 233e23b0c8d08861a488fc6abcfdcd4350337d64
+  branch: master
+  specs:
+    houston-todolists (0.0.1)
+      houston-core (>= 0.8.3)
 
 PATH
   remote: .
@@ -39,43 +88,43 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actioncable (5.0.1)
-      actionpack (= 5.0.1)
-      nio4r (~> 1.2)
+    actioncable (5.0.2)
+      actionpack (= 5.0.2)
+      nio4r (>= 1.2, < 3.0)
       websocket-driver (~> 0.6.1)
-    actionmailer (5.0.1)
-      actionpack (= 5.0.1)
-      actionview (= 5.0.1)
-      activejob (= 5.0.1)
+    actionmailer (5.0.2)
+      actionpack (= 5.0.2)
+      actionview (= 5.0.2)
+      activejob (= 5.0.2)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 2.0)
-    actionpack (5.0.1)
-      actionview (= 5.0.1)
-      activesupport (= 5.0.1)
+    actionpack (5.0.2)
+      actionview (= 5.0.2)
+      activesupport (= 5.0.2)
       rack (~> 2.0)
       rack-test (~> 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (5.0.1)
-      activesupport (= 5.0.1)
+    actionview (5.0.2)
+      activesupport (= 5.0.2)
       builder (~> 3.1)
       erubis (~> 2.7.0)
       rails-dom-testing (~> 2.0)
-      rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    activejob (5.0.1)
-      activesupport (= 5.0.1)
+      rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    activejob (5.0.2)
+      activesupport (= 5.0.2)
       globalid (>= 0.3.6)
-    activemodel (5.0.1)
-      activesupport (= 5.0.1)
-    activerecord (5.0.1)
-      activemodel (= 5.0.1)
-      activesupport (= 5.0.1)
+    activemodel (5.0.2)
+      activesupport (= 5.0.2)
+    activerecord (5.0.2)
+      activemodel (= 5.0.2)
+      activesupport (= 5.0.2)
       arel (~> 7.0)
     activerecord-import (0.17.1)
       activerecord (>= 3.2)
     activerecord-pluck_in_batches (0.2.0)
       activerecord (>= 4.2.7, < 5.1.0)
-    activesupport (5.0.1)
+    activesupport (5.0.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
       minitest (~> 5.1)
@@ -83,8 +132,8 @@ GEM
     addressable (2.3.8)
     ansi (1.5.0)
     arel (7.1.4)
-    attentive (0.3.8)
-      thread_safe
+    attentive (0.3.9)
+      concurrent-ruby
     bcrypt (3.1.11)
     boblail-unfuddle (0.7.1)
       activesupport
@@ -92,7 +141,7 @@ GEM
       faraday (>= 0.8, < 0.10)
     browser (2.3.0)
     builder (3.2.3)
-    cancan (1.6.10)
+    cancancan (1.16.0)
     capybara (2.12.1)
       addressable
       mime-types (>= 1.16)
@@ -108,8 +157,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.0.4)
-    css_parser (1.4.9)
+    concurrent-ruby (1.0.5)
+    css_parser (1.4.10)
       addressable
     devise (4.2.0)
       bcrypt (~> 3.0)
@@ -136,51 +185,13 @@ GEM
       multi_json (~> 1.0)
       sprockets (>= 2.0.0)
       tilt (>= 1.2)
-    houston-core (0.8.3)
-      activerecord-import
-      activerecord-pluck_in_batches (~> 0.2.0)
-      addressable (~> 2.3.8)
-      attentive (>= 0.3.6)
-      browser (~> 2.3.0)
-      cancan (~> 1.6.10)
-      coffee-rails (~> 4.1.0)
-      concurrent-ruby (~> 1.0.2)
-      devise
-      devise_invitable
-      faraday (~> 0.9.2)
-      faraday-http-cache (~> 1.2.2)
-      faraday-raise-errors (~> 0.2.0)
-      gemoji (~> 2.1.0)
-      handlebars_assets (~> 0.23.0)
-      houston-devise_ldap_authenticatable
-      houston-vestal_versions
-      neat-rails
-      nested_editor_for
-      nokogiri
-      oauth2
-      oj (~> 2.18)
-      openxml-xlsx (>= 0.2.0)
-      pg (~> 0.19.0)
-      pg_search (~> 1.0.5)
-      premailer (~> 1.8.6)
-      progressbar (~> 0.21.0)
-      rack-utf8_sanitizer (~> 1.3.1)
-      rails (~> 5.0.0)
-      redcarpet (~> 3.3.2)
-      rufus-scheduler (~> 3.2.0)
-      sass-rails (~> 5.0)
-      strongbox (~> 0.7.2)
-      thor
-      uglifier (>= 2.7.2)
-    houston-devise_ldap_authenticatable (0.7.1)
-      devise (>= 3.0.0)
-      net-ldap (~> 0.12.1)
     houston-vestal_versions (2.0.1)
       activerecord (>= 3, < 6)
       activesupport (>= 3, < 6)
     htmlentities (4.3.4)
     i18n (0.8.1)
     jwt (1.5.6)
+    kramdown (1.13.2)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
@@ -203,23 +214,22 @@ GEM
     multipart-post (2.0.0)
     neat-rails (0.5.0)
     nested_editor_for (0.1.1)
-    net-ldap (0.12.1)
-    nio4r (1.2.1)
+    nio4r (2.0.0)
     nokogiri (1.7.0.1)
       mini_portile2 (~> 2.1.0)
-    oauth2 (1.3.0)
-      faraday (>= 0.8, < 0.11)
+    oauth2 (1.3.1)
+      faraday (>= 0.8, < 0.12)
       jwt (~> 1.0)
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
-    octokit (4.4.1)
-      sawyer (~> 0.7.0, >= 0.5.3)
-    oj (2.18.1)
-    openxml-package (0.2.6)
+    octokit (4.6.2)
+      sawyer (~> 0.8.0, >= 0.5.3)
+    oj (2.18.2)
+    openxml-package (0.2.7)
       nokogiri
       ox
-      rubyzip (~> 1.1.0)
+      rubyzip (~> 1.2.1)
     openxml-xlsx (0.2.3)
       nokogiri
       openxml-package (>= 0.2.0)
@@ -230,8 +240,9 @@ GEM
       activerecord (>= 3.1)
       activesupport (>= 3.1)
       arel
-    premailer (1.8.7)
-      css_parser (>= 1.4.5)
+    premailer (1.10.2)
+      addressable
+      css_parser (>= 1.4.10)
       htmlentities (>= 4.0.0)
     progressbar (0.21.0)
     pry (0.10.4)
@@ -243,36 +254,36 @@ GEM
       rack (>= 1.0)
     rack-utf8_sanitizer (1.3.2)
       rack (>= 1.0, < 3.0)
-    rails (5.0.1)
-      actioncable (= 5.0.1)
-      actionmailer (= 5.0.1)
-      actionpack (= 5.0.1)
-      actionview (= 5.0.1)
-      activejob (= 5.0.1)
-      activemodel (= 5.0.1)
-      activerecord (= 5.0.1)
-      activesupport (= 5.0.1)
+    rails (5.0.2)
+      actioncable (= 5.0.2)
+      actionmailer (= 5.0.2)
+      actionpack (= 5.0.2)
+      actionview (= 5.0.2)
+      activejob (= 5.0.2)
+      activemodel (= 5.0.2)
+      activerecord (= 5.0.2)
+      activesupport (= 5.0.2)
       bundler (>= 1.3.0, < 2.0)
-      railties (= 5.0.1)
+      railties (= 5.0.2)
       sprockets-rails (>= 2.0.0)
     rails-dom-testing (2.0.2)
       activesupport (>= 4.2.0, < 6.0)
       nokogiri (~> 1.6)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    railties (5.0.1)
-      actionpack (= 5.0.1)
-      activesupport (= 5.0.1)
+    railties (5.0.2)
+      actionpack (= 5.0.2)
+      activesupport (= 5.0.2)
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (11.3.0)
-    redcarpet (3.3.4)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
     ruby-progressbar (1.8.1)
-    rubyzip (1.1.7)
-    rufus-scheduler (3.2.2)
+    rubyzip (1.2.1)
+    rufus-scheduler (3.3.4)
+      tzinfo
     rugged (0.25.1.1)
     sass (3.4.23)
     sass-rails (5.0.6)
@@ -281,10 +292,12 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    sawyer (0.7.0)
-      addressable (>= 2.3.5, < 2.5)
-      faraday (~> 0.8, < 0.10)
+    sawyer (0.8.1)
+      addressable (>= 2.3.5, < 2.6)
+      faraday (~> 0.8, < 1.0)
     shoulda-context (1.2.2)
+    slackdown (0.2.2)
+      kramdown (~> 1.13.2)
     slop (3.6.0)
     sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
@@ -300,7 +313,7 @@ GEM
     tilt (2.0.6)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (3.0.4)
+    uglifier (3.1.6)
       execjs (>= 0.3.0, < 3)
     warden (1.2.7)
       rack (>= 1.0)
@@ -317,9 +330,11 @@ DEPENDENCIES
   bundler (~> 1.11.2)
   capybara
   houston-commits!
+  houston-core!
   houston-credentials!
   houston-roadmaps!
   houston-tickets!
+  houston-todolists!
   minitest
   minitest-reporters
   minitest-reporters-turn_reporter

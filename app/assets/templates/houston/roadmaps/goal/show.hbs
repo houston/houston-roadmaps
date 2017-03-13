@@ -1,0 +1,35 @@
+<section class="milestone-section">
+  <header class="has-buttons">
+    <h3>To-Do Lists</h3>
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Add a to-do list
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        {{#unattachedTodoLists}}
+        <li class="todolist">
+          <a data-provider="{{provider}}" data-id="{{id}}" data-name="{{name}}" class="add-todolist">
+            <b class="bubble" style="background-color:{{color}};"></b> {{name}}
+          </a>
+        </li>
+        {{/unattachedTodoLists}}
+        {{#if connectableAccounts}}
+          {{#if unattachedTodoLists}}
+            <li class="divider"></li>
+          {{/if}}
+          {{#connectableAccounts}}
+            <li><a href="/todoist/auth">Connect a Todoist Account</a></li>
+          {{/connectableAccounts}}
+        {{/if}}
+      </ul>
+    </div>
+  </header>
+  {{#todoLists}}
+    <div class="todolist">
+      {{name}}
+      <a href="todoist://project?id={{remoteId}}">Open in App</a>
+      <a class="delete-link delete-todolist" href="#" data-id="{{id}}" title="Delete">Delete</a>
+    </div>
+  {{/todoLists}}
+</section>

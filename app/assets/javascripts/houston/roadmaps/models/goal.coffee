@@ -7,5 +7,6 @@ class Roadmaps.Goals extends Backbone.Collection
   model: Roadmaps.Goal
 
   outsideOf: (milestones) ->
-    ids = _(milestones.pluck('milestoneId'))
+    # TODO: use type as well
+    ids = _(milestones.pluck('id'))
     new Roadmaps.Goals @reject (goal) -> ids.include(goal.id)

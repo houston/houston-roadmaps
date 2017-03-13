@@ -11,13 +11,13 @@ window.Roadmaps.getMilestonesByCommit = (allMilestones, commits) ->
     for diff in commit.diffs
       switch diff.status
         when "added"
-          milestone = _(allMilestones).findWhere(id: diff.milestoneId)
+          milestone = _(allMilestones).findWhere(id: diff.id)
           currentMilestones.push _.extend(diff.attributes, milestone) if milestone
         when "modified"
-          milestone = _(currentMilestones).findWhere(id: diff.milestoneId)
+          milestone = _(currentMilestones).findWhere(id: diff.id)
           milestone[attribute] = value for attribute, value of diff.attributes if milestone
         when "deleted"
-          currentMilestones = _(currentMilestones).reject (milestone) -> milestone.id is diff.milestoneId
+          currentMilestones = _(currentMilestones).reject (milestone) -> milestone.id is diff.id
         else
           throw "Unknown status: '#{diff.status}'"
 

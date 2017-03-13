@@ -2,7 +2,12 @@ class Roadmap < ActiveRecord::Base
 
   has_many :commits, -> { order(created_at: :asc) }, class_name: "RoadmapCommit"
   has_and_belongs_to_many :teams
-  has_many :projects, -> { unretired.with_feature("goals") }, through: :teams
+  has_many :projects, -> { unretired.with_feature("goals") }, through: :teams do
+    def goals
+      Goal.where(project_id: unscope(:order, :select).select(:id)) +
+        Milestone.where(project_id: unscope(:order, :select).select(:id))
+    end
+  end
 
   validates :name, presence: true
 
@@ -23,6 +28,7 @@ class Roadmap < ActiveRecord::Base
       copy_number = newest_copy ? newest_copy[/\((\d+)\)$/, 1].to_i + 1 : 1
       new_name = "#{base_name} (#{copy_number})"
 
+      # Todo... is this right w/ the new commits?
       new_roadmap = self.class.create!(name: new_name, team_ids: team_ids)
       new_roadmap.commits.create!(
         user: as,

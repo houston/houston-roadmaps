@@ -1,5 +1,5 @@
 class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
-  MAX_BANDS = 4
+  MAX_BANDS = 8
   $newMilestone: null
   newMilestoneX: null
   supportsCreate: false
@@ -122,7 +122,8 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
 
         if @drag.goal
           milestone = new Roadmaps.Milestone
-            milestoneId: @drag.goal.id
+            newId: @drag.goal.id
+            newType: @drag.goal.type
             name: @drag.goal.name
             projectId: @drag.goal.projectId
             projectColor: @drag.goal.projectColor
@@ -165,11 +166,12 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
       $milestone.focus()
       $milestone.addClass "dropdown-open"
       id = $milestone.attr('data-milestone-id')
+      type = $milestone.attr('data-milestone-type')
       html = """
         <ul class="dropdown-menu" role="menu">
       """
       html += """
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/roadmap/milestones/#{id}" target="_blank">Open</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/roadmap/#{inflect.pluralize(type).toLowerCase()}/#{id}" target="_blank">Open</a></li>
       """ if id
       html += """
           <li role="presentation"><a role="menuitem" tabindex="-1" class="rename-milestone-action">Rename</a></li>
@@ -389,7 +391,7 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
     # (up to MAX_BANDS); then don't add an empty band.
     nextBand = +d3.max(milestoneBands, (band)-> band.number) + 1
     nextBand = 1 if _.isNaN(nextBand)
-    if _.keys(milestoneBands).length <= MAX_BANDS
+    if _.keys(milestoneBands).length < MAX_BANDS
       milestoneBands.push
         key: nextBand
         number: nextBand

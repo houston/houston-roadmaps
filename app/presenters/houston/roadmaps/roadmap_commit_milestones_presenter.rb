@@ -10,7 +10,7 @@ class Houston::Roadmaps::RoadmapCommitMilestonesPresenter
 
   def to_hash(milestone)
     { id: milestone.id,
-      milestoneId: milestone.id,
+      type: milestone.type,
       name: milestone.name,
       projectId: milestone.project.id,
       projectColor: milestone.project.color }

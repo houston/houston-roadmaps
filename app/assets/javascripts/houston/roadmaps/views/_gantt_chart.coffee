@@ -124,7 +124,7 @@ class Roadmaps.GanttChart
 
     newMilestones = if @linkMilestones
       milestones.enter().append('a')
-        .attr('href', (milestone)-> "/roadmap/milestones/#{milestone.milestoneId}")
+        .attr('href', (milestone)-> "/roadmap/#{inflect.pluralize(milestone.type).toLowerCase()}/#{milestone.id}")
     else
       milestones.enter().append('div')
 
@@ -139,7 +139,8 @@ class Roadmaps.GanttChart
           "height: #{milestone.lanes * (@bandHeight + @bandMargin) - @bandMargin}px" ].join('; ')
       .attr('class', 'roadmap-milestone')
       .attr('data-cid', (milestone)-> milestone.cid)
-      .attr('data-milestone-id', (milestone)-> milestone.milestoneId)
+      .attr('data-milestone-id', (milestone)-> milestone.id)
+      .attr('data-milestone-type', (milestone)-> milestone.type)
       .each -> view.initializeMilestone.apply(view, [@])
 
       # Put the milestone name into a span so that Midori can render it correctly

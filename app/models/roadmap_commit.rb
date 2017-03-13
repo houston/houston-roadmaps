@@ -11,16 +11,21 @@ class RoadmapCommit < ActiveRecord::Base
   validates :diffs, length: { minimum: 1 }
 
   def milestones
-    roadmap.commits.take_while { |commit| commit.created_at <= created_at }.each_with_object({}) do |commit, milestones_by_id|
+    roadmap.commits
+      .take_while { |commit| commit.created_at <= created_at }
+      .each_with_object({}) do |commit, milestones_by_id|
+
       commit.diffs.each do |diff|
         status = diff.fetch("status")
+        milestone_type = diff.fetch("milestone_type", "Milestone")
         milestone_id = diff.fetch("milestone_id")
         attributes = diff.fetch("attributes", {})
+        key = [milestone_type, milestone_id].join("/")
 
         case status
-        when "added" then milestones_by_id[milestone_id] = attributes.merge("id" => milestone_id)
-        when "deleted" then milestones_by_id.delete(milestone_id)
-        when "modified" then milestones_by_id[milestone_id].merge! attributes
+        when "added" then milestones_by_id[key] = attributes.merge("id" => milestone_id, "type" => milestone_type)
+        when "deleted" then milestones_by_id.delete(key)
+        when "modified" then milestones_by_id[key].merge! attributes
         else raise BadDiffError
         end
       end
@@ -41,31 +46,34 @@ class RoadmapCommit < ActiveRecord::Base
       end
 
       if !change.key?(:id)
-        if change.key?(:name) && change.key?(:projectId)
-          project = Project.find(change[:projectId])
-          project_milestone = project.create_milestone!(name: change[:name])
-          change[:milestoneId] = project_milestone.id
-        end
-
-        next unless change.key?(:milestoneId)
         next if removed
 
-        id = change.fetch(:milestoneId).to_i
-        diffs.push milestone_id: id, status: "added", attributes: new_attributes
+        if change.key?(:name) && change.key?(:projectId) && !change.key?(:newId)
+          project = Project.find(change[:projectId])
+          goal = project.goals.create!(name: change[:name])
+          change = change.merge(newId: goal.id, newType: "Goal")
+        end
+
+        if change.key?(:newId) && change.key?(:newType)
+          id = change.fetch(:newId).to_i
+          type = change.fetch(:newType)
+          diffs.push milestone_id: id, milestone_type: type, status: "added", attributes: new_attributes
+        end
+
         next
       end
 
       id = change.fetch(:id).to_i
-      current_attributes = current_milestones.find { |attributes| attributes["id"] == id }
+      type = change.fetch(:type)
+      current_attributes = current_milestones.find { |attributes| attributes["id"] == id && attributes["type"] == type }
 
       if removed
-        diffs.push milestone_id: id, status: "deleted" if current_attributes
+        diffs.push milestone_id: id, milestone_type: type, status: "deleted" if current_attributes
       elsif current_attributes
         differences = new_attributes.select { |attribute, new_value| new_value != current_attributes[attribute] }
-        diffs.push milestone_id: id, status: "modified", attributes: differences
+        diffs.push milestone_id: id, milestone_type: type, status: "modified", attributes: differences
       else
-        binding.pry
-        diffs.push milestone_id: id, status: "added", attributes: new_attributes
+        binding.pry # <-- unexpected
       end
     end
 

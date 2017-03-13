@@ -9,10 +9,10 @@ class Houston::Roadmaps::RoadmapMilestonePresenter
   end
 
   def to_hash(attributes)
-    milestone = Milestone.unscope(where: :destroyed_at).find(attributes["id"])
+    milestone = attributes.fetch("type").constantize.unscope(where: :destroyed_at).find(attributes.fetch("id"))
     project = milestone.project
     { id: attributes["id"],
-      milestoneId: attributes["id"], # <-- TODO: can the frontend just use `id`?
+      type: attributes["type"],
       name: attributes["name"],
       projectId: project.id,
       projectColor: project.color,

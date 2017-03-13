@@ -15,7 +15,7 @@ module Houston
       def show
         authorize! :read, @roadmap
         @title = @roadmap.name
-        @goals = @roadmap.projects.goals.preload(:project)
+        @goals = @roadmap.projects.goals # .preload(:project)
         @milestones = @roadmap.milestones
 
         render template: "houston/roadmaps/roadmaps/show_editable" if can?(:update, @roadmap)

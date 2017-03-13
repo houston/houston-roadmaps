@@ -81,7 +81,9 @@ class Roadmaps.Milestones extends Backbone.Collection
   changes: ->
     for milestone in @models when !milestone.id or _.keys(changes = milestone.changesSinceSave()).length > 0
       if milestone.id
-        change = id: milestone.id
+        change =
+            id: milestone.id
+            type: milestone.get('type')
         for attribute, [originalView, newValue] of changes
           [attribute, newValue] = ['start_date', App.serverDateFormat(newValue)] if attribute is 'startDate'
           [attribute, newValue] = ['end_date', App.serverDateFormat(newValue)] if attribute is 'endDate'
