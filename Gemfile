@@ -24,7 +24,7 @@ group :test do
 end
 
 # Use the development version of houston-core
-# gem "houston-core", github: "houston/houston-core", branch: "master"
+gem "houston-core", github: "houston/houston-core", branch: "0.9-dev"
 
 # Use the development version of houston-commits (dependency of houston-tickets)
 gem "houston-commits", github: "houston/houston-commits", branch: "master"

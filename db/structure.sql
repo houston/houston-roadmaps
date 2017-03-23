@@ -52,12 +52,13 @@ SET default_with_oids = false;
 CREATE TABLE actions (
     id integer NOT NULL,
     name character varying NOT NULL,
-    started_at timestamp without time zone NOT NULL,
+    started_at timestamp without time zone,
     finished_at timestamp without time zone,
     succeeded boolean,
     error_id integer,
     trigger character varying,
-    params text
+    params text,
+    created_at timestamp without time zone NOT NULL
 );
 
 
@@ -98,7 +99,6 @@ CREATE TABLE ar_internal_metadata (
 
 CREATE TABLE authorizations (
     id integer NOT NULL,
-    name character varying NOT NULL,
     scope character varying,
     access_token character varying,
     refresh_token character varying,
@@ -107,9 +107,9 @@ CREATE TABLE authorizations (
     expires_at timestamp without time zone,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    provider_name character varying NOT NULL,
     user_id integer NOT NULL,
-    props jsonb DEFAULT '{}'::jsonb
+    props jsonb DEFAULT '{}'::jsonb,
+    type character varying NOT NULL
 );
 
 
@@ -331,6 +331,36 @@ CREATE SEQUENCE errors_id_seq
 --
 
 ALTER SEQUENCE errors_id_seq OWNED BY errors.id;
+
+
+--
+-- Name: follows; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE follows (
+    id integer NOT NULL,
+    user_id integer,
+    project_id integer
+);
+
+
+--
+-- Name: follows_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE follows_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: follows_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE follows_id_seq OWNED BY follows.id;
 
 
 --
@@ -1427,6 +1457,13 @@ ALTER TABLE ONLY errors ALTER COLUMN id SET DEFAULT nextval('errors_id_seq'::reg
 
 
 --
+-- Name: follows id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY follows ALTER COLUMN id SET DEFAULT nextval('follows_id_seq'::regclass);
+
+
+--
 -- Name: measurements id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1669,6 +1706,14 @@ ALTER TABLE ONLY deploys
 
 ALTER TABLE ONLY errors
     ADD CONSTRAINT errors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: follows follows_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY follows
+    ADD CONSTRAINT follows_pkey PRIMARY KEY (id);
 
 
 --
@@ -1999,6 +2044,20 @@ CREATE INDEX index_deploys_on_project_id_and_environment_name ON deploys USING b
 --
 
 CREATE UNIQUE INDEX index_errors_on_sha ON errors USING btree (sha);
+
+
+--
+-- Name: index_follows_on_project_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_follows_on_project_id ON follows USING btree (project_id);
+
+
+--
+-- Name: index_follows_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_follows_on_user_id ON follows USING btree (user_id);
 
 
 --
@@ -2394,6 +2453,14 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: follows fk_rails_32479bd030; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY follows
+    ADD CONSTRAINT fk_rails_32479bd030 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: authorizations fk_rails_4ecef5b8c5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2402,12 +2469,20 @@ ALTER TABLE ONLY authorizations
 
 
 --
+-- Name: follows fk_rails_572bf69092; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY follows
+    ADD CONSTRAINT fk_rails_572bf69092 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user", public;
 
-INSERT INTO schema_migrations (version) VALUES
+INSERT INTO "schema_migrations" (version) VALUES
 ('20120324185914'),
 ('20120324202224'),
 ('20120324212848'),
@@ -2664,6 +2739,11 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170213001453'),
 ('20170215012012'),
 ('20170216041034'),
-('20170224025652');
+('20170224025652'),
+('20170226201504'),
+('20170301014051'),
+('20170307032041'),
+('20170307035755'),
+('20170310024505');
 
 
