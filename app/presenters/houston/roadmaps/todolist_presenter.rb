@@ -10,6 +10,7 @@ class Houston::Roadmaps::TodolistPresenter
 
   def to_hash(todolist)
     { id: todolist.id,
+      remoteId: todolist.remote_id,
       name: todolist.name,
       items: todolist.items_count,
       completedItems: todolist.completed_items_count }
