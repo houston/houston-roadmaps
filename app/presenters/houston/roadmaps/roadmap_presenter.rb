@@ -26,7 +26,8 @@ private
   def present_milestones(milestones)
     milestones.map do |milestone|
       # TODO: optimize this: manually preload projects
-      project = Milestone.unscope(where: :destroyed_at).find(milestone["id"]).project
+      klass = milestone.fetch("type", "Milestone").constantize
+      project = klass.unscope(where: :destroyed_at).find(milestone["id"]).project
       { id: milestone["id"],
         name: milestone["name"],
         projectId: project.id,
