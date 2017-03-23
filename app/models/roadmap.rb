@@ -2,7 +2,12 @@ class Roadmap < ActiveRecord::Base
 
   has_many :commits, -> { order(created_at: :asc) }, class_name: "RoadmapCommit"
   has_and_belongs_to_many :teams
-  has_many :projects, -> { unretired.with_feature("goals") }, through: :teams
+  has_many :projects, -> { unretired.with_feature("goals") }, through: :teams do
+    def goals
+      Goal.where(project_id: unscope(:order, :select).select(:id)) +
+        Milestone.where(project_id: unscope(:order, :select).select(:id))
+    end
+  end
 
   validates :name, presence: true
 

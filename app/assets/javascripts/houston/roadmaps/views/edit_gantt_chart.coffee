@@ -122,7 +122,8 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
 
         if @drag.goal
           milestone = new Roadmaps.Milestone
-            milestoneId: @drag.goal.id
+            newId: @drag.goal.id
+            newType: @drag.goal.type
             name: @drag.goal.name
             projectId: @drag.goal.projectId
             projectColor: @drag.goal.projectColor
@@ -165,11 +166,12 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
       $milestone.focus()
       $milestone.addClass "dropdown-open"
       id = $milestone.attr('data-milestone-id')
+      type = $milestone.attr('data-milestone-type')
       html = """
         <ul class="dropdown-menu" role="menu">
       """
       html += """
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/roadmap/milestones/#{id}" target="_blank">Open</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/roadmap/#{inflect.pluralize(type).toLowerCase()}/#{id}" target="_blank">Open</a></li>
       """ if id
       html += """
           <li role="presentation"><a role="menuitem" tabindex="-1" class="rename-milestone-action">Rename</a></li>

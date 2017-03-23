@@ -18,6 +18,7 @@ class Houston::Roadmaps::RoadmapCommitPresenter
       diffs: commit.diffs.map { |diff|
         x = {
           milestoneId: diff["milestone_id"],
+          milestoneType: diff["milestone_type"],
           status: diff["status"]
         }
         x["attributes"] = diff["attributes"].each_with_object({}) { |(key, value), new_hash|

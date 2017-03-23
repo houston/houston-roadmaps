@@ -7,6 +7,7 @@ class Roadmaps.EditMilestoneView extends Roadmaps.ShowMilestoneView
     'click .btn-cancel': 'cancelInlineEdit'
     'click #save_goal': 'saveGoal'
     'click #save_feedback_query': 'saveFeedbackQuery'
+    'click #btn_upgrade': 'upgradeMilestone'
 
   initialize: (options)->
     @options = options
@@ -94,5 +95,15 @@ class Roadmaps.EditMilestoneView extends Roadmaps.ShowMilestoneView
       .success =>
         @milestone.feedbackQuery = feedbackQuery
         @render()
+      .error (response)=>
+        alertify.error(response.responseText)
+
+
+
+  upgradeMilestone: (e)->
+    e.preventDefault()
+    $.post("/roadmap/milestones/#{@id}/upgrade")
+      .success (data)=>
+        window.location = data.url
       .error (response)=>
         alertify.error(response.responseText)

@@ -5,10 +5,8 @@ module Houston
     module ProjectExt
       extend ActiveSupport::Concern
 
-      module ClassMethods
-        def goals
-          Milestone.where(project_id: unscope(:order, :select).select(:id))
-        end
+      included do
+        has_many :goals
       end
 
     end

@@ -15,7 +15,7 @@ module Houston
       def show
         authorize! :read, @roadmap
         @title = @roadmap.name
-        @goals = @roadmap.projects.goals.preload(:project)
+        @goals = @roadmap.projects.goals
         @milestones = @roadmap.milestones
 
         render template: "houston/roadmaps/roadmaps/show_editable" if can?(:update, @roadmap)
@@ -27,8 +27,15 @@ module Houston
         @title = "#{@roadmap.name} History"
 
         @commits = @roadmap.commits.preload(:user)
-        milestone_ids = @commits.flat_map { |commit| commit.diffs.flat_map { |diff| diff["milestone_id"] } }.uniq
-        @milestones = Milestone.where(id: milestone_ids).preload(:project)
+        milestone_ids = @commits.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |commit, map|
+          commit.diffs.each do |diff|
+            map[diff.fetch("milestone_type", "Milestone")].push(diff.fetch("milestone_id"))
+          end
+        end
+
+        @milestones = []
+        @milestones.concat Milestone.where(id: milestone_ids["Milestone"]).preload(:project) if milestone_ids.key?("Milestone")
+        @milestones.concat Goal.where(id: milestone_ids["Goal"]).preload(:project) if milestone_ids.key?("Goal")
 
         @commit_id = params.fetch(:commit_id, @commits.last.id).to_i
 

@@ -34,3 +34,6 @@ gem "houston-credentials", github: "houston/houston-credentials", branch: "maste
 
 # Use the development version of houston-tickets
 gem "houston-tickets", github: "houston/houston-tickets", branch: "master"
+
+# Use the development version of houston-todolists
+gem "houston-todolists", github: "houston/houston-todolists", branch: "master"

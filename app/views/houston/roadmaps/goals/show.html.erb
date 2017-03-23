@@ -1,0 +1,24 @@
+<%= render partial: "projects/header", locals: {project: @project, postfix: @goal.name} %>
+
+<div id="goal_view" class="<%= can?(:update, @project.tickets.build) ? "editable" : "readonly" %>"><div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript">
+  $(function() {
+    var goal = <%=raw({
+      id: @goal.id,
+      name: @goal.name,
+      todoLists: @goal.todolists.map { |todolist| Houston::Roadmaps::TodolistPresenter.new(todolist) }
+    }.to_json)%>;
+
+    var unattachedTodoLists = <%=raw(@unattached_todo_lists.to_json)%>;
+
+    new Goal2View({
+      el: $('#goal_view')[0],
+      goal: goal,
+      unattachedTodoLists: unattachedTodoLists,
+      connectableAccounts: <%=raw(@connectable_accounts.to_json)%>
+    }).render();
+  });
+</script>
+<% end %>

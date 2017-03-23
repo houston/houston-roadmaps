@@ -9,10 +9,10 @@ class Houston::Roadmaps::RoadmapMilestonePresenter
   end
 
   def to_hash(attributes)
-    milestone = Milestone.unscope(where: :destroyed_at).find(attributes["id"])
+    milestone = attributes.fetch("type").constantize.unscope(where: :destroyed_at).find(attributes.fetch("id"))
     project = milestone.project
     { id: attributes["id"],
-      milestoneId: attributes["id"], # <-- TODO: can the frontend just use `id`?
+      type: attributes["type"],
       name: attributes["name"],
       projectId: project.id,
       projectColor: project.color,
@@ -21,19 +21,31 @@ class Houston::Roadmaps::RoadmapMilestonePresenter
       startDate: attributes["start_date"],
       endDate: attributes["end_date"],
 
-      percentComplete: percent_complete(attributes["id"]),
-      completed: milestone.completed?, # <-- TODO: can we just derive this from percentComplete?
+      percentComplete: percent_complete(attributes.values_at("type", "id")),
+      completed: completed?(attributes.values_at("type", "id")),
       removed: false } # <-- TODO: why `removed`? (milestone.destroyed_at.present?)
   end
 
 private
 
-  def percent_complete(milestone_id)
-    percent_complete_by_ticket.fetch(milestone_id, 0)
+  def percent_complete((type, id))
+    fraction_complete_by.fetch(type).fetch(id, 0).to_f
   end
 
-  def percent_complete_by_ticket
-    @percent_complete_by_ticket ||= Hash[Milestone.connection.select_rows(<<-SQL)
+  def completed?((type, id))
+    fraction_complete_by.fetch(type).fetch(id, 0) == 1
+  end
+
+  def fraction_complete_by
+    @fraction_complete_by ||= {
+      "Milestone" => fraction_complete_by_milestone,
+      "Goal" => fraction_complete_by_goal
+    }
+  end
+
+  def fraction_complete_by_milestone
+    return {} if milestone_ids.empty?
+    Hash[Milestone.connection.select_rows(<<-SQL)
       SELECT
         tickets.milestone_id,
         tickets.id,
@@ -61,11 +73,34 @@ private
         [ milestone_id, (closed ? tasks : completed_tasks).to_f / tasks ] }
       .group_by { |(milestone_id, _)| milestone_id }
       .map { |(milestone_id, tickets)|
-        [milestone_id, (tickets.sum { |(_, percent)| percent } / tickets.length)] }]
+        [milestone_id, Rational(tickets.sum { |(_, percent)| percent }, tickets.length)] }]
   end
 
   def milestone_ids
-    @milestone_ids ||= Array(@milestones.map { |attributes| attributes["id"] })
+    @milestone_ids ||= Array(@milestones)
+      .select { |attributes| attributes["type"] == "Milestone" }
+      .map { |attributes| attributes["id"] }
+  end
+
+  def fraction_complete_by_goal
+    return {} if goal_ids.empty?
+    Hash[Goal.connection.select_rows(<<-SQL)
+      SELECT
+        goals_todo_lists.goal_id,
+        SUM(todo_lists.items_count),
+        SUM(todo_lists.completed_items_count)
+      FROM goals_todo_lists
+      INNER JOIN todo_lists ON goals_todo_lists.todo_list_id=todo_lists.id
+      WHERE goals_todo_lists.goal_id IN (#{goal_ids.join(", ")})
+      GROUP BY goals_todo_lists.goal_id
+    SQL
+      .map { |goal_id, total, completed| [goal_id, Rational(completed, total)] }]
+  end
+
+  def goal_ids
+    @goal_ids ||= Array(@milestones)
+      .select { |attributes| attributes["type"] == "Goal" }
+      .map { |attributes| attributes["id"] }
   end
 
 end

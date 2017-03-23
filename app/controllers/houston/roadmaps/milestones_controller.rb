@@ -5,15 +5,17 @@ module Houston
 
       layout "houston/roadmaps/application"
 
-      before_action :find_milestone, only: [:show, :update, :close, :add_ticket, :create_ticket, :remove_ticket, :update_order]
+      before_action :find_milestone, only: [:show, :update, :upgrade, :close, :add_ticket, :create_ticket, :remove_ticket, :update_order]
 
 
       def show
         authorize! :read, milestone
         @project = milestone.project
         @title = "#{milestone.name} • #{@project.name}"
-        @tickets = milestone.tickets.includes(:project, :tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
-        @open_tickets = @project.tickets.open.includes(:tasks, :reporter).reorder("tickets.props->'roadmaps.milestoneSequence'")
+        @tickets = milestone.tickets.includes(:project, :tasks, :reporter)
+          .reorder("tickets.props->'roadmaps.milestoneSequence'")
+        @open_tickets = @project.tickets.open.includes(:tasks, :reporter)
+          .reorder("tickets.props->'roadmaps.milestoneSequence'")
       end
 
 
@@ -37,6 +39,18 @@ module Houston
         else
           render json: milestone.errors, status: :unprocessable_entity
         end
+      end
+
+
+      def upgrade
+        authorize! :update, milestone
+        if milestone.tickets.any?
+          return render text: "This milestone has tickets. Upgrading it hasn't been implemented yet", status: :unprocessable_entity
+        end
+
+        goal = ConvertMilestoneToGoal.perform! milestone
+
+        render json: { url: goal_url(goal) }
       end
 
 

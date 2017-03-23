@@ -27,6 +27,16 @@ Houston::Roadmaps::Engine.routes.draw do
     post "milestones/:id/tickets", :to => "milestones#create_ticket", constraints: {id: /\d+/}
     post "milestones/:id/tickets/:ticket_id", :to => "milestones#add_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
     delete "milestones/:id/tickets/:ticket_id", :to => "milestones#remove_ticket", constraints: {id: /\d+/, ticket_id: /\d+/}
+
+    post "milestones/:id/upgrade", :to => "milestones#upgrade", constraints: {id: /\d+/}
+
+
+    post "goals", :to => "goals#create"
+    get "goals/:id", :to => "goals#show", :as => :goal
+    put "goals/:id", :to => "goals#update"
+
+    put "goals/:goal_id/todolists/:id", to: "goal_todo_lists#add"
+    delete "goals/:goal_id/todolists/:id", to: "goal_todo_lists#remove"
   end
 
   scope "roadmap" do
