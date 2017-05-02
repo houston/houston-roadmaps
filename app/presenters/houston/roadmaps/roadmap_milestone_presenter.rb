@@ -86,17 +86,17 @@ private
     return {} if goal_ids.empty?
     Hash[Goal.connection.select_rows(<<-SQL)
       SELECT
-        goals_todo_lists.goal_id,
-        SUM(todo_lists.items_count),
-        SUM(todo_lists.completed_items_count),
+        goals.id,
+        COALESCE(SUM(todo_lists.items_count), 0),
+        COALESCE(SUM(todo_lists.completed_items_count), 0),
         (goals.completed_at IS NOT NULL)
-      FROM goals_todo_lists
-      INNER JOIN todo_lists ON goals_todo_lists.todo_list_id=todo_lists.id
-      INNER JOIN goals ON goals_todo_lists.goal_id=goals.id
-      WHERE goals_todo_lists.goal_id IN (#{goal_ids.join(", ")})
-      GROUP BY goals_todo_lists.goal_id, goals.completed_at
+      FROM goals
+      LEFT JOIN goals_todo_lists ON goals_todo_lists.goal_id=goals.id
+      LEFT JOIN todo_lists ON goals_todo_lists.todo_list_id=todo_lists.id
+      WHERE goals.id IN (#{goal_ids.join(", ")})
+      GROUP BY goals.id, goals.completed_at
     SQL
-      .map { |goal_id, total, completed, closed| [goal_id, closed ? 1 : Rational(completed, total)] }]
+      .map { |goal_id, total, completed, closed| [goal_id, closed ? 1 : total.zero? ? 0 : Rational(completed, total)] }]
   end
 
   def goal_ids

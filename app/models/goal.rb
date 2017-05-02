@@ -8,6 +8,7 @@ class Goal < ActiveRecord::Base
   def closed?
     !open?
   end
+  alias :completed? :closed?
 
   def open?
     completed_at.nil?
