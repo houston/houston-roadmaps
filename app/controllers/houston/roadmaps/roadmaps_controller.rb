@@ -14,7 +14,7 @@ module Houston
 
       def show
         authorize! :read, @roadmap
-        @title = @roadmap.name
+        @title = "#{@roadmap.name} • Roadmaps"
         @goals = @roadmap.projects.goals
         @milestones = @roadmap.milestones
 

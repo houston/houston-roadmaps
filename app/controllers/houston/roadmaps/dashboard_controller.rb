@@ -20,7 +20,7 @@ module Houston
 
         @show_today = params[:today] != "false"
 
-        @title = "Roadmap"
+        @title = "#{roadmap.name} • Roadmaps"
         respond_to do |format|
           format.html { render }
           format.json { render json: {
