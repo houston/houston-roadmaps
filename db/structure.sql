@@ -366,7 +366,8 @@ CREATE TABLE goals (
     props jsonb DEFAULT '{}'::jsonb NOT NULL,
     destroyed_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    completed_at timestamp without time zone
 );
 
 
@@ -3104,6 +3105,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170320002452'),
 ('20170323034420'),
 ('20170329030329'),
-('20170329164043');
+('20170329164043'),
+('20170502012341');
 
 

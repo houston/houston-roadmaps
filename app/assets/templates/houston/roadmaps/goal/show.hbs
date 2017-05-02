@@ -41,3 +41,11 @@
     </div>
   {{/todoLists}}
 </section>
+
+<hr/>
+
+{{#if goal.closed}}
+  <button id="reopen_goal_button" class="btn btn-default">Reopen</button>
+{{else}}
+  <button id="close_goal_button" class="btn btn-default">Close</button>
+{{/if}}

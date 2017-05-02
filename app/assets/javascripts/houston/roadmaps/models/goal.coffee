@@ -1,5 +1,5 @@
 class Roadmaps.Goal extends Backbone.Model
-  urlRoot: '/roadmap/milestones'
+  urlRoot: '/roadmap/goals'
 
 
 

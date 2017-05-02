@@ -20,10 +20,23 @@ module Houston::Roadmaps
       end
     end
 
+    def update
+      authorize! :update, goal
+      if goal.update_attributes(goal_attributes)
+        render json: Houston::Roadmaps::GoalPresenter.new(goal)
+      else
+        render json: goal.errors, status: :unprocessable_entity
+      end
+    end
+
   private
 
     def find_goal
       @goal = Goal.unscoped.find(params[:id])
+    end
+
+    def goal_attributes
+      params.pick(:name, :closed)
     end
 
   end

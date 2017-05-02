@@ -5,11 +5,7 @@
 <% content_for :javascripts do %>
 <script type="text/javascript">
   $(function() {
-    var goal = <%=raw({
-      id: @goal.id,
-      name: @goal.name,
-      todoLists: @goal.todolists.map { |todolist| Houston::Roadmaps::TodolistPresenter.new(todolist) }
-    }.to_json)%>;
+    var goal = new Roadmaps.Goal(<%=raw(Houston::Roadmaps::GoalPresenter.new(@goal).to_json)%>);
 
     var unattachedTodoLists = <%=raw(@unattached_todo_lists.to_json)%>;
 

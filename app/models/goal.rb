@@ -5,8 +5,20 @@ class Goal < ActiveRecord::Base
 
   default_scope { where(destroyed_at: nil) }
 
-  def completed?
-    false
+  def closed?
+    !open?
+  end
+
+  def open?
+    completed_at.nil?
+  end
+
+  def closed=(value)
+    if value
+      self.completed_at = Time.now if open?
+    else
+      self.completed_at = nil
+    end
   end
 
 end
