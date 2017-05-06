@@ -5,10 +5,11 @@ class Houston.BurndownChart
     @_selector = '#graph'
     @_height = 260
     @$el = $(@_selector)
-    @_totalEffort = 0
     @_lines = {}
     @_regressions = {}
     @_snapTo = (date)-> date
+    @_prevTick = (date)-> 1.day().before(date)
+    @_nextTick = (date)-> 1.day().after(date)
     $(window).resize (e)=>
       @render() if e.target is window
 
@@ -16,10 +17,27 @@ class Houston.BurndownChart
   height: (@_height)-> @
   selector: (@_selector)-> @$el = $(@_selector); @
   dateFormat: (@_dateFormat)-> @
-  totalEffort: (@_totalEffort)-> @
   snapTo: (@_snapTo)-> @
-  addLine: (slug, data)-> @_lines[slug] = data; @
-  addRegression: (slug, data)-> @_regressions[slug] = @computeRegression(data); @
+  prevTick: (@_prevTick)-> @
+  nextTick: (@_nextTick)-> @
+  data: (data, options={})->
+    line = @computeBurndown(data)
+    @_lines["completed"] = line; @
+
+    if options.regression
+      # If the most recent data point is for an incomplete
+      # sprint, disregard it when calculating the regressions
+      today = new Date()
+      pastData = (point for point in line when point.day < today)
+      @addRegression('all',    pastData)           if pastData.length >= 5  # all time
+      @addRegression('last-3', pastData.slice(-4)) if pastData.length >= 4  # last 3 weeks only
+      @addRegression('last-2', pastData.slice(-3)) if pastData.length >= 3  # last 2 weeks only
+
+    @
+  addRegression: (slug, data)->
+    line = @computeRegression(data)
+    @_regressions[slug] = line if line
+    @
 
   render: ->
     width = @$el.width() || 960
@@ -27,11 +45,9 @@ class Houston.BurndownChart
     graphWidth = width - @_margin.left - @_margin.right
     graphHeight = height - @_margin.top - @_margin.bottom
 
-    totalEffort = @_totalEffort
-    unless totalEffort
-      for slug, data of @_lines
-        # max(effort) will always be on the first day of a project
-        totalEffort = data[0].effort if data[0] and data[0].effort > totalEffort
+    # max(effort) will always be on the first day of a project
+    totalEffort = @_lines["completed"][0]?.effort
+    return unless totalEffort
 
     formatDate = @_dateFormat || d3.time.format('%A')
 
@@ -148,3 +164,35 @@ class Houston.BurndownChart
     x2: new Date(x2)
     y1: y1
     y2: 0
+
+  computeBurndown: (tasks)->
+    # Sum progress by date
+    # Find the total amount of effort to accomplish
+    progressByTick = {}
+    totalEffort = 0
+    for task in tasks when task.effort
+      if task.closedAt
+        tick = +@_snapTo(task.closedAt)
+        progressByTick[tick] = (progressByTick[tick] || 0) + task.effort
+      totalEffort += task.effort
+
+    [firstTick, lastTick] = d3.extent(new Date(+date) for date in _.keys(progressByTick))
+
+    # Start 1 week before the first progress was made
+    # to show the original total effort of the milestone
+    firstTick = @_prevTick(firstTick)
+
+    # Transform into remaining effort by week:
+    # Iterate by week in case there are some weeks
+    # where no progress was made
+    remainingEffort = totalEffort
+    tick = firstTick
+    data = []
+    while tick <= lastTick
+      remainingEffort -= (progressByTick[+tick] || 0)
+      data.push
+        day: tick
+        effort: Math.ceil(remainingEffort)
+      tick = @_nextTick(tick)
+
+    data
