@@ -29,6 +29,18 @@ class @Goal2View extends Backbone.View
     for todoList in todoLists
       @renderProgress(todoList)
 
+    items = []
+    for todoList in todoLists
+      items = items.concat(todoList.items)
+
+    new Houston.BurndownChart()
+      .snapTo((date)=> @getEndOfSprint(date))
+      .prevTick((date)=> @prevSprint(date))
+      .nextTick((date)=> @nextSprint(date))
+      .dateFormat(d3.time.format('%b %e'))
+      .data(items, regression: true)
+      .render()
+
     @
 
   addTodoList: (e)->
@@ -70,8 +82,8 @@ class @Goal2View extends Backbone.View
   renderProgress: (todoList)->
     $pie = $("#todolist_#{todoList.id} .progress-pie")
 
-    completed = +todoList.completedItems
-    total = +todoList.items
+    completed = +todoList.completedItemsCount
+    total = +todoList.itemsCount
     uncompleted = total - completed
     data = [completed, uncompleted]
 
@@ -105,3 +117,20 @@ class @Goal2View extends Backbone.View
     g.append("path")
       .attr("d", arc)
       .style("fill", (_, i)-> colors[i])
+
+
+
+  prevSprint: (date)->
+    1.week().before(date)
+
+  nextSprint: (date)->
+    1.week().after(date)
+
+  getEndOfSprint: (date)->
+    @getNextFriday(date)
+
+  getNextFriday: (date)->
+    wday = date.getDay() # 0-6 (0=Sunday)
+    daysUntilFriday = 5 - wday # 5=Friday
+    daysUntilFriday += 7 if daysUntilFriday < 0
+    daysUntilFriday.days().after(date)

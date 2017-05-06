@@ -12,8 +12,13 @@ class Houston::Roadmaps::TodolistPresenter
     { id: todolist.id,
       remoteId: todolist.remote_id,
       name: todolist.name,
-      items: todolist.items_count,
-      completedItems: todolist.completed_items_count }
+      items: todolist.items.with_destroyed.map { |item| {
+        openedAt: item.created_at,
+        deletedAt: item.destroyed_at,
+        closedAt: item.completed_at,
+        effort: 1 } },
+      itemsCount: todolist.items_count,
+      completedItemsCount: todolist.completed_items_count }
   end
 
 end

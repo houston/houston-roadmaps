@@ -10,6 +10,7 @@ class Houston.BurndownChart
     @_snapTo = (date)-> date
     @_prevTick = (date)-> 1.day().before(date)
     @_nextTick = (date)-> 1.day().after(date)
+    @_dateFormat = d3.time.format('%A')
     $(window).resize (e)=>
       @render() if e.target is window
 
@@ -49,16 +50,18 @@ class Houston.BurndownChart
     totalEffort = @_lines["completed"][0]?.effort
     return unless totalEffort
 
-    formatDate = @_dateFormat || d3.time.format('%A')
-
     allDates = []
     for slug, data of @_lines
       for value in data
         allDates.push(value.day)
-    for slug, value of @_regressions
-      allDates.push(@_snapTo(value.x2))
     min = d3.min(allDates)
     max = d3.max(allDates)
+
+    # Widen the graph to include the milestone's projected completion date
+    for slug, value of @_regressions
+      while max < value.x2
+        max = @_nextTick(max)
+        allDates.push max
 
     x = d3.scale.ordinal().rangePoints([0, graphWidth], 0.75).domain(allDates)
     y = d3.scale.linear().range([graphHeight, 0]).domain([0, totalEffort])
@@ -67,7 +70,7 @@ class Houston.BurndownChart
     xAxis = d3.svg.axis()
       .scale(x)
       .orient('bottom')
-      .tickFormat((d)=> formatDate(new Date(d)))
+      .tickFormat((d)=> @_dateFormat(new Date(d)))
 
     yAxis = d3.svg.axis()
       .scale(y)
@@ -172,7 +175,7 @@ class Houston.BurndownChart
     totalEffort = 0
     for task in tasks when task.effort
       if task.closedAt
-        tick = +@_snapTo(task.closedAt)
+        tick = +@_snapTo(App.parseDate(task.closedAt))
         progressByTick[tick] = (progressByTick[tick] || 0) + task.effort
       totalEffort += task.effort
 
