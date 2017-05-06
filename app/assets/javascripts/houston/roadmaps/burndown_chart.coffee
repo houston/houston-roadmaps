@@ -8,6 +8,7 @@ class Houston.BurndownChart
     @_totalEffort = 0
     @_lines = {}
     @_regressions = {}
+    @_snapTo = (date)-> date
     $(window).resize (e)=>
       @render() if e.target is window
 
@@ -15,10 +16,10 @@ class Houston.BurndownChart
   height: (@_height)-> @
   selector: (@_selector)-> @$el = $(@_selector); @
   dateFormat: (@_dateFormat)-> @
-  days: (@days)-> @
   totalEffort: (@_totalEffort)-> @
+  snapTo: (@_snapTo)-> @
   addLine: (slug, data)-> @_lines[slug] = data; @
-  addRegression: (slug, data)-> @_regressions[slug] = data; @
+  addRegression: (slug, data)-> @_regressions[slug] = @computeRegression(data); @
 
   render: ->
     width = @$el.width() || 960
@@ -29,12 +30,21 @@ class Houston.BurndownChart
     totalEffort = @_totalEffort
     unless totalEffort
       for slug, data of @_lines
+        # max(effort) will always be on the first day of a project
         totalEffort = data[0].effort if data[0] and data[0].effort > totalEffort
 
     formatDate = @_dateFormat || d3.time.format('%A')
 
-    [min, max] = d3.extent(@days)
-    x = d3.scale.ordinal().rangePoints([0, graphWidth], 0.75).domain(@days)
+    allDates = []
+    for slug, data of @_lines
+      for value in data
+        allDates.push(value.day)
+    for slug, value of @_regressions
+      allDates.push(@_snapTo(value.x2))
+    min = d3.min(allDates)
+    max = d3.max(allDates)
+
+    x = d3.scale.ordinal().rangePoints([0, graphWidth], 0.75).domain(allDates)
     y = d3.scale.linear().range([graphHeight, 0]).domain([0, totalEffort])
     rx = d3.scale.linear().range([x(min), x(max)]).domain([min, max])
 
@@ -109,3 +119,32 @@ class Houston.BurndownChart
           .text((d) -> d.effort)
           .attr('class', "effort-remaining effort-#{slug}")
           .attr('transform', (d)-> "translate(#{x(d.day) + 5.5}, #{y(d.effort) - 10}) rotate(-75)")
+
+  computeRegression: (data)->
+    # Compute the linear regression of the points
+    # http://trentrichardson.com/2010/04/06/compute-linear-regressions-in-javascript/
+    # http://dracoblue.net/dev/linear-least-squares-in-javascript/159/
+    [sum_x, sum_y, sum_xx, sum_xy, n] = [0, 0, 0, 0, data.length]
+    for d in data
+      [_x, _y] = [+d.day, d.effort]
+      sum_x += _x
+      sum_y += _y
+      sum_xx += _x * _x
+      sum_xy += _x * _y
+    m = (n*sum_xy - sum_x*sum_y) / (n*sum_xx - sum_x*sum_x)
+    b = (sum_y - m*sum_x) / n
+
+    # No progress is being made
+    return null if m == 0
+
+    # Find the X intercept
+    x2 = (0 - b) / m
+
+    # Find the regression's starting effort
+    y1 = m * +data[0].day + b
+
+    # Calculate the regression line
+    x1: data[0].day
+    x2: new Date(x2)
+    y1: y1
+    y2: 0

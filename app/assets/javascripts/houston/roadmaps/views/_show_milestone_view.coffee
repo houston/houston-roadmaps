@@ -86,51 +86,27 @@ class Roadmaps.ShowMilestoneView extends @TicketsView
         effort: Math.ceil(remainingEffort)
       sprint = @nextSprint(sprint)
 
-    # If the most recent data point is for an incomplete
-    # sprint, disregard it when calculating the regressions
-    lastCompleteSprint = @getEndOfSprint(1.week().before(new Date()))
-    if @truncateDate(mostRecentDataPoint) > lastCompleteSprint
-      regAll   = @computeRegression(data.slice( 0, -1)) if data.length >= 6  # all time
-      regLast3 = @computeRegression(data.slice(-5, -1)) if data.length >= 5  # last 3 weeks only
-      regLast2 = @computeRegression(data.slice(-4, -1)) if data.length >= 4  # last 2 weeks only
-    else
-      regAll   = @computeRegression(data)               if data.length >= 5  # all time
-      regLast3 = @computeRegression(data.slice(-4))     if data.length >= 4  # last 3 weeks only
-      regLast2 = @computeRegression(data.slice(-3))     if data.length >= 3  # last 2 weeks only
-
-    width = mostRecentDataPoint - firstSprint
-    maxDate = @getEndOfSprint(mostRecentDataPoint + width)
-    console.log 'earliestDataPoint', new Date(firstSprint)
-    console.log 'mostRecentDataPoint', new Date(mostRecentDataPoint)
-    console.log 'lastCompleteSprint', new Date(lastCompleteSprint)
-    console.log "width: #{(width / Duration.DAY).toFixed(1)} days"
-
-    console.log 'regAll', new Date(regAll.x2) if regAll
-    console.log 'regLast3', new Date(regLast3.x2) if regLast3
-    console.log 'regLast2', new Date(regLast2.x2) if regLast2
-
-    # Widen the graph so that it includes the X intercept
-    projections = []
-    projections.push regAll.x2 if regAll
-    projections.push regLast2.x2 if regLast2
-    projections.push regLast3.x2 if regLast3
-    sprints = (d.day for d in data)
-    if projectedEnd = projections.max()
-      lastSprint = @getEndOfSprint(projectedEnd)
-      lastSprint = maxDate if lastSprint > maxDate
-      sprint = _.last(sprints)
-      while sprint < lastSprint
-        sprint = @nextSprint(sprint)
-        sprints.push(sprint)
-
     chart = new Houston.BurndownChart()
-      .days((new Date(sprint) for sprint in sprints))
+      .snapTo((date)=> new Date(@getEndOfSprint(date)))
       .dateFormat(d3.time.format('%b %e'))
       .totalEffort(totalEffort)
       .addLine('completed', data)
-    chart.addRegression('all', regAll) if regAll
-    chart.addRegression('last-3', regLast3) if regLast3
-    chart.addRegression('last-2', regLast2) if regLast2
+
+    # If the most recent data point is for an incomplete
+    # sprint, disregard it when calculating the regressions
+    lastCompleteSprint = @getEndOfSprint(1.week().before(new Date()))
+    console.log 'earliestDataPoint', new Date(firstSprint)
+    console.log 'mostRecentDataPoint', new Date(mostRecentDataPoint)
+    console.log 'lastCompleteSprint', new Date(lastCompleteSprint)
+    if @truncateDate(mostRecentDataPoint) > lastCompleteSprint
+      chart.addRegression('all',    data.slice( 0, -1)) if data.length >= 6  # all time
+      chart.addRegression('last-3', data.slice(-5, -1)) if data.length >= 5  # last 3 weeks only
+      chart.addRegression('last-2', data.slice(-4, -1)) if data.length >= 4  # last 2 weeks only
+    else
+      chart.addRegression('all',    data)               if data.length >= 5  # all time
+      chart.addRegression('last-3', data.slice(-4))     if data.length >= 4  # last 3 weeks only
+      chart.addRegression('last-2', data.slice(-3))     if data.length >= 3  # last 2 weeks only
+
     chart.render()
 
     insertLinebreaks = (d)->
@@ -166,32 +142,6 @@ class Roadmaps.ShowMilestoneView extends @TicketsView
     date.setSeconds(0)
     date.setMilliseconds(0)
     +date
-
-  computeRegression: (data)->
-    # Compute the linear regression of the points
-    # http://trentrichardson.com/2010/04/06/compute-linear-regressions-in-javascript/
-    # http://dracoblue.net/dev/linear-least-squares-in-javascript/159/
-    [sum_x, sum_y, sum_xx, sum_xy, n] = [0, 0, 0, 0, data.length]
-    for d in data
-      [_x, _y] = [+d.day, d.effort]
-      sum_x += _x
-      sum_y += _y
-      sum_xx += _x * _x
-      sum_xy += _x * _y
-    m = (n*sum_xy - sum_x*sum_y) / (n*sum_xx - sum_x*sum_x)
-    b = (sum_y - m*sum_x) / n
-
-    # No progress is being made
-    return null if m == 0
-
-    # Find the X intercept
-    [x0, y0] = [((0 - b) / m), 0]
-
-    # Calculate the regression line
-    x1: new Date(+data[0].day)
-    x2: x0
-    y1: new Date(b + m * +data[0].day)
-    y2: y0
 
 
 
