@@ -38,7 +38,7 @@ class @Goal2View extends Backbone.View
       .prevTick((date)=> @prevSprint(date))
       .nextTick((date)=> @nextSprint(date))
       .dateFormat(d3.time.format('%b %e'))
-      .data(items, regression: true)
+      .data(items, regression: true, burnup: true)
       .render()
 
     @

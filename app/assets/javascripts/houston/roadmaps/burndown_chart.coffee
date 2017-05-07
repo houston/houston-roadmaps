@@ -21,9 +21,14 @@ class Houston.BurndownChart
   snapTo: (@_snapTo)-> @
   prevTick: (@_prevTick)-> @
   nextTick: (@_nextTick)-> @
-  data: (data, options={})->
-    line = @computeBurndown(data)
-    @_lines["completed"] = line; @
+  data: (tasks, options={})->
+    line = @computeBurndown(tasks)
+
+    if options.burnup
+      allDates = (value.day for value in line)
+      @_lines["total"] = @computeBurnup(tasks, allDates)
+
+    @_lines["completed"] = line
 
     if options.regression
       # If the most recent data point is for an incomplete
@@ -32,7 +37,6 @@ class Houston.BurndownChart
       pastData = (point for point in line when point.day < today)
       @addRegression('all',    pastData)           if pastData.length >= 5  # all time
       @addRegression('last-3', pastData.slice(-4)) if pastData.length >= 4  # last 3 weeks only
-      @addRegression('last-2', pastData.slice(-3)) if pastData.length >= 3  # last 2 weeks only
 
     @
   addRegression: (slug, data)->
@@ -173,7 +177,7 @@ class Houston.BurndownChart
     # Find the total amount of effort to accomplish
     progressByTick = {}
     totalEffort = 0
-    for task in tasks when task.effort
+    for task in tasks when task.effort and not task.deletedAt
       if task.closedAt
         tick = +@_snapTo(App.parseDate(task.closedAt))
         progressByTick[tick] = (progressByTick[tick] || 0) + task.effort
@@ -199,3 +203,14 @@ class Houston.BurndownChart
       tick = @_nextTick(tick)
 
     data
+
+  computeBurnup: (tasks, dates)->
+    for date in dates
+      totalEffort = 0
+      for task in tasks when task.effort
+        continue if task.openedAt and App.parseDate(task.openedAt) > date
+        continue if task.deletedAt and App.parseDate(task.deletedAt) < date
+        totalEffort += task.effort
+
+      day: date
+      effort: Math.ceil(totalEffort)

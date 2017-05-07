@@ -1,0 +1,92 @@
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke-width: 1.5px;
+  stroke: #000;
+}
+
+.graph { position: relative; }
+
+dl.legend {
+  position: absolute;
+  margin: 0;
+  top: 1em;
+  left: 6em;
+  border: 1px solid #999;
+  background: white;
+  overflow: hidden;
+  padding: 0.5em;
+  display: inline-block;
+  line-height: 1em;
+  font-size: 11px;
+
+  dt {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 1em;
+  }
+
+  dd {
+    display: inline;
+    line-height: 1.25em;
+    margin-left: 0.5em;
+
+    &:after {
+      content: '\A';
+      white-space: pre;
+    }
+  }
+}
+
+.burndown-chart {
+  .legend { font-size: 10px; }
+
+  .axis text {
+    font-size: 10px;
+  }
+
+  .regression {
+    fill: none;
+    stroke-dasharray: 5px, 4px;
+    stroke-width: 1.5px;
+  }
+
+  .regression-all {
+    stroke: #e0e0e0;
+  }
+
+  .regression-last-3 {
+    stroke: #93C9E5;
+  }
+
+  .regression-last-2 {
+    stroke: #F8E3BE;
+  }
+
+  .line {
+    &.line-completed { stroke: #1f77b4; }
+    &.line-total { stroke: #f3c0a7; }
+  }
+  circle {
+    fill: white;
+    stroke-width: 1.5px;
+
+    &.circle-completed { stroke: #1f77b4; }
+    &.circle-total { stroke: #f3c0a7; }
+  }
+  .effort-remaining {
+    font-size: 11px;
+    font-weight: bold;
+
+    &.effort-completed { fill: darken(#1f77b4, 15%); }
+    &.effort-total { fill: darken(#f3c0a7, 15%); }
+  }
+
+}
