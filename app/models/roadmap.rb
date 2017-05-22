@@ -30,16 +30,17 @@ class Roadmap < ActiveRecord::Base
 
       new_roadmap = self.class.create!(name: new_name, team_ids: team_ids)
       new_roadmap.commits.create!(
+        roadmap: new_roadmap,
         user: as,
         message: "Created a copy of \"#{name}\"",
-        milestone_changes: milestones
-          .pluck(:milestone_id, :band, :lanes, :start_date, :end_date)
-          .map { |milestone_id, band, lanes, start_date, end_date|
-            { milestoneId: milestone_id,
-              band: band,
-              lanes: lanes,
-              start_date: start_date,
-              end_date: end_date } })
+        milestone_changes: milestones.map { |milestone|
+          { newId: milestone["id"],
+            newType: milestone["type"],
+            name: milestone["name"],
+            band: milestone["band"],
+            lanes: milestone["lanes"],
+            start_date: milestone["start_date"],
+            end_date: milestone["end_date"] }.with_indifferent_access })
       new_roadmap
     end
   end

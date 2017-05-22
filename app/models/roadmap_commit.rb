@@ -36,10 +36,10 @@ class RoadmapCommit < ActiveRecord::Base
       removed = change[:removed].to_s == "true"
 
       new_attributes = change.each_with_object({}) do |(key, value), attributes|
-        next unless %w{name band lanes start_date end_date}.member? key
-        value = value.to_date if %w{start_date end_date}.member?(key)
-        value = value.to_i if %w{band lanes}.member?(key)
-        attributes[key] = value
+        next unless %w{name band lanes start_date end_date}.member? key.to_s
+        value = value.to_date if %w{start_date end_date}.member?(key.to_s)
+        value = value.to_i if %w{band lanes}.member?(key.to_s)
+        attributes[key.to_s] = value
       end
 
       if !change.key?(:id)
