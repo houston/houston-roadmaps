@@ -52,6 +52,8 @@ class Houston.BurndownChart
 
     # max(effort) will always be on the first day of a project
     totalEffort = @_lines["completed"][0]?.effort
+    if @_lines["total"]
+      totalEffort = Math.max(totalEffort, d3.max(@_lines["total"], (data)-> data.effort))
     return unless totalEffort
 
     allDates = []
