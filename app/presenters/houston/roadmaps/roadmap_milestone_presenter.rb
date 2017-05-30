@@ -87,16 +87,24 @@ private
     Hash[Goal.connection.select_rows(<<-SQL)
       SELECT
         goals.id,
-        COALESCE(SUM(todo_lists.items_count), 0),
-        COALESCE(SUM(todo_lists.completed_items_count), 0),
-        (goals.completed_at IS NOT NULL)
+        COUNT(*) FILTER (WHERE items.destroyed_at IS NULL AND (items.completed_at IS NULL OR items.completed_at >= goals_params.start_date)) "total",
+        COUNT(*) FILTER (WHERE items.destroyed_at IS NULL AND items.completed_at IS NOT NULL AND items.completed_at >= goals_params.start_date) "completed",
+        (goals.completed_at IS NOT NULL) "closed"
       FROM goals
+      LEFT JOIN (VALUES #{goals_params}) "goals_params" (goal_id, start_date) ON goals_params.goal_id=goals.id
       LEFT JOIN goals_todo_lists ON goals_todo_lists.goal_id=goals.id
-      LEFT JOIN todo_lists ON goals_todo_lists.todo_list_id=todo_lists.id
+      LEFT JOIN todo_list_items "items" ON items.todolist_id=goals_todo_lists.todo_list_id
       WHERE goals.id IN (#{goal_ids.join(", ")})
       GROUP BY goals.id, goals.completed_at
     SQL
       .map { |goal_id, total, completed, closed| [goal_id, closed ? 1 : total.zero? ? 0 : Rational(completed, total)] }]
+  end
+
+  def goals_params
+    @goals_params ||= Array(@milestones)
+      .select { |attributes| attributes["type"] == "Goal" }
+      .map { |attributes| "(#{attributes["id"]}, '#{attributes["start_date"]}'::date)" }
+      .join(", ")
   end
 
   def goal_ids
