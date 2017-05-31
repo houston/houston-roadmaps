@@ -12,6 +12,8 @@
     new Goal2View({
       el: $('#goal_view')[0],
       goal: goal,
+      minDate: <%=raw(@milestone&.[]("start_date").to_json)%>,
+      targetDate: <%=raw(@milestone&.[]("end_date").to_json)%>,
       unattachedTodoLists: unattachedTodoLists,
       connectableAccounts: <%=raw(@connectable_accounts.to_json)%>
     }).render();

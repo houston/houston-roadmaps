@@ -11,6 +11,9 @@ module Houston::Roadmaps
       @project = goal.project
       @title = "#{goal.name} • #{@project.name}"
 
+      roadmap = Roadmap.find_by_id(params[:roadmap_id]) if params[:roadmap_id]
+      @milestone = roadmap.milestones.find { |milestone| milestone["type"] == "Goal" && milestone["id"] == goal.id } if roadmap
+
       @connectable_accounts = %w{todoist}
       authorization = Todoist.for(current_user).granted.with_scope("data:read_write").first
       if authorization

@@ -20,6 +20,7 @@ class Roadmaps.RoadmapsView extends Backbone.View
         roadmapView = new Roadmaps.GanttChart milestones,
           el: $preview[0]
           viewport: roadmap.viewport()
+          roadmapId: roadmap.id
           showThumbnail: false
           linkMilestones: false
           bandHeight: 8

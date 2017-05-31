@@ -12,6 +12,7 @@ class Roadmaps.GanttChart
     @bandHeight = options.bandHeight ? 30
     @bandMargin = options.bandMargin ? 8
     @transitionDuration = options.transition ? 150
+    @roadmapId = options.roadmapId
     @viewport = options.viewport ? @defaultViewport()
     @viewport.bind 'change', @updateViewport, @
     @height = 24
@@ -124,7 +125,7 @@ class Roadmaps.GanttChart
 
     newMilestones = if @linkMilestones
       milestones.enter().append('a')
-        .attr('href', (milestone)-> "/roadmap/#{inflect.pluralize(milestone.type).toLowerCase()}/#{milestone.id}")
+        .attr('href', _.bind(@urlForMilestone, @))
     else
       milestones.enter().append('div')
 
@@ -225,3 +226,9 @@ class Roadmaps.GanttChart
 
   initializeBand: ->
   initializeMilestone: ->
+
+  urlForMilestone: (milestone)->
+    if @roadmapId
+      "/roadmaps/#{@roadmapId}/#{inflect.pluralize(milestone.type).toLowerCase()}/#{milestone.id}"
+    else
+      "/roadmap/#{inflect.pluralize(milestone.type).toLowerCase()}/#{milestone.id}"

@@ -15,12 +15,12 @@ module Houston
           @range = 6.months.before(today)..6.months.after(today)
         end
 
-        roadmap = Roadmap.preload(:commits).find(params[:roadmap_id])
-        @milestones = roadmap.milestones.find_all { |milestone| milestone["start_date"].to_date <= @range.end && milestone["end_date"].to_date >= @range.begin }
+        @roadmap = Roadmap.preload(:commits).find(params[:roadmap_id])
+        @milestones = @roadmap.milestones.find_all { |milestone| milestone["start_date"].to_date <= @range.end && milestone["end_date"].to_date >= @range.begin }
 
         @show_today = params[:today] != "false"
 
-        @title = "#{roadmap.name} • Roadmaps"
+        @title = "#{@roadmap.name} • Roadmaps"
         respond_to do |format|
           format.html { render }
           format.json { render json: {

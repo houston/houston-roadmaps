@@ -7,8 +7,9 @@ class Houston.BurndownChart
     @$el = $(@_selector)
     @_lines = {}
     @_regressions = {}
+    @_pipes = []
+    @_minDate = null
     @_snapTo = (date)-> date
-    @_prevTick = (date)-> 1.day().before(date)
     @_nextTick = (date)-> 1.day().after(date)
     @_dateFormat = d3.time.format('%A')
     $(window).resize (e)=>
@@ -19,22 +20,26 @@ class Houston.BurndownChart
   selector: (@_selector)-> @$el = $(@_selector); @
   dateFormat: (@_dateFormat)-> @
   snapTo: (@_snapTo)-> @
-  prevTick: (@_prevTick)-> @
   nextTick: (@_nextTick)-> @
+  minDate: (@_minDate)-> @
+  addPipe: (date)-> @_pipes.push(date); @
   data: (tasks, options={})->
-    line = @computeBurndown(tasks)
+    completed = @computeBurndown(tasks)
 
     if options.burnup
-      allDates = (value.day for value in line)
-      @_lines["total"] = @computeBurnup(tasks, allDates)
+      allDates = (value.day for value in completed)
+      total = @computeBurnup(tasks, allDates)
+      total = (point for point in total when point.day >= @_minDate) if @_minDate
+      @_lines["total"] = total
 
-    @_lines["completed"] = line
+    completed = (point for point in completed when point.day >= @_minDate) if @_minDate
+    @_lines["completed"] = completed
 
     if options.regression
       # If the most recent data point is for an incomplete
       # sprint, disregard it when calculating the regressions
       today = new Date()
-      pastData = (point for point in line when point.day < today)
+      pastData = (point for point in completed when point.day < today)
       @addRegression('all',    pastData)           if pastData.length >= 5  # all time
       @addRegression('last-3', pastData.slice(-4)) if pastData.length >= 4  # last 3 weeks only
 
@@ -66,6 +71,12 @@ class Houston.BurndownChart
     # Widen the graph to include the milestone's projected completion date
     for slug, value of @_regressions
       while max < value.x2
+        max = @_nextTick(max)
+        allDates.push max
+
+    # Widen the graph to include all pipes
+    for date in @_pipes
+      while max < date
         max = @_nextTick(max)
         allDates.push max
 
@@ -145,6 +156,16 @@ class Houston.BurndownChart
           .attr('class', "effort-remaining effort-#{slug}")
           .attr('transform', (d)-> "translate(#{x(d.day) + 5.5}, #{y(d.effort) - 10}) rotate(-75)")
 
+
+
+    for date in @_pipes
+      svg.append('line')
+        .attr('class', "line")
+        .attr('x1', rx(date))
+        .attr('x2', rx(date))
+        .attr('y1', graphHeight)
+        .attr('y2', 0)
+
   computeRegression: (data)->
     # Compute the linear regression of the points
     # http://trentrichardson.com/2010/04/06/compute-linear-regressions-in-javascript/
@@ -187,9 +208,9 @@ class Houston.BurndownChart
 
     [firstTick, lastTick] = d3.extent(new Date(+date) for date in _.keys(progressByTick))
 
-    # Start 1 week before the first progress was made
-    # to show the original total effort of the milestone
-    firstTick = @_prevTick(firstTick)
+    if @_minDate
+      lastTick = @_minDate if @_minDate > lastTick
+      firstTick = @_minDate if @_minDate < firstTick
 
     # Transform into remaining effort by week:
     # Iterate by week in case there are some weeks

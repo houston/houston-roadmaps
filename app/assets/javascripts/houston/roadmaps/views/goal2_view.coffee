@@ -9,6 +9,8 @@ class @Goal2View extends Backbone.View
 
   initialize: (options)->
     @goal = options.goal
+    @minDate = App.parseDate(options.minDate) if options.minDate
+    @targetDate = App.parseDate(options.targetDate) if options.targetDate
     @todoLists = new TodoLists(@goal.get('todoLists'))
     @unattachedTodoLists = options.unattachedTodoLists
     @connectableAccounts = options.connectableAccounts
@@ -34,9 +36,10 @@ class @Goal2View extends Backbone.View
       items = items.concat(todoList.items)
 
     new Houston.BurndownChart()
-      .snapTo((date)=> @getEndOfSprint(date))
-      .prevTick((date)=> @prevSprint(date))
-      .nextTick((date)=> @nextSprint(date))
+      .minDate(@nextMonday(@minDate))
+      .addPipe(@targetDate)
+      .snapTo((date)=> @nextMonday(date))
+      .nextTick((date)=> @nextWeek(date))
       .dateFormat(d3.time.format('%b %e'))
       .data(items, regression: true, burnup: true)
       .render()
@@ -120,17 +123,12 @@ class @Goal2View extends Backbone.View
 
 
 
-  prevSprint: (date)->
-    1.week().before(date)
-
-  nextSprint: (date)->
+  nextWeek: (date)->
     1.week().after(date)
 
-  getEndOfSprint: (date)->
-    @getNextFriday(date)
-
-  getNextFriday: (date)->
+  nextMonday: (date)->
+    return null unless date
     wday = date.getDay() # 0-6 (0=Sunday)
-    daysUntilFriday = 5 - wday # 5=Friday
-    daysUntilFriday += 7 if daysUntilFriday < 0
-    daysUntilFriday.days().after(date)
+    daysUntilMonday = 1 - wday
+    daysUntilMonday += 7 if daysUntilMonday < 0
+    daysUntilMonday.days().after(date)

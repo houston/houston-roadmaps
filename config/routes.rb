@@ -14,6 +14,8 @@ Houston::Roadmaps::Engine.routes.draw do
     end
   end
 
+  get "roadmaps/:roadmap_id/goals/:id", to: "goals#show"
+
   scope "roadmaps/projects/:project_slug" do
     get "goals", to: "project_goals#index", as: :project_goals
   end
