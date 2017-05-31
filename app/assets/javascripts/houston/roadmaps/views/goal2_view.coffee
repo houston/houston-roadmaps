@@ -9,6 +9,7 @@ class @Goal2View extends Backbone.View
 
   initialize: (options)->
     @goal = options.goal
+    @showRegression = !@goal.get('completed') && !@goal.get('closed')
     @minDate = App.parseDate(options.minDate) if options.minDate
     @targetDate = App.parseDate(options.targetDate) if options.targetDate
     @todoLists = new TodoLists(@goal.get('todoLists'))
@@ -41,7 +42,7 @@ class @Goal2View extends Backbone.View
       .snapTo((date)=> @nextMonday(date))
       .nextTick((date)=> @nextWeek(date))
       .dateFormat(d3.time.format('%b %e'))
-      .data(items, regression: true, burnup: true)
+      .data(items, regression: @showRegression, burnup: true)
       .render()
 
     @

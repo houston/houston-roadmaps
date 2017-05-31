@@ -12,6 +12,7 @@ class Houston::Roadmaps::GoalPresenter
     { id: goal.id,
       name: goal.name,
       closed: goal.closed?,
+      completed: goal.todolists.any? && goal.todolists.all?(&:completed?),
       todoLists: goal.todolists.map { |todolist| Houston::Roadmaps::TodolistPresenter.new(todolist) } }
   end
 
