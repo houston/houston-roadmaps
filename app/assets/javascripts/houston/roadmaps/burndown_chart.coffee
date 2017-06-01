@@ -9,6 +9,7 @@ class Houston.BurndownChart
     @_regressions = {}
     @_pipes = []
     @_minDate = null
+    @_maxDate = null
     @_snapTo = (date)-> date
     @_nextTick = (date)-> 1.day().after(date)
     @_dateFormat = d3.time.format('%A')
@@ -22,6 +23,7 @@ class Houston.BurndownChart
   snapTo: (@_snapTo)-> @
   nextTick: (@_nextTick)-> @
   minDate: (@_minDate)-> @
+  maxDate: (@_maxDate)-> @
   addPipe: (date)-> @_pipes.push(date); @
   data: (tasks, options={})->
     completed = @computeBurndown(tasks)
@@ -79,6 +81,17 @@ class Houston.BurndownChart
       while max < date
         max = @_nextTick(max)
         allDates.push max
+
+    # Widen the graph to include @_maxDate
+    if @_maxDate and max < @_maxDate
+      while max < @_maxDate
+        max = @_nextTick(max)
+        allDates.push max
+
+    # Cap the width of the graph at @_maxDate
+    if @_maxDate and max > @_maxDate
+      allDates = (date for date in allDates when date <= @_maxDate) if @_maxDate
+      max = d3.max(allDates)
 
     x = d3.scale.ordinal().rangePoints([0, graphWidth], 0.75).domain(allDates)
     y = d3.scale.linear().range([graphHeight, 0]).domain([0, totalEffort])

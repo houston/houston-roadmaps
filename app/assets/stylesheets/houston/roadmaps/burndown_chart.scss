@@ -88,5 +88,25 @@ dl.legend {
     &.effort-completed { fill: darken(#1f77b4, 15%); }
     &.effort-total { fill: darken(#f3c0a7, 15%); }
   }
+}
 
+
+.dashboard {
+  .burndown-chart {
+    margin-top: 20px;
+
+    .line {
+      &.line-completed { stroke: #909090; }
+      &.line-total { stroke: #303030; }
+    }
+    circle {
+      &.circle-completed { stroke: #909090; }
+      &.circle-total { stroke: #303030; }
+    }
+    .effort-remaining {
+      &.effort-completed { fill: #6a6a6a; }
+      &.effort-total { fill: #202020; }
+    }
+    .axis { display: none; }
+  }
 }

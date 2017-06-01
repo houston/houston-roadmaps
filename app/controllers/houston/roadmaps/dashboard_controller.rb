@@ -18,6 +18,20 @@ module Houston
         @roadmap = Roadmap.preload(:commits).find(params[:roadmap_id])
         @milestones = @roadmap.milestones.find_all { |milestone| milestone["start_date"].to_date <= @range.end && milestone["end_date"].to_date >= @range.begin }
 
+        if params[:burndown] == "yes"
+          goal_ids = @roadmap.milestones
+            .find_all { |milestone| milestone["type"] == "Goal" }
+            .map { |milestone| milestone["id"] }
+          items = TodoListItem.joins(<<~SQL).where("goals_todo_lists.goal_id" => goal_ids)
+            INNER JOIN goals_todo_lists ON todo_list_items.todolist_id=goals_todo_lists.todo_list_id
+          SQL
+          @tasks = items.with_destroyed.map { |item|
+            { openedAt: item.created_at,
+              deletedAt: item.destroyed_at,
+              closedAt: item.completed_at,
+              effort: 1 } }
+        end
+
         @show_today = params[:today] != "false"
 
         @title = "#{@roadmap.name} • Roadmaps"
