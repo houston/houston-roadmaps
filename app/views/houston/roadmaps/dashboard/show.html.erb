@@ -41,6 +41,7 @@
       })
       .nextTick(function(date) { return 1..week().after(date) })
       .dateFormat(d3.time.format('%b %e'))
+      .radius(4)
       .minDate(viewport.get('start'))
       .maxDate(viewport.get('end'))
       .data(tasks, { regression: false, burnup: true })

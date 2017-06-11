@@ -10,6 +10,7 @@ class Houston.BurndownChart
     @_pipes = []
     @_minDate = null
     @_maxDate = null
+    @_radius = 5
     @_snapTo = (date)-> date
     @_nextTick = (date)-> 1.day().after(date)
     @_dateFormat = d3.time.format('%A')
@@ -20,6 +21,7 @@ class Houston.BurndownChart
   height: (@_height)-> @
   selector: (@_selector)-> @$el = $(@_selector); @
   dateFormat: (@_dateFormat)-> @
+  radius: (@_radius)-> @
   snapTo: (@_snapTo)-> @
   nextTick: (@_nextTick)-> @
   minDate: (date)-> @_minDate = @_snapTo(date); @
@@ -157,7 +159,7 @@ class Houston.BurndownChart
         .enter()
         .append('circle')
           .attr('class', "circle-#{slug}")
-          .attr('r', 5)
+          .attr('r', @_radius)
           .attr('cx', (d)-> x(d.day))
           .attr('cy', (d)-> y(d.effort))
 
