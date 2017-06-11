@@ -37,11 +37,11 @@ class @Goal2View extends Backbone.View
       items = items.concat(todoList.items)
 
     new Houston.BurndownChart()
-      .minDate(@nextMonday(@minDate))
-      .addPipe(@targetDate)
       .snapTo((date)=> @nextMonday(date))
       .nextTick((date)=> @nextWeek(date))
       .dateFormat(d3.time.format('%b %e'))
+      .minDate(@minDate)
+      .addPipe(@targetDate)
       .data(items, regression: @showRegression, burnup: true)
       .render()
 

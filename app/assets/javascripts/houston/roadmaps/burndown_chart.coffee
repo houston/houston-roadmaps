@@ -22,8 +22,8 @@ class Houston.BurndownChart
   dateFormat: (@_dateFormat)-> @
   snapTo: (@_snapTo)-> @
   nextTick: (@_nextTick)-> @
-  minDate: (@_minDate)-> @
-  maxDate: (@_maxDate)-> @
+  minDate: (date)-> @_minDate = @_snapTo(date); @
+  maxDate: (date)-> @_maxDate = @_snapTo(date); @
   addPipe: (date)-> @_pipes.push(date); @
   data: (tasks, options={})->
     completed = @computeBurndown(tasks)

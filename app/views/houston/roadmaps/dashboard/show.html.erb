@@ -33,8 +33,6 @@
     var tasks = <%=raw(@tasks.to_json)%>;
     new Houston.BurndownChart()
       .margin({ top: 40, right: 0, bottom: 0, left: 0 })
-      .minDate(viewport.get('start'))
-      .maxDate(viewport.get('end'))
       .snapTo(function(date) {
         var wday = date.getDay();
         var daysUntilMonday = 1 - wday;
@@ -43,6 +41,8 @@
       })
       .nextTick(function(date) { return 1..week().after(date) })
       .dateFormat(d3.time.format('%b %e'))
+      .minDate(viewport.get('start'))
+      .maxDate(viewport.get('end'))
       .data(tasks, { regression: false, burnup: true })
       .render();
     <% end %>
