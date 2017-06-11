@@ -4,8 +4,8 @@ class Roadmap < ActiveRecord::Base
   has_and_belongs_to_many :teams
   has_many :projects, -> { unretired.with_feature("goals") }, through: :teams do
     def goals
-      Goal.where(project_id: unscope(:order, :select).select(:id)) +
-        Milestone.where(project_id: unscope(:order, :select).select(:id))
+      Goal.where(project_id: unscope(:order, :select).select(:id)).open +
+        Milestone.where(project_id: unscope(:order, :select).select(:id)).open
     end
   end
 

@@ -5,6 +5,12 @@ class Goal < ActiveRecord::Base
 
   default_scope { where(destroyed_at: nil) }
 
+  class << self
+    def open
+      where(completed_at: nil)
+    end
+  end
+
   def closed?
     !open?
   end
