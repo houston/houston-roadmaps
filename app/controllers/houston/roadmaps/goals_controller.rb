@@ -9,10 +9,12 @@ module Houston::Roadmaps
     def show
       authorize! :read, goal
       @project = goal.project
-      @title = "#{goal.name} • #{@project.name}"
 
       roadmap = Roadmap.find_by_id(params[:roadmap_id]) if params[:roadmap_id]
       @milestone = roadmap.milestones.find { |milestone| milestone["type"] == "Goal" && milestone["id"] == goal.id } if roadmap
+      @goal.name = @milestone["name"] if @milestone && !@milestone["name"].blank?
+
+      @title = "#{goal.name} • #{@project.name}"
 
       @connectable_accounts = %w{todoist}
       authorization = Todoist.for(current_user).granted.with_scope("data:read_write").first
