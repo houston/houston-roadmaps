@@ -12,6 +12,7 @@ class Houston::Roadmaps::TodolistPresenter
     { id: todolist.id,
       remoteId: todolist.remote_id,
       name: todolist.name,
+      archived: todolist.archived?,
       items: todolist.items.with_destroyed.map { |item| {
         openedAt: item.created_at,
         deletedAt: item.destroyed_at,

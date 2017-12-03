@@ -56,3 +56,8 @@
 .todolist + .todolist {
   border-top: 1px solid #e8e8e8;
 }
+
+.dropdown-menu > li.todolist-archived > a {
+  &::after { content: ' (archived)'; }
+  &:not(:hover) { color: #999999; }
+}

@@ -9,9 +9,9 @@
       </a>
       <ul class="dropdown-menu">
         {{#unattachedTodoLists}}
-        <li>
+        <li class="{{#if archived}}todolist-archived{{/if}}">
           <a data-provider="{{provider}}" data-id="{{id}}" data-name="{{name}}" class="add-todolist">
-            <b class="bubble" style="background-color:{{color}};"></b> {{name}}
+            {{!-- <b class="bubble" style="background-color:{{color}};"></b> --}}{{name}}
           </a>
         </li>
         {{/unattachedTodoLists}}

@@ -21,7 +21,7 @@ module Houston::Roadmaps
       if authorization
         @connectable_accounts.delete "todoist"
         authorization.sync! unless authorization.synced?
-        @unattached_todo_lists = authorization.todolists.map { |todolist| Houston::Roadmaps::TodolistPresenter.new(todolist) }
+        @unattached_todo_lists = authorization.todolists.order(:archived, :name).map { |todolist| Houston::Roadmaps::TodolistPresenter.new(todolist) }
       end
     end
 
