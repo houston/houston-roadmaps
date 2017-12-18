@@ -12,7 +12,8 @@ class @Goal2View extends Backbone.View
     @showRegression = !@goal.get('completed') && !@goal.get('closed')
     @minDate = App.parseDate(options.minDate) if options.minDate
     @targetDate = App.parseDate(options.targetDate) if options.targetDate
-    @todoLists = new TodoLists(@goal.get('todoLists'))
+    @todoLists = new TodoLists _.sortBy @goal.get('todoLists'), (tdl)->
+      [ -tdl.completedItemsCount / tdl.itemsCount, tdl.name ]
     @unattachedTodoLists = options.unattachedTodoLists
     @connectableAccounts = options.connectableAccounts
     @goal.on("change", _.bind(@render, @))
