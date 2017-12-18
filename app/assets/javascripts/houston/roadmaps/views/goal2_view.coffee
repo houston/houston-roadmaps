@@ -13,7 +13,7 @@ class @Goal2View extends Backbone.View
     @minDate = App.parseDate(options.minDate) if options.minDate
     @targetDate = App.parseDate(options.targetDate) if options.targetDate
     @todoLists = new TodoLists _.sortBy @goal.get('todoLists'), (tdl)->
-      [ -tdl.completedItemsCount / tdl.itemsCount, tdl.name ]
+      -tdl.completedItemsCount / tdl.itemsCount
     @unattachedTodoLists = options.unattachedTodoLists
     @connectableAccounts = options.connectableAccounts
     @goal.on("change", _.bind(@render, @))
