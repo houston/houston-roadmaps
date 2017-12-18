@@ -24,6 +24,7 @@ class Roadmaps.EditRoadmapView extends Backbone.View
     @$goals = @$el.find('#goals')
     @$goals_view = @$el.find('#goals_view')
     @roadmap = new Roadmaps.EditGanttChart @milestones,
+      roadmapId: @roadmapId
       removeMilestoneByDroppingOn: @$goals_view
       showWeekends: true
     @roadmap.createMilestone(_.bind(@createMilestone, @))

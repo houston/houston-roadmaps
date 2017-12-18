@@ -171,7 +171,7 @@ class Roadmaps.EditGanttChart extends Roadmaps.GanttChart
         <ul class="dropdown-menu" role="menu">
       """
       html += """
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/roadmap/#{inflect.pluralize(type).toLowerCase()}/#{id}" target="_blank">Open</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#{@urlForMilestone.call(@, type: type, id: id)}" target="_blank">Open</a></li>
       """ if id
       html += """
           <li role="presentation"><a role="menuitem" tabindex="-1" class="rename-milestone-action">Rename</a></li>
