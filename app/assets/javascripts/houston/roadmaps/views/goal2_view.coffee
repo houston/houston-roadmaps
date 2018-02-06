@@ -98,6 +98,12 @@ class @Goal2View extends Backbone.View
     width = diameter
     height = diameter
 
+    if uncompleted is 0
+      $pie.addClass("complete")
+      thickness = radius
+    else
+      $pie.removeClass("complete")
+
     colors = ["#5db64c", "#e8e8e8"]
 
     arc = d3.svg.arc()

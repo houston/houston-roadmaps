@@ -27,6 +27,21 @@
   .progress-pie {
     display: inline-block;
     vertical-align: top;
+
+    &.complete {
+      position: relative;
+      &::after {
+        content: '\f00c';
+        font-family: FontAwesome;
+        font-size: 14px;
+        color: white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+      }
+    }
   }
 
   .fraction {
