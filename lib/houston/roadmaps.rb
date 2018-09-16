@@ -19,16 +19,14 @@ module Houston
 
 
 
-  add_navigation_renderer :roadmaps do
-    name "Roadmaps"
-    path { Houston::Roadmaps::Engine.routes.url_helpers.roadmaps_path }
-    ability { |ability| ability.can?(:read, Roadmap) }
-  end
+  navigation
+    .add_link(:roadmaps) { Houston::Roadmaps::Engine.routes.url_helpers.roadmaps_path }
+    .name("Roadmaps")
+    .ability { can?(:read, Roadmap) }
 
-  add_project_feature :goals do
-    name "Goals"
-    path { |project| Houston::Roadmaps::Engine.routes.url_helpers.project_goals_path(project) }
-    ability { |ability, project| ability.can?(:read, project.milestones.build) }
-  end
+  project_features
+    .add(:goals) { |project| Houston::Roadmaps::Engine.routes.url_helpers.project_goals_path(project) }
+    .name("Goals")
+    .ability { |project| can?(:read, project.milestones.build) }
 
 end
