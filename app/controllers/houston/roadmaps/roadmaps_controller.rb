@@ -46,13 +46,36 @@ module Houston
       def play
         authorize! :read, @roadmap
         @title = "#{@roadmap.name} History"
-        @start = Date.parse params[:start]
-        @end = Date.parse params[:end]
         except = params.key?(:except) ? params[:except].split(",") : []
 
         @commits = @roadmap.commits.preload(:user)
         milestone_ids = @commits.flat_map { |commit| commit.diffs.flat_map { |diff| diff["milestone_id"] } }.uniq
         @milestones = Milestone.where(id: milestone_ids).preload(:project)
+
+        @start = Date.parse params[:start] if params.key?(:start)
+        @end = Date.parse params[:end] if params.key?(:end)
+
+        unless @start
+          start_dates = @commits.flat_map { |commit|
+            commit.diffs.each_with_object([]) do |goal, dates|
+              date = goal.fetch("attributes", {})["start_date"]
+              dates.push(Date.strptime(date, "%Y-%m-%d")) if date
+            end }
+          @start = start_dates.empty? ? Date.today : start_dates.min
+        end
+
+        unless @end
+          end_dates = @commits.flat_map { |commit|
+            commit.diffs.each_with_object([]) do |goal, dates|
+              date = goal.fetch("attributes", {})["end_date"]
+              dates.push(Date.strptime(date, "%Y-%m-%d")) if date
+            end }
+          @end = end_dates.empty? ? Date.today : end_dates.max
+        end
+
+        unless params.key?(:start) && params.key?(:end)
+          redirect_to start: @start.iso8601, end: @end.iso8601
+        end
 
         @markers = Houston::Roadmaps.config.markers
       end
