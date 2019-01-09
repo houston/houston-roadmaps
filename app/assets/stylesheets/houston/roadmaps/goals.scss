@@ -19,6 +19,13 @@
   }
 }
 
+#goal_view.readonly {
+  hr,
+  .delete-link,
+  #goal_add_todolist,
+  #close_goal_button { display: none; }
+}
+
 .todolist {
   line-height: 28px;
   height: 28px;

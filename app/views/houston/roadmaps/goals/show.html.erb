@@ -1,6 +1,6 @@
 <%= render partial: "projects/header", locals: {project: @project, postfix: @goal.name} %>
 
-<div id="goal_view" class="<%= can?(:update, @project.tickets.build) ? "editable" : "readonly" %>"><div>
+<div id="goal_view" class="<%= can?(:update, @goal) ? "editable" : "readonly" %>"><div>
 
 <% content_for :javascripts do %>
 <script type="text/javascript">
