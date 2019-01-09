@@ -7,11 +7,13 @@ module Houston::Roadmaps
     before_action :find_todolist
 
     def add
+      authorize! :update, goal
       goal.todolists << todolist
       render json: Houston::Roadmaps::TodolistPresenter.new(todolist), status: :created
     end
 
     def remove
+      authorize! :update, goal
       goal.todolists.delete todolist
       render json: {}
     end
